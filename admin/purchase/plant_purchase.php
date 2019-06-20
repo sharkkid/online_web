@@ -378,7 +378,7 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$user_list = getUser($search_where, $pg_offset, $pg_rows);
+	$product_list = getUser($search_where, $pg_offset, $pg_rows);
 }
 ?>
 <!DOCTYPE html>
@@ -669,7 +669,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>資料建立＆管理</h4>
+					<h4>庫存管理</h4>
 				</div>
 			</div>
 		</div>
@@ -1113,11 +1113,11 @@ if(!empty($op)) {
 				<div class="col-md-12">
 
 					<!-- nav toolbar -->
-					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
+					<!-- <div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 						<ul class="nav nav-pills pull-right toolbar">
 							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_add.php'"><i class="glyphicon glyphicon-plus"></i> 資料新增</button></li>
 						</ul>
-					</div>
+					</div> -->
 
 					<!-- search -->
 					<div id="search" style="clear:both;">
@@ -1152,10 +1152,12 @@ if(!empty($op)) {
 								<th>品名</th>
 								<th>下種日期</th>
 								<th>下種數量</th>
-								<th>預計成長大小</th>
-								<th>下一階段換盆日期</th>
-								<!-- <th>總下種週期</th>       							 -->
+								<th>目前尺寸</th> <!-- 2019/6/19新增 -->
+								<th>預計成熟日</th> <!-- 2019/6/19新增 -->
+								<th>育成率</th> <!-- 2019/6/19新增 -->
+								<th>備註</th> <!-- 2019/6/19新增 -->
 								<th>供應商</th>
+								<th>訂單客戶</th> <!-- 2019/6/19新增 -->						
 								<th>操作</th>
 							</tr>
 						</thead>
@@ -1166,7 +1168,7 @@ if(!empty($op)) {
         						// 	$onchba_size = $v['onchba_size'];
         						// 	$onchba_cycle = $v['onchba_cycle'];
         						// }
-							foreach ($user_list as $row) {
+							foreach ($product_list as $row) {
 								echo '<tr>';
         							echo '<td>'.'P-00'.$row['onadd_sn'].'</td>';//品號
         							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
@@ -1188,15 +1190,26 @@ if(!empty($op)) {
         							echo '<td>'.$test.'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							// echo '<td>'.$onadd_cycle.'月'.'</td>';
-        							echo '<td>'.$row['onadd_supplier'].'</td>';//品名
-        							echo '<td><button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp;';
-        							echo '<button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>&nbsp;';
-        							echo '<button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;';
+        							echo '<td>'.round($row['onadd_quantity']/getProductFirstQty($row['onadd_part_no'])*100).'%</td>';//品名
+        							echo '<td>'.$test.'</td>';
+        							echo '<td>'.$row['onadd_supplier'].'</td>';
+        							echo '<td></td>';
+        							echo '<td><button type="button" class="btn btn-primary btn-xs upd5" data-onadd_sn="'.$row['onadd_sn'].'" data-toggle="collapse" data-target="#collapse'.$row['onadd_sn'].'">展開</button>';
+
+        							// 2019/6/19新增 - 展開收回操作列表
+        							echo '<td>
+	        							    <div id="collapse'.$row['onadd_sn'].'" class="collapse">
+	        							      <button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
+	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
+	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;';
         							if($permmsion == '系統管理員'){
 	        							echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
 	        							echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}
-        							echo '</td></tr>';
+
+	        						echo '	</div>
+	        							 </td>';
+        							echo '</tr>';
         						}
         						?>
         					</tbody>

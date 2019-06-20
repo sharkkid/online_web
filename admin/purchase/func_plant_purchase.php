@@ -24,6 +24,7 @@ function getUser($where='', $offset=30, $rows=0) {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
+
 			$ret_data[] = $row;
 		}
 		$qresult->free();
@@ -120,6 +121,22 @@ function getUserQtyadd($where='') {
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
 			$ret_data = $row['count(*)'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getProductFirstQty($onadd_part_no) {
+	$ret_data = 0;
+	$conn = getDB();	
+	$sql="select onadd_planting_date,onadd_quantity from onliine_add_data where onadd_status>=0 and onadd_part_no like '$onadd_part_no' order by onadd_planting_date ASC limit 0,1";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['onadd_quantity'];
 		}
 		$qresult->free();
 	}
@@ -449,6 +466,23 @@ function getHistoryEditQty($where='') {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		$ret_data = $qresult->num_rows;
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getExpectedList($onbuda_part_no,$year,$month) {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="SELECT * FROM `onliine_business_data` WHERE onbuda_part_no = '$onbuda_part_no' AND onbuda_day = $month AND onbuda_year = $year";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$row['onbuda_date'] = date('Y-m-d',$row['onbuda_date']);
+			$row['onbuda_add_date'] = date('Y-m-d',$row['onbuda_add_date']);
+			$ret_data[] = $row;
+		}
 		$qresult->free();
 	}
 	$conn->close();

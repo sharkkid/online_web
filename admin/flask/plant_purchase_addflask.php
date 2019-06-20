@@ -526,7 +526,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>資料建立＆管理</h4>
+					<h4>庫存管理</h4>
 				</div>
 			</div>
 		</div>
@@ -718,7 +718,7 @@ if(!empty($op)) {
 					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 						<ul class="nav nav-pills pull-right toolbar">
 							<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li>
-							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_flask.php'"></i> 返回查看資料</button></li>
+							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_flask.php'"></i> 返回瓶苗資料管理</button></li>
 						</ul>
 					</div>
 

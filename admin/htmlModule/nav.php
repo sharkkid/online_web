@@ -48,10 +48,18 @@
                     <ul class="metisMenu nav" id="menu">
                         <li class="nav-heading"><span>主要項目</span></li>
                         <li class="active">
+                            <a href="javascript: void(0);" aria-expanded="true"><i class="icon-pencil"></i> 品種建立 <span class="fa arrow"></span></a>
+                            <ul class="nav-second-level nav" aria-expanded="true">
+                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_add.php">苗種資料建立</a></li>
+                                <li><a href="<?php echo WT_SERVER;?>/admin/flask/plant_purchase_addflask.php">瓶苗資料建立</a></li>
+                                 
+                            </ul>
+                        </li>
+                        <li class="active">
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-home"></i> 庫存管理 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">
-                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php">資料建立＆管理</a></li>
-                                <li><a href="<?php echo WT_SERVER;?>/admin/flask/plant_flask.php">瓶苗資料建立</a></li>
+                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php">苗種資料管理</a></li>
+                                <li><a href="<?php echo WT_SERVER;?>/admin/flask/plant_flask.php">瓶苗資料管理</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_elimination.php">汰除統計報表</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_shipment.php">出貨統計報表</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details1234.php">預估出貨週期</a></li>                                 
@@ -78,7 +86,7 @@
                         </li>
 
                         <li>
-                            <a href="javascript: void(0);" aria-expanded="true"><i class="icon-pencil"></i> 業務專區 <span class="fa arrow"></span></a>
+                            <a href="javascript: void(0);" aria-expanded="true"><i class="icon-tag"></i> 業務專區 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details.php">品種資料</a></li>
                             </ul>

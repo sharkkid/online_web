@@ -1,5 +1,7 @@
 <?php
 include_once("./func_plant_purchase.php");
+// printr(getProductFirstQty('PA2'));
+// exit();
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
 	1=>"1.7",
@@ -46,7 +48,7 @@ if(!empty($op)) {
 
 		break;
 
-		//汰除---------------------------------------------
+		//新增預計出貨---------------------------------------------
 		case 'upd1':
 		$onbuda_part_no = GetParam('onbuda_part_no');
 		$onbuda_part_name = GetParam('onbuda_part_name');
@@ -59,8 +61,6 @@ if(!empty($op)) {
 		$now = time();
 		$conn = getDB();
 
-		// $sql = "INSERT INTO onliine_business_data (onbuda_add_date, onbuda_mod_date, onbuda_status, onbuda_part_no, onbuda_date, onbuda_quantity, onbuda_size, onbuda_client, onbuda_year, onbuda_day) " .
-		// "VALUES ('{$now}', '{$now}', '1', '{$onadd_part_no}', '{$onbuda_date}', '{$onbuda_quantity}', '{$onbuda_size}', '{$onbuda_client}', '{$onbuda_year}', '{$onbuda_day}');";
 		$sql = "INSERT INTO `onliine_business_data`(`onbuda_add_date`, `onbuda_mod_date`, `onbuda_status`, `onbuda_part_no`, `onbuda_part_name`, `onbuda_date`, `onbuda_quantity`, `onbuda_size`, `onbuda_client`, `onbuda_year`, `onbuda_day`) ".
 			"VALUES('{$now}', '{$now}', '1','{$onbuda_part_no}','{$onbuda_part_name}','{$onbuda_date}','{$onbuda_quantity}','{$onbuda_size}','{$onbuda_client}','{$onbuda_year}','{$onbuda_month}');";
 		if($conn->query($sql)) {
@@ -70,8 +70,8 @@ if(!empty($op)) {
 		}
 
 		break;
-		//汰除---------------------------------------------
 
+		//刪除---------------------------------------------
 		case 'del':
 		$onadd_sn=GetParam('onadd_sn');
 
@@ -87,6 +87,25 @@ if(!empty($op)) {
 				$ret_msg = "刪除失敗！";
 			}
 			$conn->close();
+		}
+		break;
+
+		default:
+		$ret_msg = 'error!';
+		break;
+
+		
+		//取得預計出貨明細-----------------------------------
+		case 'get_customer_list':
+		$onbuda_part_no=GetParam('onadd_part_no');
+		$year=GetParam('year');
+		$month=GetParam('month');
+		if(empty($onbuda_part_no)){
+			$ret_code = 0;
+		}else{
+			$ret_msg = '';
+			$ret_code = 1;
+			$ret_data = getExpectedList($onbuda_part_no,$year,$month);
 		}
 		break;
 
@@ -300,6 +319,38 @@ if(!empty($op)) {
 				location.href = "./../";
 			});
 		});
+		function customer_list(onadd_part_no,year,month){
+			$('#month_customers_title').html(year+" 年 "+month+" 月 - "+onadd_part_no+" 客戶明細(預計出貨)");
+			$('#modal_month_customers').modal();
+			$.ajax({
+				url: './details_table.php',
+				type: 'post',
+				dataType: 'json',
+				data: {op:"get_customer_list", onadd_part_no:onadd_part_no, year:year, month:month},
+				beforeSend: function(msg) {
+					$("#ajax_loading").show();
+				},
+				complete: function(XMLHttpRequest, textStatus) {
+					$("#ajax_loading").hide();
+				},
+				success: function(ret) {
+					$('#month_customers_cotent').html('<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨尺寸</label><label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label></div></div>');
+					$.each(ret.data, function(key,value){	
+						if(key < ret.data.length){										
+							$('#month_customers_cotent').html($('#month_customers_cotent').html()+'<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_client+'</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_quantity+'</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_date+'</label></label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_size+'吋</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_add_date+'</label></div></div>');								
+						}
+
+					});
+					
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+			   	console.log('ajax error');
+			        // console.log(xhr);
+			    }
+			});
+			// $('#month_customers_cotent').html($('#month_customers_cotent').html()+'<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label><label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label></div></div>');
+		}
+
 	</script>
 </head>
 
@@ -325,7 +376,39 @@ if(!empty($op)) {
 			</ul>
 		</div>
 
-		<!--汰除----------------------------------------------------------->
+		<!--顯示月份出貨明細----------------------------------------------------------->
+		<div id="modal_month_customers" class="modal upd-modal2" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd_form2" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title" id="month_customers_title">出貨</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row" id="month_customers_cotent">
+								<div class="col-md-12">									
+									<div class="col-sm-10">
+										<label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label>
+									</div>	
+								</div>
+
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--顯示月份出貨明細----------------------------------------------------------->
+
+		<!--預計出貨----------------------------------------------------------->
 		<div id="upd-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
@@ -388,7 +471,7 @@ if(!empty($op)) {
 				</div>
 			</div>
 		</div>
-		<!--汰除----------------------------------------------------------->
+		<!--預計出貨----------------------------------------------------------->
 
 		<!-- Page Content -->
 		<div  class="container-fluid">
@@ -640,7 +723,7 @@ if(!empty($op)) {
         					echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         					for($i = 0 ;$i < 12;$i++){
         						if($team_array[$i]['quantity'] != "0")
-                                    echo '<td>'.$team_array[$i]['quantity'].'</td>';//品號
+                                    echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).')">'.$team_array[$i]['quantity'].'</a></td>';//品號
                                	else
                                		echo '<td></td>';
                             }        					
