@@ -1,7 +1,7 @@
 <?php
 include_once("./func_plant_purchase.php");
-printr(getProductFirstQty('MS4'));
-exit();
+// printr(getProductFirstQty('MS4'));
+// exit();
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
 		1=>"1.7",
