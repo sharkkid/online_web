@@ -32,13 +32,13 @@ function getUser($where='', $offset=30, $rows=0) {
 	return $ret_data;
 }
 
-function getUseradd($where='', $offset=30, $rows=0) {
+function getProducts($where='', $offset=30, $rows=0) {
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
-		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 GROUP BY onadd_part_no";
+		$sql="select * from  onliine_product_data where onproduct_status>=0 and onproduct_plant_st = 2 GROUP BY onproduct_part_no";
 	else
-		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 GROUP BY onadd_part_no";
+		$sql="select * from  onliine_product_data where onproduct_status>=0 and onproduct_plant_st = 2 and $where GROUP BY onproduct_part_no";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -46,6 +46,127 @@ function getUseradd($where='', $offset=30, $rows=0) {
 		}
 		$qresult->free();
 	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getProductBySn($onproduct_sn) {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select * from onliine_product_data where onproduct_sn='{$onproduct_sn}'";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		if ($row = $qresult->fetch_assoc()) {
+			$ret_data = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+function getUseradd($where='', $offset=30, $rows=0) {
+	$ret_data = array();
+	$conn = getDB();
+	if(empty($where))
+		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 GROUP BY onadd_part_no";
+	else
+		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 and ( $where ) GROUP BY onadd_part_no";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getProductFirstQty($onadd_part_no) {
+	$ret_data = 0;
+	$conn = getDB();	
+	$sql="select onadd_planting_date,onadd_quantity from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 and onadd_part_no like '$onadd_part_no' order by onadd_planting_date ASC limit 0,1";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['onadd_quantity'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+//flag 0:下種 1:出貨 2:汰除 3:換盆
+function getHistory_List($onadd_part_no) {
+	$ret_data = array();
+	$conn = getDB();
+
+	$sql="select onadd_add_date as add_date,onadd_planting_date as mod_date,onadd_quantity as quantity,onadd_quantity_cha from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 and onadd_part_no like '$onadd_part_no' order by onadd_add_date";
+
+	$qresult = $conn->query($sql);
+
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			if(!empty($row['onadd_quantity_cha'])){
+				$row['flag'] = 3;	
+			}
+			else{
+				$row['flag'] = 0;			
+			}
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+
+	$sql="select onshda_add_date as add_date,onshda_mod_date as mod_date,onshda_quantity as quantity from online_shipment_data where onshda_status>=0 and onadd_plant_st=2 and onadd_part_no like '$onadd_part_no'";
+
+	$qresult = $conn->query($sql);
+	
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$row['flag'] = 1;
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+
+	$sql="select onelda_add_date as add_date,onelda_mod_date as mod_date,onelda_quantity as quantity from online_elimination_data where onelda_status>=0 and onadd_plant_st=2 and onadd_part_no like '$onadd_part_no'";
+
+		$qresult = $conn->query($sql);
+		
+		if ($qresult->num_rows > 0) {
+			while($row = $qresult->fetch_assoc()) {
+				$row['flag'] = 2;
+				$ret_data[] = $row;
+			}
+			$qresult->free();
+		}
+
+	//排序日期
+	$num = count($ret_data);
+    //只是做迴圈
+    for($i = 0 ; $i < $num ; $i++){
+        //從最後一個數字往上比較，如果比較小就交換
+        for($j = $num-1 ; $j > $k ; $j--){
+            if($ret_data[$j]['add_date'] < $ret_data[$j-1]['add_date']){
+                //交換兩個數值的小技巧，用list+each
+	            list($ret_data[$j]['add_date'] , $ret_data[$j-1]['add_date']) = array($ret_data[$j-1]['add_date'] , $ret_data[$j]['add_date']);
+	            list($ret_data[$j]['mod_date'] , $ret_data[$j-1]['mod_date']) = array($ret_data[$j-1]['mod_date'] , $ret_data[$j]['mod_date']);
+	            list($ret_data[$j]['quantity'] , $ret_data[$j-1]['quantity']) = array($ret_data[$j-1]['quantity'] , $ret_data[$j]['quantity']);
+	            list($ret_data[$j]['flag'] , $ret_data[$j-1]['flag']) = array($ret_data[$j-1]['flag'] , $ret_data[$j]['flag']);
+            }
+        }
+    }
+    for($i = 0 ; $i < $num ; $i++){
+        //從最後一個數字往上比較，如果比較小就交換    
+        $ret_data[$i]['add_date'] = date('Y-m-d',$ret_data[$i]['add_date']);
+        $ret_data[$i]['mod_date'] = date('Y-m-d',$ret_data[$i]['mod_date']);
+    }
+
+
 	$conn->close();
 	return $ret_data;
 }

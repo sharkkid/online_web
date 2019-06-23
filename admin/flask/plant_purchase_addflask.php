@@ -20,65 +20,19 @@ $permissions_mapping = array(
     6=>'<font color="#666666">3.6</font>',
     7=>'<font color="#666666">其他</font>' 
 );
-
+$permmsion = '系統管理員';
 $op=GetParam('op');
 if(!empty($op)) {
 	$ret_code = 1;
 	$ret_msg = '';
 	$ret_data = array();
 	switch ($op) {
-		case 'add':
-		$onadd_add_date=GetParam('onadd_add_date');//建立日期
-		$onadd_mod_date=GetParam('onadd_mod_date');//修改日期
-		$onadd_part_no=GetParam('onadd_part_no');//品號
-		$onadd_part_name=GetParam('onadd_part_name');//品名
-		$onadd_color=GetParam('onadd_color');//花色
-		$onadd_size=GetParam('onadd_size');//花徑
-		$onadd_height=GetParam('onadd_height');//高度
-		$onadd_pot_size=GetParam('onadd_pot_size');//適合開花盆徑
-		$onadd_supplier=GetParam('onadd_supplier');//供應商
-		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
-		$onadd_quantity=GetParam('onadd_quantity');//下種數量
-		// if($onadd_growing==1){
-		// 	$list_setting = getSettingBySn(1.7);
-		// 	$onchba_cycle = $list_setting['onchba_cycle'];
-		// }else if($onadd_growing==2){
-		// 	$list_setting = getSettingBySn(2.5);
-		// 	$onchba_cycle = $list_setting['onchba_cycle'];
-		// }else if($onadd_growing==5){
-		// 	$list_setting = getSettingBySn(3.5);
-		// 	$onchba_cycle = $list_setting['onchba_cycle'];
-		// }
-		// $test = date("m", strtotime("+$onchba_cycle months", $onadd_planting_date));
-		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//換盆年
-		$onadd_quantity_cha=$test;//換盆月
-		$onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
-		$jsuser_sn = GetParam('supplier');//編輯人員
-
-		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)){
-			$ret_msg = "*為必填！";
-		} else { 
-			$user = getUserByAccount($onadd_part_no);
-			$onadd_planting_date = str2time($onadd_planting_date);
-			$now = time();
-			$conn = getDB();
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_plant_st) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '2');";
-				if($conn->query($sql)) {
-					$ret_msg = "新增成功！";
-				} else {
-					$ret_msg = "新增失敗！";
-				}
-			$conn->close();
-		}
-		break;
-
 		case 'get':
-		$onadd_sn=GetParam('onadd_sn');
+		$onproduct_sn=GetParam('onproduct_sn');
 		$ret_data = array();
-		if(!empty($onadd_sn)){
+		if(!empty($onproduct_sn)){
 			$ret_code = 1;
-			$ret_data = getUserBySn($onadd_sn);
+			$ret_data = getProductBySn($onproduct_sn);
 		} else {
 			$ret_code = 0;
 		}
@@ -118,6 +72,48 @@ if(!empty($op)) {
 			$conn = getDB();
 				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycleㄝ,onadd_plant_st) " .
 				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '2');";
+				if($conn->query($sql)) {
+					$ret_msg = "新增成功！";
+				} else {
+					$ret_msg = "新增失敗！";
+				}
+			$conn->close();
+		}
+		break;
+
+		case 'upd':
+		$onadd_sn=GetParam('onadd_sn');
+		$onadd_add_date=GetParam('onadd_add_date');//建立日期
+		$onadd_mod_date=GetParam('onadd_mod_date');//修改日期
+		$onadd_part_no=GetParam('onadd_part_no');//品號
+		$onadd_part_name=GetParam('onadd_part_name');//品名
+		$onadd_color=GetParam('onadd_color');//花色
+		$onadd_size=GetParam('onadd_size');//花徑
+		$onadd_height=GetParam('onadd_height');//高度
+		$onadd_pot_size=GetParam('onadd_pot_size');//適合開花盆徑
+		$onadd_supplier=GetParam('onadd_supplier');//供應商
+		$onadd_planting_date=GetParam('onproduct_planting_date');//下種日期
+		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+		$onadd_quantity_cha=GetParam('onadd_quantity_cha');//換盆數量
+		$onadd_quantity_cha123 =($onadd_quantity - $onadd_quantity_cha);
+		if($onadd_quantity_cha123<=0) {
+			$onadd_status = -1;
+		} else {
+			$onadd_status = 1;
+		}
+		$onadd_growing=GetParam('onadd_growing');//預計成長大小
+		// $onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
+		$jsuser_sn = GetParam('supplier');//編輯人員
+
+		if(empty($onadd_planting_date)||empty($onadd_quantity)){
+			$ret_msg = "*為必填！";
+		} else { 
+			$user = getUserByAccount($onadd_part_no);
+			$onadd_planting_date = str2time($onadd_planting_date);
+			$now = time();
+			$conn = getDB();
+			$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle) " .
+				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}');";
 				if($conn->query($sql)) {
 					$ret_msg = "新增成功！";
 				} else {
@@ -224,18 +220,18 @@ if(!empty($op)) {
 		//出貨---------------------------------------------
 
 		case 'del':
-		$onadd_sn=GetParam('onadd_sn');
+		$onproduct_sn=GetParam('onproduct_sn');
 
-		if(empty($onadd_sn)){
+		if(empty($onproduct_sn)){
 			$ret_msg = "刪除失敗！";
 		}else{
 			$now = time();
 			$conn = getDB();
-			$sql = "DELETE FROM onliine_add_data WHERE onadd_sn='{$onadd_sn}'";
+			$sql = "DELETE FROM onliine_product_data WHERE onproduct_sn='{$onproduct_sn}'";
 			if($conn->query($sql)) {
 				$ret_msg = "刪除完成！";
 			} else {
-				$ret_msg = "刪除失敗！";
+				$ret_msg = "刪除失敗！".$sql;
 			}
 			$conn->close();
 		}
@@ -284,7 +280,7 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$user_list = getUseradd($search_where, $pg_offset, $pg_rows);
+	$user_list = getProducts($search_where, $pg_offset, $pg_rows);
 }
 ?>
 <!DOCTYPE html>
@@ -330,12 +326,12 @@ if(!empty($op)) {
 			$('button.upd').on('click', function(){
 				$('#upd-modal').modal();
 				$('#upd_form')[0].reset();
-
+				// console.log($(this).data('onproduct_sn'));
 				$.ajax({
-					url: './plant_flask.php',
+					url: './plant_purchase_addflask.php',
 					type: 'post',
 					dataType: 'json',
-					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					data: {op:"get", onproduct_sn:$(this).data('onproduct_sn')},
 					beforeSend: function(msg) {
 						$("#ajax_loading").show();
 					},
@@ -346,20 +342,23 @@ if(!empty($op)) {
 			                // console.log(ret);
 			                if(ret.code==1) {
 			                	var d = ret.data;
-			                	$('#upd_form input[name=onadd_sn]').val(d.onadd_sn);
-			                	$('#upd_form input[name=onadd_part_no]').val(d.onadd_part_no);
-			                	$('#upd_form input[name=onadd_part_name]').val(d.onadd_part_name);
-			                	$('#upd_form input[name=onadd_color]').val(d.onadd_color);
-			                	$('#upd_form input[name=onadd_size]').val(d.onadd_size);
-			                	$('#upd_form input[name=onadd_height]').val(d.onadd_height);
-			                	$('#upd_form input[name=onadd_pot_size]').val(d.onadd_pot_size);
-			                	$('#upd_form input[name=onadd_supplier]').val(d.onadd_supplier);
+			                	console.log(d);
+			                	$('#upd_form input[name=onproduct_sn]').val(d.onproduct_sn);
+			                	$('#upd_form input[name=onproduct_part_no]').val(d.onproduct_part_no);
+			                	$('#upd_form input[name=onproduct_part_name]').val(d.onproduct_part_name);
+			                	$('#upd_form input[name=onproduct_color]').val(d.onproduct_color);
+			                	$('#upd_form input[name=onproduct_size]').val(d.onproduct_size);
+			                	$('#upd_form input[name=onproduct_height]').val(d.onproduct_height);
+			                	$('#upd_form input[name=onproduct_pot_size]').val(d.onproduct_pot_size);
+			                	$('#upd_form input[name=onproduct_supplier]').val(d.onproduct_supplier);
 			                	// $('#upd_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
-			                	// $('#upd_form input[name=onadd_quantity]').val(d.onadd_quantity);
-			                	// $('#upd_form input[name=onadd_growing]').val(d.onadd_growing);
-			                	// $('#upd_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
-			                	$('#upd_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
+			                	// $('#upd_form input[name=onproduct_quantity]').val(d.onproduct_quantity);
+			                	// $('#upd_form input[name=onproduct_growing]').val(d.onproduct_growing);
+			                	$('#upd_form [name=onproduct_growing] option[value='+d.onproduct_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
+			                	$('#upd_form [name=onproduct_status] option[value='+d.onproduct_status+']').prop('selected','selected');
 			                }
+			                // console.log('ajax error');
+
 			            },
 			            error: function (xhr, ajaxOptions, thrownError) {
 		                	// console.log('ajax error');
@@ -434,19 +433,67 @@ if(!empty($op)) {
 			});
 			//出貨-----------------------------------------------------------
 
+			//修改
+			$('button.upd3').on('click', function(){
+							$('#upd-modal3').modal();
+							$('#upd_form3')[0].reset();
+							// console.log($(this).data('onproduct_sn'));
+							$.ajax({
+								url: './plant_purchase_addflask.php',
+								type: 'post',
+								dataType: 'json',
+								data: {op:"get", onproduct_sn:$(this).data('onproduct_sn')},
+								beforeSend: function(msg) {
+									$("#ajax_loading").show();
+								},
+								complete: function(XMLHttpRequest, textStatus) {
+									$("#ajax_loading").hide();
+								},
+								success: function(ret) {
+						                // console.log(ret);
+						                if(ret.code==1) {
+						                	var d = ret.data;
+						                	// console.log(d);
+						                	$('#upd_form3 input[name=onproduct_sn]').val(d.onproduct_sn);
+						                	$('#upd_form3 select[name=onproduct_isbought]').val(d.onproduct_isbought);
+						                	$('#upd_form3 input[name=onproduct_part_no]').val(d.onproduct_part_no);
+						                	$('#upd_form3 input[name=onproduct_part_name]').val(d.onproduct_part_name);
+						                	$('#upd_form3 input[name=onproduct_color]').val(d.onproduct_color);
+						                	$('#upd_form3 input[name=onproduct_size]').val(d.onproduct_size);
+						                	$('#upd_form3 input[name=onproduct_height]').val(d.onproduct_height);
+						                	$('#upd_form3 input[name=onproduct_pot_size]').val(d.onproduct_pot_size);
+						                	$('#upd_form3 input[name=onproduct_supplier]').val(d.onproduct_supplier);
+
+						                	// $('#upd_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
+						                	// $('#upd_form input[name=onproduct_quantity]').val(d.onproduct_quantity);
+						                	// $('#upd_form input[name=onproduct_growing]').val(d.onproduct_growing);
+						                	$('#upd_form3 [name=onproduct_growing] option[value='+d.onproduct_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
+						                	$('#upd_form3 [name=onproduct_status] option[value='+d.onproduct_status+']').prop('selected','selected');
+						                }
+						                // console.log('ajax error');
+
+						            },
+						            error: function (xhr, ajaxOptions, thrownError) {
+					                	// console.log('ajax error');
+					                    // console.log(xhr);
+					                }
+					            });
+						});
+
+
 			bootbox.setDefaults({
 				locale: "zh_TW",
 			});
 
 			$('button.del').on('click', function(){
-				onadd_sn = $(this).data('onadd_sn')
+				var onproduct_sn = $(this).data('onproduct_sn');
 				bootbox.confirm("確認刪除？", function(result) {
 					if(result) {
 						$.ajax({
-							url: './plant_flask.php',
+							url: './plant_purchase_addflask.php',
 							type: 'post',
 							dataType: 'json',
-							data: {op:"del", onadd_sn:onadd_sn},
+							data: {op:"del", onproduct_sn:onproduct_sn},
 							beforeSend: function(msg) {
 								$("#ajax_loading").show();
 							},
@@ -538,12 +585,22 @@ if(!empty($op)) {
 					<form autocomplete="off" method="post" action="./" id="add_form" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 class="modal-title">新增資料</h4>
+							<h4 class="modal-title">新品項資料建立</h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="add">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">苗種來源<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="addModalInput1" name="onadd_isbought" placeholder="" required minlength="1" maxlength="32">
+											　<option value="0">自種苗</option>
+											　<option value="1">外購苗</option>
+											</select>
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -559,52 +616,66 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花色<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花徑<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">高度<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">供應商<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label">日期&nbsp;</label>
+										<label class="col-sm-2 control-label">下種日期&nbsp;<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="datetimepicker1" name="onadd_planting_date" placeholder="">
+											<input type="text" class="form-control" id="datetimepicker1" name="onadd_planting_date" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">數量<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onadd_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
 										</div>
 									</div>
 								</div>
@@ -620,7 +691,7 @@ if(!empty($op)) {
 			</div>
 		</div>
 
-		<div id="upd-modal" class="modal upd-modal" tabindex="-1" role="dialog">
+				<div id="upd-modal" class="modal upd-modal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<form autocomplete="off" method="post" action="./" id="upd_form" class="form-horizontal" role="form" data-toggle="validator">
@@ -631,69 +702,197 @@ if(!empty($op)) {
 						<div class="modal-body">
 							<div class="row">
 								<div class="col-md-12">
-									<input type="hidden" name="op" value="upd">
-									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="op" value="add_sub">
+									<input type="hidden" name="onproduct_sn">
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_part_no" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_part_name" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花色<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_color" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花徑<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_size" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">高度<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_height" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_pot_size" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">供應商<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_supplier" placeholder="">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">數量<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">下種日期<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="datetimepicker2" name="onproduct_planting_date" value="<?php echo (empty($device['onproduct_planting_date'])) ? '' : date('Y-m-d', $device['onproduct_planting_date']);?>" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label">日期&nbsp;</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="datetimepicker2" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_quantity" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onproduct_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">新增</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- //修改資料 -->
+		<div id="upd-modal3" class="modal upd-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd_form3" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">修改資料</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd3">
+									<input type="hidden" name="onproduct_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">苗種來源<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="addModalInput1" name="onproduct_isbought" placeholder="" required minlength="1" maxlength="32">
+											　<option value="0">自種苗</option>
+											　<option value="1">外購苗</option>
+											</select>
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_part_no" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_part_name" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_color" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_size" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_height" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_pot_size" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_supplier" placeholder="">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+<!-- 									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_quantity" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> -->
+<!-- 									<div class="form-group">
+										<label class="col-sm-2 control-label">下種日期&nbsp;</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="datetimepicker2" name="onproduct_planting_date" value="<?php echo (empty($device['onproduct_planting_date'])) ? '' : date('Y-m-d', $device['onproduct_planting_date']);?>" placeholder="">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> -->
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onproduct_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
 										</div>
 									</div>
 								</div>
@@ -760,9 +959,14 @@ if(!empty($op)) {
         						// }
 							foreach ($user_list as $row) {
 								echo '<tr>';
-        							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td>'.$row['onadd_part_name'].'</td>';//品名
-        							echo '<td><button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">新增</button>&nbsp;';
+        							echo '<td>'.$row['onproduct_part_no'].'</td>';//品號
+        							echo '<td>'.$row['onproduct_part_name'].'</td>';//品名
+        							echo '<td>';
+        							if($permmsion == '系統管理員'){
+	        							echo '<button type="button" class="btn btn-primary btn-xs upd" data-onproduct_sn="'.$row['onproduct_sn'].'">新增</button>&nbsp;';
+	        							echo '<button type="button" class="btn btn-success btn-xs upd3" data-onproduct_sn="'.$row['onproduct_sn'].'">修改</button>&nbsp;';
+	        							echo '<button type="button" class="btn btn-danger btn-xs del" data-onproduct_sn="'.$row['onproduct_sn'].'">刪除</button>&nbsp;';
+	        						}
         							echo '</td></tr>';
         						}
         						?>

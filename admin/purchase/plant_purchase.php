@@ -33,6 +33,7 @@ if(!empty($op)) {
 		case 'add':
 		$onadd_add_date=GetParam('onadd_add_date');//建立日期
 		$onadd_mod_date=GetParam('onadd_mod_date');//修改日期
+		$onadd_isbought=GetParam('onadd_isbought');//苗種來源
 		$onadd_part_no=GetParam('onadd_part_no');//品號
 		$onadd_part_name=GetParam('onadd_part_name');//品名
 		$onadd_color=GetParam('onadd_color');//花色
@@ -55,11 +56,11 @@ if(!empty($op)) {
 			$onadd_planting_date = str2time($onadd_planting_date);
 			$now = time();
 			$conn = getDB();
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}');";
+				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st) " .
+				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1');";
 
-				$sql2 = "INSERT INTO `onliine_product_data`(`onproduct_add_date`, `onproduct_date`, `onproduct_status`, `jsuser_sn`, `onproduct_part_no`, `onproduct_part_name`, `onproduct_color`, `onproduct_size`, `onproduct_height`, `onproduct_pot_size`, `onproduct_supplier`,`onproduct_growing`) " .
-				"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}');";
+				$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st) " .
+				"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '1');";
 
 				if($conn->query($sql)) {
 					if($conn->query($sql2))
@@ -133,6 +134,7 @@ if(!empty($op)) {
 		$onproduct_quantity=GetParam('onproduct_quantity');//下種數量
 		$onproduct_growing=GetParam('onproduct_growing');//預計成長大小
 		$onproduct_quantity_shi=GetParam('onproduct_quantity_shi');//換盆年
+		$onproduct_isbought=GetParam('onproduct_isbought');//苗種來源
 		$onproduct_quantity_cha=$test;//換盆月
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
@@ -143,7 +145,7 @@ if(!empty($op)) {
 			$onproduct_planting_date = str2time($onproduct_planting_date);
 			$now = time();
 			$conn = getDB();
-				$sql = "UPDATE onliine_product_data SET onproduct_part_no = '$onproduct_part_no', onproduct_part_name = '$onproduct_part_name', onproduct_color ='$onproduct_color', onproduct_size = '$onproduct_size', onproduct_height = '$onproduct_height', onproduct_pot_size = '$onproduct_pot_size', onproduct_supplier = '$onproduct_supplier',onproduct_growing ='$onproduct_growing', jsuser_sn = '$jsuser_sn' WHERE onproduct_sn = $onproduct_sn;";
+				$sql = "UPDATE onliine_product_data SET onproduct_part_no = '$onproduct_part_no', onproduct_part_name = '$onproduct_part_name', onproduct_color ='$onproduct_color', onproduct_size = '$onproduct_size', onproduct_height = '$onproduct_height', onproduct_pot_size = '$onproduct_pot_size', onproduct_supplier = '$onproduct_supplier',onproduct_growing ='$onproduct_growing', jsuser_sn = '$jsuser_sn', onproduct_isbought = '$onproduct_isbought' WHERE onproduct_sn = $onproduct_sn;";
 
 				if($conn->query($sql)) {
 					$ret_msg = "更新成功！";
@@ -696,30 +698,30 @@ if(!empty($op)) {
 									case 0:
 										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
 										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>';
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>';
 									break;
 									case 1:
 										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
 										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>';
 									break;
 									case 2:
 										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
 										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>';
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>';
 									break;
 									case 3:
 										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
 										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">無</label>';
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>';
 									break;
 								}
 																		
@@ -1188,7 +1190,7 @@ if(!empty($op)) {
 		</div>
 		<!--出貨----------------------------------------------------------->
 
-		<!--植物履歷----------------------------------------------------------->
+		<!--苗種履歷----------------------------------------------------------->
 		<div id="history_modal" class="modal upd-modal2" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
@@ -1277,14 +1279,13 @@ if(!empty($op)) {
 						</thead>
 						<tbody>
 							<?php
-        						// $setting_list = getsetting();
-        						// foreach ($setting_list as $i=>$v) {
-        						// 	$onchba_size = $v['onchba_size'];
-        						// 	$onchba_cycle = $v['onchba_cycle'];
-        						// }
 							foreach ($product_list as $row) {
 								echo '<tr>';
-        							echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\')">'.'P-00'.$row['onadd_sn'].'</a></td>';//品號
+									if($row['onadd_part_no'] == 0){
+        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+									}else{
+										echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+									}
         							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
         							echo '<td>'.date('Y-m-d',$row['onadd_planting_date']).'</td>';

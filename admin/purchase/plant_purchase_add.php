@@ -422,6 +422,7 @@ if(!empty($op)) {
 						                	var d = ret.data;
 						                	// console.log(d);
 						                	$('#upd_form3 input[name=onproduct_sn]').val(d.onproduct_sn);
+						                	$('#upd_form3 select[name=onproduct_isbought]').val(d.onproduct_isbought);
 						                	$('#upd_form3 input[name=onproduct_part_no]').val(d.onproduct_part_no);
 						                	$('#upd_form3 input[name=onproduct_part_name]').val(d.onproduct_part_name);
 						                	$('#upd_form3 input[name=onproduct_color]').val(d.onproduct_color);
@@ -429,6 +430,7 @@ if(!empty($op)) {
 						                	$('#upd_form3 input[name=onproduct_height]').val(d.onproduct_height);
 						                	$('#upd_form3 input[name=onproduct_pot_size]').val(d.onproduct_pot_size);
 						                	$('#upd_form3 input[name=onproduct_supplier]').val(d.onproduct_supplier);
+
 						                	// $('#upd_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
 						                	// $('#upd_form input[name=onproduct_quantity]').val(d.onproduct_quantity);
 						                	// $('#upd_form input[name=onproduct_growing]').val(d.onproduct_growing);
@@ -622,6 +624,16 @@ if(!empty($op)) {
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="add">
 									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">苗種來源<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="addModalInput1" name="onadd_isbought" placeholder="" required minlength="1" maxlength="32">
+											　<option value="0">自種苗</option>
+											　<option value="1">外購苗</option>
+											</select>
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
@@ -774,16 +786,16 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">下種日期<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onproduct_quantity" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="datetimepicker2" name="onproduct_planting_date" value="<?php echo (empty($device['onproduct_planting_date'])) ? '' : date('Y-m-d', $device['onproduct_planting_date']);?>" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label">下種日期&nbsp;</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="datetimepicker2" name="onproduct_planting_date" value="<?php echo (empty($device['onproduct_planting_date'])) ? '' : date('Y-m-d', $device['onproduct_planting_date']);?>" placeholder="">
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_quantity" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -829,6 +841,16 @@ if(!empty($op)) {
 									<input type="hidden" name="op" value="upd3">
 									<input type="hidden" name="onproduct_sn">
 									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">苗種來源<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="addModalInput1" name="onproduct_isbought" placeholder="" required minlength="1" maxlength="32">
+											　<option value="0">自種苗</option>
+											　<option value="1">外購苗</option>
+											</select>
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onproduct_part_no" placeholder="" required minlength="1" maxlength="32">
@@ -845,7 +867,7 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onproduct_color" placeholder="" required >
+											<input type="text" class="form-control" id="addModalInput1" name="onproduct_color" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
