@@ -19,7 +19,7 @@ function getUser($where='', $offset=30, $rows=0) {
 	if(empty($where))
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
 	else
-		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 ( $where ) order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
+		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 and ( $where ) order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
@@ -39,7 +39,6 @@ function getUseradd($where='', $offset=30, $rows=0) {
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 GROUP BY onadd_part_no";
 	else
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 GROUP BY onadd_part_no";
-
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {

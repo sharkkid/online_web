@@ -21,7 +21,7 @@ $permissions_mapping = array(
     7=>'<font color="#666666">其他</font>' 
 );
 
-$AllProductData = getAllProductData();
+
 
 $op=GetParam('op');
 if(!empty($op)) {
@@ -244,26 +244,15 @@ if(!empty($op)) {
 	exit;
 } else {
 	// search
-	if(($onadd_part_no = GetParam('onadd_part_no'))) {
-		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
-		$search_query_string['onadd_part_no'] = $onadd_part_no;
+	if(($onproduct_part_no = GetParam('onproduct_part_no'))) {
+		$search_where[] = "onproduct_part_no like '%{$onproduct_part_no}%'";
+		$search_query_string['onproduct_part_no'] = $onadd_part_no;
 	}
-	if(($onadd_part_name = GetParam('onadd_part_name'))) {
-		$search_where[] = "onadd_part_name like '%{$onadd_part_name}%'";
-		$search_query_string['onadd_part_name'] = $onadd_part_name;
+	if(($onproduct_part_name = GetParam('onproduct_part_name'))) {
+		$search_where[] = "onproduct_part_name like '%{$onproduct_part_name}%'";
+		$search_query_string['onproduct_part_name'] = $onadd_part_name;
 	}
-	if(($onadd_supplier = GetParam('onadd_supplier'))) {
-		$search_where[] = "onadd_supplier like '%{$onadd_supplier}%'";
-		$search_query_string['onadd_supplier'] = $onadd_supplier;
-	}
-	if(($onadd_status = GetParam('onadd_status', -1))>=0) {
-		$search_where[] = "onadd_status='{$onadd_status}'";
-		$search_query_string['onadd_status'] = $onadd_status;
-	}
-	if(($onadd_growing = GetParam('onadd_growing', -1))>=0) {
-        $search_where[] = "onadd_growing='{$onadd_growing}'";
-        $search_query_string['onadd_growing'] = $onadd_growing;
-    }
+
 	$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
 	$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
 
@@ -274,9 +263,10 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$user_list = getUseradd($search_where, $pg_offset, $pg_rows);
-	// printr($user_list);
-	// exit;
+	// echo $search_where;
+	// exit();
+	$AllProductData = getAllProductData($search_where);
+
 }
 ?>
 <!DOCTYPE html>
@@ -605,11 +595,11 @@ if(!empty($op)) {
 								<div class="col-md-12">
 									<div class="form-group">
 										<label for="searchInput1">品號</label>
-										<input type="text" class="form-control" id="searchInput1" name="onadd_part_no" value="<?php echo $onadd_part_no;?>" placeholder="">
+										<input type="text" class="form-control" id="searchInput1" name="onproduct_part_no" value="<?php echo $onadd_part_no;?>" placeholder="">
 									</div>
 									<div class="form-group">
 										<label for="searchInput4">品名</label>
-										<input type="text" class="form-control" id="searchInput4" name="onadd_part_name" value="<?php echo $onadd_part_name;?>" placeholder="">
+										<input type="text" class="form-control" id="searchInput4" name="onproduct_part_name" value="<?php echo $onadd_part_name;?>" placeholder="">
 									</div>
 
 									<button type="submit" class="btn btn-info" op="search">搜尋</button>

@@ -1,6 +1,7 @@
 <?php
 include_once("./func_plant_purchase.php");
-
+printr(getProductFirstQty('MS4'));
+exit();
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
 		1=>"1.7",
@@ -1303,8 +1304,8 @@ if(!empty($op)) {
         							echo '<td>'.$test.'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							// echo '<td>'.$onadd_cycle.'月'.'</td>';
-        							// echo '<td>'.round($row['onadd_quantity']/getProductFirstQty($row['onadd_part_no'])*100).'%</td>';//育成率
-        							echo '<td></td>';//品名
+        							echo '<td>'.round($row['onadd_quantity']/getProductFirstQty($row['onadd_part_no'])*100).'%</td>';//育成率
+        							// echo '<td></td>';//育成率
         							$note = (!empty($row['onadd_quantity_cha'])) ? '<td>換盆</td>' : '<td></td>';
         							echo $note;
         							echo '<td>'.$row['onadd_supplier'].'</td>';

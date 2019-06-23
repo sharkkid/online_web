@@ -167,7 +167,7 @@ function getUseradd($where='', $offset=30, $rows=0) {
 	if(empty($where))
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=1 GROUP BY onadd_part_no";
 	else
-		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=1 GROUP BY onadd_part_no";
+		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=1 and ( $where ) GROUP BY onadd_part_no";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
@@ -224,7 +224,10 @@ function getHistoryEditQty($where='') {
 function getAllProductData($where='') {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from onliine_product_data";
+	if(empty($where))
+		$sql="select * from onliine_product_data order by onproduct_part_no";
+	else
+		$sql="select * from onliine_product_data where ($where) order by onproduct_part_no";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
