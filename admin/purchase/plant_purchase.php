@@ -205,7 +205,7 @@ if(!empty($op)) {
 		$onadd_replant_number=GetParam('onadd_replant_number');//換盆數量
 		$onadd_quantity_cha123 =($onadd_quantity - $onadd_replant_number);
 
-		$onadd_status = ($onadd_quantity_cha123<=0) ? -1 : 1;
+		$onadd_status = ($onadd_quantity_cha123 < 0) ? -1 : 1;
 		
 
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
@@ -213,25 +213,29 @@ if(!empty($op)) {
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
 		if(empty($onadd_planting_date)||empty($onadd_quantity)){
-			$ret_msg = "*為必填！";
+			$ret_msg = "*為必填！ onadd_quantity=".$onadd_quantity;
 		} else { 
 			$user = getUserByAccount($onadd_part_no);
 			$onadd_planting_date = str2time($onadd_planting_date);
 			$now = time();
 			$conn = getDB();
+			if($onadd_status != -1) {
 				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle) " .
 				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}');";
 
 				$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
-				if($conn->query($sql) && $conn->query($sql1) && $onadd_status != -1) {
-					$ret_msg = "新增成功！";
-				}
-				else if($onadd_status == -1){
-					$ret_msg = "錯誤！換盆數量高於原下種數量！";
-				}
-				else {
-					$ret_msg = "新增失敗！";
-				}
+				($conn->query($sql) && $conn->query($sql1)) ? $ret_msg = "換盆成功！" : $ret_msg = "換盆失敗！";
+				if($onadd_quantity_cha123 == 0){
+					$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
+					$conn->query($sql);
+				}			
+			}
+			else if($onadd_status == -1){
+				$ret_msg = "錯誤！換盆數量高於原下種數量！";
+			}
+			else {	
+				$ret_msg = "換盆失敗！";
+			}
 			$conn->close();
 		}
 		break;
@@ -248,7 +252,7 @@ if(!empty($op)) {
 		$onelda_reason=GetParam('onelda_reason');//汰除原因
 		$jsuser_sn = GetParam('supplier');//編輯人員
 		$onadd_quantity_del123 = ($onadd_quantity - $onadd_quantity_del);
-		if($onadd_quantity_del123<=0) {
+		if($onadd_quantity_del123 < 0) {
 			$onadd_status = -1;
 		} else {
 			$onadd_status = 1;
@@ -256,31 +260,27 @@ if(!empty($op)) {
 
 		if(empty($onadd_quantity_del)){
 			$ret_msg = "*為必填！";
-		} else {
+		} 
+		else if($onadd_status != -1){
 			$now = time();
 			$conn = getDB();
 			$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_del123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
-			if($conn->query($sql1)) {
-				$ret_msg = "修改完成！";
-			} else {
-				$ret_msg = "修改失敗！";
-			}
-		}
-
-		if(empty($onelda_reason)){
-			$ret_msg = "*為必填！";
-		} else {
-			$now = time();
-			$conn = getDB();
 			$sql = "INSERT INTO online_elimination_data (onelda_add_date, onelda_mod_date, onelda_quantity, onelda_reason, onadd_sn, onadd_part_no, onadd_part_name) " .
 				"VALUES ('{$now}', '{$now}', '{$onadd_quantity_del}', '{$onelda_reason}', '{$onadd_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
-			if($conn->query($sql)) {
-				$ret_msg = "修改完成！";
+			if($conn->query($sql1) && $conn->query($sql)) {
+				$ret_msg = "汰除完成！";
+				if($onadd_quantity_del123 == 0){
+					$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_del123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
+					$conn->query($sql);
+				}
 			} else {
-				$ret_msg = "修改失敗！";
-			}			
-			$conn->close();
-		} 
+				$ret_msg = "汰除失敗！";
+			}
+		}
+		else if($onadd_status == -1){
+			$ret_msg = "錯誤！ 汰除數量不可大於下種數量！";
+		}
+
 		break;
 		//汰除---------------------------------------------
 
@@ -292,10 +292,10 @@ if(!empty($op)) {
 		$onadd_part_name = $list['onadd_part_name'];
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
 		$jsuser_sn = GetParam('supplier');//編輯人員
-		$onadd_plant_year=GetParam('onadd_plant_year');//汰除數量
-		$onshda_client=GetParam('onshda_client');//汰除數量
+		$onadd_plant_year=GetParam('onadd_plant_year');//出貨數量
+		$onshda_client=GetParam('onshda_client');//出貨客戶
 		$onadd_quantity_shi123 = ($onadd_quantity - $onadd_plant_year);
-		if($onadd_quantity_shi123<=0) {
+		if($onadd_quantity_shi123 < 0) {
 			$onadd_status = -1;
 		} else {
 			$onadd_status = 1;
@@ -303,32 +303,26 @@ if(!empty($op)) {
 
 		if(empty($onadd_plant_year)){
 			$ret_msg = "*為必填！";
-		} else {
+		} 
+		else if($onadd_status != -1){
 			$now = time();
 			$conn = getDB();
-			$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_shi123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
-			if($conn->query($sql)) {
-				$ret_msg = "修改完成！";
-			} else {
-				$ret_msg = "修改失敗！";
-			}
-			$conn->close();
-		}
-
-		if(empty($onadd_plant_year)){
-			$ret_msg = "*為必填！";
-		} else {
-			$now = time();
-			$conn = getDB();
+			$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_shi123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
 			$sql = "INSERT INTO online_shipment_data (onshda_add_date, onshda_mod_date, onshda_client, onshda_quantity, onadd_sn, onadd_part_no, onadd_part_name) " .
 				"VALUES ('{$now}', '{$now}', '{$onshda_client}', '{$onadd_plant_year}', '{$onadd_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
-			if($conn->query($sql)) {
-				$ret_msg = "修改完成！";
+			if($conn->query($sql1) && $conn->query($sql)) {
+				$ret_msg = "出貨完成！";
+				if($onadd_quantity_shi123 == 0){
+					$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_shi123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
+					$conn->query($sql);
+				}
 			} else {
-				$ret_msg = "修改失敗！";
-			}			
-			$conn->close();
-		} 
+				$ret_msg = "出貨失敗！";
+			}
+		}
+		else if($onadd_status == -1){
+			$ret_msg = "錯誤！ 出貨數量不可大於下種數量！";
+		}
 		break;
 		//出貨---------------------------------------------
 
@@ -876,56 +870,56 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -1091,14 +1085,14 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div> 
@@ -1151,14 +1145,14 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div> 

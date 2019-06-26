@@ -95,9 +95,9 @@
                             </ul>
 
                         </li>
-                         <li><a href="<?php echo WT_SERVER;?>/admin/business/plant_business.php">"<i class="icon-map"></i> 成本管理 </a></li>
+                         <!-- <li><a href="<?php echo WT_SERVER;?>/admin/business/plant_business.php">"<i class="icon-map"></i> 成本管理 </a></li> -->
                         <li class="nav-heading"><span>管理員項目</span></li>
-                        <li><a href="<?php echo WT_SERVER;?>/admin/sys/sys_user.php"><i class="icon-user"></i> 帳號管理</a></li>
+                        <!-- <li><a href="<?php echo WT_SERVER;?>/admin/sys/sys_user.php"><i class="icon-user"></i> 帳號管理</a></li> -->
                         <li>
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-settings"></i> 進階設定 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">
