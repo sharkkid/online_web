@@ -217,7 +217,7 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$user_list = getUser($search_where, $pg_offset, $pg_rows);
+	$user_list = getWorkListByMonth($search_where, $pg_offset, $pg_rows);
 }
 ?>
 <!DOCTYPE html>
@@ -846,6 +846,12 @@ if(!empty($op)) {
         						// 	$onchba_size = $v['onchba_size'];
         						// 	$onchba_cycle = $v['onchba_cycle'];
         						// }
+								$list_setting="";
+								$onchba_cycle="";
+								$list_setting1 = getSettingBySn(1.7);
+								$list_setting2 = getSettingBySn(2.5);
+								$list_setting5 = getSettingBySn(3.5);
+
 							foreach ($user_list as $row) {
 								echo '<tr>';
         							echo '<td>'.'P-00'.$row['onadd_sn'].'</td>';//品號
@@ -862,15 +868,16 @@ if(!empty($op)) {
         							// }else{
         							// 	echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							// }	
-        							if($row['onadd_growing']==1){
-        								$list_setting = getSettingBySn(1.7);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}else if($row['onadd_growing']==2){
-        								$list_setting = getSettingBySn(2.5);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}else if($row['onadd_growing']==5){
-        								$list_setting = getSettingBySn(3.5);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
+        							switch ($row['onadd_growing']) {
+        								case 1:
+        									$onchba_cycle = $list_setting1['onchba_cycle'];
+        									break;
+        								case 2:
+        									$onchba_cycle = $list_setting2['onchba_cycle'];
+        									break;
+        								case 5:
+        									$onchba_cycle = $list_setting5['onchba_cycle'];
+        									break;
         							}
         							if($row['onadd_plant_st']==2){
         								$onchba_cycle=1;
