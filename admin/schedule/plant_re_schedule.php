@@ -874,9 +874,9 @@ if(!empty($op)) {
         							}
         							if($row['onadd_plant_st']==2){
         								$onchba_cycle=1;
-        								$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        								$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         							}else{
-        								$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        								$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         							}
         							echo '<td>'.$test.'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));

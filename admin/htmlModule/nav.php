@@ -65,14 +65,14 @@
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details1234.php">預估出貨週期</a></li>                                 
                             </ul>
                         </li>
-                        <li>
+                        <!-- <li>
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-grid"></i> 植床區域管理 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">
                                 <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">A區</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">B區</a></li>
                                  <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">冷房</a></li>
                             </ul>
-                        </li>
+                        </li> -->
 
                         <li><a href="<?php echo WT_SERVER;?>/admin/index/index.php">"<i class="icon-bar-chart"></i> 統計圖表 </a></li>
 

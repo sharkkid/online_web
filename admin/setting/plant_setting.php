@@ -325,7 +325,7 @@ if(!empty($op)) {
         								<input type="hidden" name="op" value="upd">
         								<input type="hidden" name="onchba_sn">
         								<div class="form-group">
-        									<label for="addModalInput1" class="col-sm-2 control-label">週期(月)<font color="red">*</font></label>
+        									<label for="addModalInput1" class="col-sm-2 control-label">週期(日)<font color="red">*</font></label>
         									<div class="col-sm-10">
         										<input type="text" class="form-control" id="addModalInput1" name="onchba_cycle" placeholder="" required minlength="1" maxlength="32">
         										<div class="help-block with-errors"></div>
@@ -354,7 +354,7 @@ if(!empty($op)) {
         					<thead>
         						<tr>
         							<th>尺寸</th>
-        							<th>週期(月)</th>
+        							<th>週期(日)</th>
         							<th>操作</th>
         						</tr>
         					</thead>

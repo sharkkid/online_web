@@ -1295,7 +1295,7 @@ if(!empty($op)) {
         								$list_setting = getSettingBySn(3.5);
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}
-        							$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         							echo '<td>'.$test.'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							// echo '<td>'.$onadd_cycle.'月'.'</td>';
