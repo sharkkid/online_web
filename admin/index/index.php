@@ -31,7 +31,9 @@ $pg_total = GetParam('pg_total')=='' ? getUserQty($search_where) : GetParam('pg_
 $pg_offset = $pg_rows * ($pg_page - 1);
 $pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-$user_list = getUser($search_where, $pg_offset, $pg_rows);
+$product_list = getWorkListByMonth();
+// printr($product_list);
+// exit();
 $list17 = getDetails('1');//計算1.7
 $list25 = getDetails('2');//計算2.5
 $list35 = getDetails('5');//計算3.5
@@ -61,6 +63,11 @@ $op=GetParam('op');
 				$day = GetParam('day');
 				$ret_msg = "搜尋成功!";
 				$ret_data = getQuantity_Day($day);
+			break;
+			case 'get_expected_data':
+				// $ret_msg = "test";
+				$ret_code = 1;
+				$ret_data = getWorkListByMonth();
 			break;
 		}
 		echo enclode_ret_data($ret_code, $ret_msg, $ret_data);
@@ -120,6 +127,35 @@ $op=GetParam('op');
 	<script>
 		$(document).ready(function () {
 			$(function () {
+				$.ajax({
+				url: './index.php',
+				type: 'post',
+				dataType: 'json',
+				data: {op:"get_expected_data"},
+				beforeSend: function(msg) {
+					$("#ajax_loading").show();
+				},
+				complete: function(XMLHttpRequest, textStatus) {
+					$("#ajax_loading").hide();
+				},
+				success: function(ret) {
+					if(ret.code==1) {
+				        var data = ret.data;	
+						$.each(ret.data, function(key,value){	
+							if(key < ret.data.length){
+								// alert(key);
+								// $('#myModal').modal('show');
+							}
+						});
+
+					}
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+				    	// console.log('ajax error');
+				    }
+				});
+
+
         //page view chart
         <?php 
         //出貨統計表資料
@@ -317,22 +353,7 @@ $op=GetParam('op');
 </head>
 
 <body>
-	<?php	
-	foreach ($user_list as $i=>$v) {
-		$row = $i+5;
-
-		$onadd_change_basin = $v['onadd_change_basin'];;
-		$date1 = date ("m", $v['onadd_cycle']);
-		$date12 = ($date1 - $onadd_change_basin);
-		$onadd_part_no = $v['onadd_part_no'];
-		$onadd_part_name = $v['onadd_part_name'];
-		$onadd_quantity = $v['onadd_quantity'];
-		$onadd_planting_date = date ("Y/m/d", $v['onadd_planting_date']);
-		if($date12<=0){
-			// echo "<script>$(document).ready(function(){ $('#myModal').modal('show'); });</script>";  
-		}
-	}
-	?>
+	
 	<?php include('./../htmlModule/nav.php');?>
 	<!--main content start-->
 	<section class="main-content">
@@ -489,30 +510,35 @@ $op=GetParam('op');
 				<div class='modal-content'>
 					<div class='modal-body'>
 						<h4 class="modal-title">提醒事項</h4>
-						<label>品號：</label>
-						<?php
-						echo "<label>".$onadd_part_no."</label>" ;
-						?>
-					</br>
-					<label>品名：</label>
-					<?php
-					echo "<label>".$onadd_part_name."</label>" ;
-					?>
-				</br>
-				<label>下種日：</label>
-				<?php
-				echo "<label>".$onadd_planting_date."</label>" ;
-				?>
-			</br>
-			<label>數量：</label>
-			<?php
-			echo "<label>".$onadd_quantity."</label>" ;
-			?>
-		</br>
-		<label>提醒事項：</label>
-		<?php
-		echo "<label>".'已經超過換盆日期'."</label>" ;
-		?>
+							<label>品號：</label>
+							<?php
+							echo "<label id=\"onadd_part_no\">".$onadd_part_no."</label>" ;
+							?>
+							</br>
+							<label>品名：</label>
+							<?php
+							echo "<label id=\"onadd_part_name\">".$onadd_part_name."</label>" ;
+							?>
+							</br>
+							<label>下種日：</label>
+							<?php
+							echo "<labelid=\"onadd_planting_date\">".$onadd_planting_date."</label>" ;
+							?>
+							</br>
+							<label>預計成長日：</label>
+							<?php
+							echo "<label id=\"onadd_planting_date\">".$onadd_planting_date."</label>" ;
+							?>
+							</br>
+							<label>數量：</label>
+							<?php
+							echo "<label id=\"onadd_quantity\">".$onadd_quantity."</label>" ;
+							?>
+							</br>
+							<label>提醒事項：</label>
+							<?php
+							echo "<label id=\"onadd_content\">".'已經超過換盆日期'."</label>" ;
+							?>
 	</div>
 	<div class='modal-footer'>
 		<a href='index.php'>

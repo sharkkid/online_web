@@ -62,9 +62,12 @@ if(!empty($op)) {
 				$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st) " .
 				"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '1');";
 
+				$sql3 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_quantity}','{$onadd_part_no}');";
+
 				if($conn->query($sql)) {
 					if($conn->query($sql2))
-						$ret_msg = "新增成功！";
+						if($conn->query($sql3))
+							$ret_msg = "新增成功！";
 					else
 						$ret_msg = "新增失敗！";
 				} else {
@@ -1296,11 +1299,18 @@ if(!empty($op)) {
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							echo '<td>'.$test.'</td>';
+        							echo '<td>'.$test.'</td>';//預計成熟日
+
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
-        							// echo '<td>'.$onadd_cycle.'月'.'</td>';
-        							echo '<td>'.round($row['onadd_quantity']/getProductFirstQty($row['onadd_part_no'])*100).'%</td>';//育成率
-        							// echo '<td></td>';//育成率
+
+        							$first_plant_amount = getProductFirstQty($row['onadd_part_no']);//第一次下種時間
+        							if($first_plant_amount != 1){//育成率
+        								echo '<td>'.round($row['onadd_quantity']/getProductFirstQty($row['onadd_part_no'])*100).'%</td>';
+        							}
+        							else{
+        								echo '<td></td>';
+        							}
+        							
         							$note = (!empty($row['onadd_quantity_cha'])) ? '<td>換盆</td>' : '<td></td>';
         							echo $note;
         							echo '<td>'.$row['onadd_supplier'].'</td>';

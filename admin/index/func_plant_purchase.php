@@ -230,5 +230,60 @@ function getSpace() {
 	$conn->close();
 	return $ret_data;
 }
+
+function getSettingBySn($onchba_size) {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select * from online_change_basin where onchba_size='{$onchba_size}'";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		if ($row = $qresult->fetch_assoc()) {
+			$ret_data = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getWorkListByMonth() {
+	$list_setting1 = getSettingBySn(1.7);
+	$list_setting2 = getSettingBySn(2.5);
+	$list_setting5 = getSettingBySn(3.5);
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			switch ($row['onadd_growing']) {
+        		case 1:
+        			$onchba_cycle = $list_setting1['onchba_cycle'];
+        			break;
+        		case 2:
+        			$onchba_cycle = $list_setting2['onchba_cycle'];
+        			break;
+        		case 5:
+        			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			break;
+        	}
+        	if($row['onadd_plant_st']==2){
+        		$onchba_cycle=1;
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        	}else{
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        	}
+        	if(date('M',strtotime($test)) == date('M')){
+        		$row['expected_date'] = strtotime($test);
+				$ret_data[] = $row;
+
+        	}
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
 //function--------------------------------------------------------------------------------------
 ?>

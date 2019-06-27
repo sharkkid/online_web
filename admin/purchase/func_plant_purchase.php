@@ -200,17 +200,20 @@ function getUserQtyadd($where='') {
 	return $ret_data;
 }
 
-function getProductFirstQty($onadd_part_no) {
+function getProductFirstQty($onfp_part_no) {
 	$ret_data = 0;
 	$conn = getDB();	
-	$sql="select onadd_planting_date,onadd_quantity from onliine_add_data where onadd_status>=0 and onadd_part_no like '$onadd_part_no' order by onadd_planting_date ASC limit 0,1";
+	$sql="select onfp_plant_amount from onliine_firstplant_data where onfp_status>=0 and onfp_part_no like '$onfp_part_no'";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$ret_data = $row['onadd_quantity'];
+			$ret_data = $row['onfp_plant_amount'];
 		}
 		$qresult->free();
+	}
+	else{
+		$ret_data = 1;
 	}
 	$conn->close();
 	return $ret_data;
@@ -554,6 +557,43 @@ function getExpectedList($onbuda_part_no,$year,$month) {
 			$row['onbuda_date'] = date('Y-m-d',$row['onbuda_date']);
 			$row['onbuda_add_date'] = date('Y-m-d',$row['onbuda_add_date']);
 			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getWorkListByMonth() {
+	$list_setting1 = getSettingBySn(1.7);
+	$list_setting2 = getSettingBySn(2.5);
+	$list_setting5 = getSettingBySn(3.5);
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			switch ($row['onadd_growing']) {
+        		case 1:
+        			$onchba_cycle = $list_setting1['onchba_cycle'];
+        			break;
+        		case 2:
+        			$onchba_cycle = $list_setting2['onchba_cycle'];
+        			break;
+        		case 5:
+        			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			break;
+        	}
+        	if($row['onadd_plant_st']==2){
+        		$onchba_cycle=1;
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        	}else{
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        	}
+        	if(date('M',strtotime($test)) == date('M')){
+				$ret_data[] = $row;
+        	}
 		}
 		$qresult->free();
 	}
