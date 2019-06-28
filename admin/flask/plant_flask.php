@@ -1004,11 +1004,12 @@ if(!empty($op)) {
 				<div class="col-md-12">
 
 					<!-- nav toolbar -->
-				<!-- 	<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
+					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 						<ul class="nav nav-pills pull-right toolbar">
-							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_addflask.php'"><i class="glyphicon glyphicon-plus"></i> 資料新增</button></li>
+							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus" onclick="javascript:location.href='./plant_purchase_addflask.php'"></i> 新品項建立</button></li>
+							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_addflask.php'"></i> 返回瓶苗資料建立</button></li>
 						</ul>
-					</div> -->
+					</div>
 
 					<!-- search -->
 					<div id="search" style="clear:both;">
