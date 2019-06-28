@@ -1006,8 +1006,8 @@ if(!empty($op)) {
 					<!-- nav toolbar -->
 					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 						<ul class="nav nav-pills pull-right toolbar">
-							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_addflask.php'">新品項建立</button></li>
-							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_addflask.php'"></i> 返回瓶苗資料管理</button></li>
+							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_addflask.php'"><i class="glyphicon glyphicon-plus"></i>新品項建立</button></li>
+							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_addflask.php'"></i> 返回瓶苗資料建立</button></li>
 						</ul>
 					</div>
 
