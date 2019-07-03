@@ -150,7 +150,12 @@ $op=GetParam('op');
 						  	$('#onadd_planting_date').html(ret.data[count]['onadd_planting_date']);
 						  	$('#onadd_expected_date').html(ret.data[count]['expected_date']);
 						  	$('#onadd_quantity').html(ret.data[count]['onadd_quantity']);
-						  	$('#onadd_content').html("已經超過換盆日期");
+						  	if(ret.data[count]['onadd_planting_date_unix'] > ret.data[count]['expected_date_unix']){
+							  	$('#onadd_content').html("已經超過換盆日期");
+							}
+							else{
+								$('#onadd_content').html("即將到達換盆日期");
+							}
 						    $('#myModal').modal('show');
 						 //    console.log(ret.data);
 							console.log(count);	

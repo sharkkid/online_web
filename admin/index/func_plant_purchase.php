@@ -277,6 +277,8 @@ function getWorkListByMonth() {
         	if(date('M',strtotime($test)) == date('M')){
         		$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);
         		$row['expected_date'] = $test;
+        		$row['onadd_planting_date_unix'] = $row['onadd_planting_date'];
+        		$row['expected_date_unix'] = strtotime($test);
 				$ret_data[] = $row;
 
         	}
