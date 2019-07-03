@@ -275,7 +275,8 @@ function getWorkListByMonth() {
         		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
         	}
         	if(date('M',strtotime($test)) == date('M')){
-        		$row['expected_date'] = strtotime($test);
+        		$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);
+        		$row['expected_date'] = $test;
 				$ret_data[] = $row;
 
         	}

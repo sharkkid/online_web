@@ -124,8 +124,9 @@ $op=GetParam('op');
 	<script src="./../../js1/jquery.toast.min.js"></script>
 	<script src="./../../js1/dashboard-alpha.js"></script>
 
-	<script>
+	<script>		
 		$(document).ready(function () {
+			var count = 0;
 			$(function () {
 				$.ajax({
 				url: './index.php',
@@ -138,16 +139,26 @@ $op=GetParam('op');
 				complete: function(XMLHttpRequest, textStatus) {
 					$("#ajax_loading").hide();
 				},
-				success: function(ret) {
+				success: function(ret) {					
 					if(ret.code==1) {
 				        var data = ret.data;	
-						$.each(ret.data, function(key,value){	
-							if(key < ret.data.length){
-								// alert(key);
-								// $('#myModal').modal('show');
-							}
-						});
-
+						console.log(ret.data.length);
+						var interval = setInterval(function write_numbers() {
+						  if (count < ret.data.length) {
+						  	$('#onadd_part_no').html(ret.data[count]['onadd_part_no']);
+						  	$('#onadd_part_name').html(ret.data[count]['onadd_part_name']);
+						  	$('#onadd_planting_date').html(ret.data[count]['onadd_planting_date']);
+						  	$('#onadd_expected_date').html(ret.data[count]['expected_date']);
+						  	$('#onadd_quantity').html(ret.data[count]['onadd_quantity']);
+						  	$('#onadd_content').html("已經超過換盆日期");
+						    $('#myModal').modal('show');
+						 //    console.log(ret.data);
+							console.log(count);	
+						  } else {
+						    clearInterval(interval);
+						    $('#myModal').modal('hide');
+						  }
+						}, 1500)
 					}
 				},
 				error: function (xhr, ajaxOptions, thrownError) {
@@ -155,6 +166,10 @@ $op=GetParam('op');
 				    }
 				});
 
+		$("#btn_modal").click(function() {
+			$('#myModal').modal('hide');	
+			count++;
+		});
 
         //page view chart
         <?php 
@@ -510,40 +525,20 @@ $op=GetParam('op');
 				<div class='modal-content'>
 					<div class='modal-body'>
 						<h4 class="modal-title">提醒事項</h4>
-							<label>品號：</label>
-							<?php
-							echo "<label id=\"onadd_part_no\">".$onadd_part_no."</label>" ;
-							?>
+							<label>品號：</label><label id="onadd_part_no"></label>
 							</br>
-							<label>品名：</label>
-							<?php
-							echo "<label id=\"onadd_part_name\">".$onadd_part_name."</label>" ;
-							?>
+							<label>品名：</label><label id="onadd_part_name"></label>
 							</br>
-							<label>下種日：</label>
-							<?php
-							echo "<labelid=\"onadd_planting_date\">".$onadd_planting_date."</label>" ;
-							?>
+							<label>下種日：</label><label id="onadd_planting_date"></label>
 							</br>
-							<label>預計成長日：</label>
-							<?php
-							echo "<label id=\"onadd_planting_date\">".$onadd_planting_date."</label>" ;
-							?>
+							<label>預計成長日：</label><label id="onadd_expected_date"></label>
 							</br>
-							<label>數量：</label>
-							<?php
-							echo "<label id=\"onadd_quantity\">".$onadd_quantity."</label>" ;
-							?>
+							<label>數量：</label><label id="onadd_quantity"></label>
 							</br>
-							<label>提醒事項：</label>
-							<?php
-							echo "<label id=\"onadd_content\">".'已經超過換盆日期'."</label>" ;
-							?>
+							<label>提醒事項：</label><label id="onadd_content"></label>
 	</div>
 	<div class='modal-footer'>
-		<a href='index.php'>
-			<button type='button' class='btn btn-default' data-dismiss='modal'>確認</button>
-		</a>
+		<button type='button' class='btn btn-default' id="btn_modal">確認</button>
 	</div>
 </div>
 </div>
