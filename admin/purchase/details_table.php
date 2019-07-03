@@ -1,6 +1,6 @@
 <?php
 include_once("./func_plant_purchase.php");
-// printr(getProductFirstQty('PA2'));
+// printr(getExpectedShipByMonth(2019,'PA2',2));
 // exit();
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
@@ -127,9 +127,9 @@ if(!empty($op)) {
 	$onadd_part_no = GetParam('onadd_part_no');
 	$onadd_growing = GetParam('onadd_growing');
 	$onadd_quantity_del = GetParam('onadd_quantity_del');
-	$user_list = getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del);
+	$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no,$onadd_growing);
 	$business_data = getBusinessData($onadd_part_no,$onadd_growing,$onadd_quantity_del);
-	// printr($business_data);
+	// printr($user_list);
 	// exit;
 	$data_list = getDataDetails($onadd_part_no,$onadd_growing);
 	// $user_list = getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del);
@@ -578,8 +578,8 @@ if(!empty($op)) {
         			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
         				<thead>
         					<tr>
-        						<th rowspan="2">尺寸</th>
-        						<th colspan="12" class="tableheader" align="center">月份</th>
+        						<th rowspan="2">出售</br>尺寸</th>
+        						<th colspan="12" class="tableheader" align="center">可供出售月份(系統計算)</th>
         					</tr>
         					<tr>
         						<th>一月</th>
@@ -598,91 +598,11 @@ if(!empty($op)) {
         				</thead>
         				<tbody>
         					<?php
-        					echo '<td>'.$permissions_mapping[$user_list[0]['onadd_growing']].'寸'.'</td>';
-        					foreach ($user_list as $row) {
-        						if ($row['onadd_quantity_shi']==1 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==2 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==3 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==4 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==5 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==6 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==7 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==8 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==9 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==10 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==11 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
-                             foreach ($user_list as $row) {
-                             	if ($row['onadd_quantity_shi']==12 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                 }
-                             }
+        					
+        					echo '<td>'.$permissions_mapping[$onadd_growing].'寸'.'</td>';
+        					for($i = 1 ;$i <= 12;$i++){
+        						echo '<td>'.$user_list[$i].'</td>';//預計成熟月份數量
+                            } 
 
                              ?>
                          </tbody>
@@ -720,7 +640,7 @@ if(!empty($op)) {
         							$team_array[$i]['quantity'] = "0";
         						}
                             }
-        					echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
+        					echo '<td>'.$permissions_mapping[$onadd_growing].'寸'.'</td>';
         					for($i = 0 ;$i < 12;$i++){
         						if($team_array[$i]['quantity'] != "0")
                                     echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).')">'.$team_array[$i]['quantity'].'</a></td>';//品號
