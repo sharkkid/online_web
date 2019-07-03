@@ -270,9 +270,9 @@ function getWorkListByMonth() {
         	}
         	if($row['onadd_plant_st']==2){
         		$onchba_cycle=1;
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         	}else{
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         	}
         	if(date('M',strtotime($test)) == date('M')){
         		$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);

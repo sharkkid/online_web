@@ -156,7 +156,7 @@ $op=GetParam('op');
 							console.log(count);	
 						  } else {
 						    clearInterval(interval);
-						    $('#myModal').modal('hide');
+						    $('#myModal').modal('toogle');
 						  }
 						}, 1500)
 					}
