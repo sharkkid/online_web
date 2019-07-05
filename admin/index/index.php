@@ -127,6 +127,7 @@ $op=GetParam('op');
 	<script>		
 		$(document).ready(function () {
 			var count = 0;
+			var flag = 1;
 			$(function () {
 				$.ajax({
 				url: './index.php',
@@ -150,13 +151,17 @@ $op=GetParam('op');
 						  	$('#onadd_planting_date').html(ret.data[count]['onadd_planting_date']);
 						  	$('#onadd_expected_date').html(ret.data[count]['expected_date']);
 						  	$('#onadd_quantity').html(ret.data[count]['onadd_quantity']);
+						  	console.log('今日'+ret.data[count]['onadd_planting_date_unix']+'預計成長日'+ret.data[count]['expected_date_unix']);
 						  	if(ret.data[count]['onadd_planting_date_unix'] > ret.data[count]['expected_date_unix']){
 							  	$('#onadd_content').html("已經超過換盆日期");
 							}
 							else{
 								$('#onadd_content').html("即將到達換盆日期");
 							}
-						    $('#myModal').modal('show');
+							if(flag == 1){
+						    	$('#myModal').modal('show');
+						    	flag = 0;
+							}
 						 //    console.log(ret.data);
 							console.log(count);	
 						  } else {
@@ -174,6 +179,7 @@ $op=GetParam('op');
 		$("#btn_modal").click(function() {
 			$('#myModal').modal('hide');	
 			count++;
+			flag = 1;
 		});
 
         //page view chart
