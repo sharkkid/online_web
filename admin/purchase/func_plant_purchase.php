@@ -56,10 +56,10 @@ function getProducts($where='', $offset=30, $rows=0) {
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
-		$sql="select * from  onliine_product_data where onproduct_status>=0 and onproduct_plant_st = 1 GROUP BY onproduct_part_no";
+		$sql="select * from  onliine_product_data where onproduct_status>=0 and onproduct_plant_st = 1 GROUP BY onproduct_part_no limit $offset, $rows";
 	else
-		$sql="select * from  onliine_product_data where onproduct_status>=0 and onproduct_plant_st = 1 and $where GROUP BY onproduct_part_no";
-
+		$sql="select * from  onliine_product_data where onproduct_status>=0 and onproduct_plant_st = 1 and $where GROUP BY onproduct_part_no limit $offset, $rows";
+	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -75,15 +75,13 @@ function getProductsQty($where='') {
 	$ret_data = 0;
 	$conn = getDB();
 	if(empty($where))
-		$sql="select count(*) from onliine_product_data where onproduct_status>=0";
+		$sql="select count(DISTINCT onproduct_part_no) as count from onliine_product_data where onproduct_status>=0 AND onproduct_plant_st = 1";
 	else
-		$sql="select count(*) from onliine_product_data where onproduct_status>=0 AND $where";
-
+		$sql="select count(DISTINCT onproduct_part_no) as count from onliine_product_data where onproduct_status>=0 AND onproduct_plant_st = 1 AND $where";
 	$qresult = $conn->query($sql);
-	// echo $sql;
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$ret_data = $row['count(*)'];
+			$ret_data = $row['count'];
 		}
 		$qresult->free();
 	}

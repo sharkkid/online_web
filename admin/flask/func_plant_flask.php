@@ -189,18 +189,18 @@ function getUserQty($where='') {
 	$conn->close();
 	return $ret_data;
 }
-function getUserQtyadd($where='') {
+function getProductsQty($where='') {
 	$ret_data = 0;
 	$conn = getDB();
 	if(empty($where))
-		$sql="select count(*) from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 GROUP BY onadd_part_no";
+		$sql="select count(DISTINCT onproduct_part_no) as count from onliine_product_data where onproduct_status>=0 AND onproduct_plant_st = 2";
 	else
-		$sql="select count(*) from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 GROUP BY onadd_part_no";
-
+		$sql="select count(DISTINCT onproduct_part_no) as count from onliine_product_data where onproduct_status>=0 AND onproduct_plant_st = 2 AND $where";
+	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$ret_data = $row['count(*)'];
+			$ret_data = $row['count'];
 		}
 		$qresult->free();
 	}

@@ -305,12 +305,10 @@ if(!empty($op)) {
 
 	$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
 	$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
-	// printr(getProductsQty("onproduct_part_no like '%PA2%'"));
-	// exit;
-	// page
 	$pg_page = GetParam('pg_page', 1);
 	$pg_rows = 20;
 	$pg_total = GetParam('pg_total')=='' ? getProductsQty($search_where) : GetParam('pg_total');
+	// exit();
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 

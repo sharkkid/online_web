@@ -276,7 +276,9 @@ if(!empty($op)) {
 	// page
 	$pg_page = GetParam('pg_page', 1);
 	$pg_rows = 20;
-	$pg_total = GetParam('pg_total')=='' ? getUserQtyadd($search_where) : GetParam('pg_total');
+	$pg_total = GetParam('pg_total')=='' ? getProductsQty($search_where) : GetParam('pg_total');
+	
+	// exit();
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
