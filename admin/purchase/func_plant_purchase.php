@@ -304,10 +304,8 @@ function getsetting() {
 function getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del) {
 	$ret_data = array();
 	$conn = getDB();
-	if(empty($where))
-		$sql="select * , SUM(onadd_quantity) from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_growing='$onadd_growing' AND onadd_quantity_del='$onadd_quantity_del' GROUP BY onadd_quantity_shi";
-	else
-		$sql="select * , SUM(onadd_quantity) from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_growing='$onadd_growing' AND onadd_quantity_del='$onadd_quantity_del' GROUP BY onadd_quantity_shi";
+
+	$sql="select * , SUM(onadd_quantity) from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_growing='$onadd_growing' AND onadd_quantity_del='$onadd_quantity_del' GROUP BY onadd_quantity_shi";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
@@ -596,6 +594,99 @@ function getWorkListByMonth() {
 		$qresult->free();
 	}
 	$conn->close();
+	return $ret_data;
+}
+
+function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
+	$year_start = strtotime($year."/1/1");
+    $year_end = strtotime(($year)."/12/31");
+
+	$list_setting1 = getSettingBySn(1.7);
+	$list_setting2 = getSettingBySn(2.5);
+	$list_setting5 = getSettingBySn(3.5);
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select onadd_planting_date,onadd_quantity,onadd_growing from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_growing='$onadd_growing' AND onadd_planting_date";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			switch ($row['onadd_growing']) {
+        		case 1:
+        			$onchba_cycle = $list_setting1['onchba_cycle'];
+        			break;
+        		case 2:
+        			$onchba_cycle = $list_setting2['onchba_cycle'];
+        			break;
+        		case 5:
+        			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			break;
+        	}
+
+        	if($row['onadd_plant_st']==2){
+        		$onchba_cycle=1;
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
+        	}else{
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
+        	}
+
+			
+        	if(strtotime($test) > $year_start && strtotime($test) < $year_end){
+        		// echo 'original date = '.$row['onadd_planting_date'].'('.date("Y/m/d",$row['onadd_planting_date']).'),';
+        		// echo strtotime("+$onchba_cycle days", $row['onadd_planting_date']).'('.date("Y/m/d",strtotime("+$onchba_cycle days", $row['onadd_planting_date'])).')<br>';
+        		$row['month'] = date("m", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
+        		$row['count'] = $row['onadd_quantity'];
+        		$ret_data[] = $row;
+        	}
+		}
+		$qresult->free();
+	}
+	$conn->close();
+
+	$expected_number = array();
+	for($i=1;$i<=12;$i++)
+		$expected_number[$i] = 0;
+
+	for($i=0;$i<count($ret_data);$i++){
+		switch ($ret_data[$i]['month']) {
+			case '01':
+				$expected_number['1'] += $ret_data[$i]['count'];
+				break;
+			case '02':
+				$expected_number['2'] += $ret_data[$i]['count'];
+				break;
+			case '03':
+				$expected_number['3'] += $ret_data[$i]['count'];
+				break;
+			case '04':
+				$expected_number['4'] += $ret_data[$i]['count'];
+				break;
+			case '05':
+				$expected_number['5'] += $ret_data[$i]['count'];
+				break;
+			case '06':
+				$expected_number['6'] += $ret_data[$i]['count'];
+				break;
+			case '07':
+				$expected_number['7'] += $ret_data[$i]['count'];
+				break;
+			case '08':
+				$expected_number['8'] += $ret_data[$i]['count'];
+				break;
+			case '09':
+				$expected_number['9'] += $ret_data[$i]['count'];
+				break;
+			case '10':
+				$expected_number['10'] += $ret_data[$i]['count'];
+				break;
+			case '11':
+				$expected_number['11'] += $ret_data[$i]['count'];
+				break;
+			case '12':
+				$expected_number['12'] += $ret_data[$i]['count'];
+				break;
+		}
+	}
+	$ret_data = $expected_number;
 	return $ret_data;
 }
 
