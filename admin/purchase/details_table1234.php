@@ -26,8 +26,9 @@ $onadd_quantity_del = GetParam('onproduct_quantity_del');
 $onproduct_sn = GetParam('onproduct_sn');
 $onadd_quantity_del = GetParam('onadd_quantity_del');
 
-$user_list = getProductData($onproduct_sn);
-$business_data = getBusinessData($onadd_part_no,$onadd_growing,$onadd_quantity_del);
+$product_list = getProductData($onproduct_sn);
+$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no,$onadd_growing);
+$business_data = getBusinessData($onadd_part_no,$onadd_quantity_del);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -124,7 +125,7 @@ $business_data = getBusinessData($onadd_part_no,$onadd_growing,$onadd_quantity_d
 
 
         <?php
-        foreach ($user_list as $row) {
+        foreach ($product_list as $row) {
             echo '<h3>'.$onadd_part_no.'</h3>';
             echo '<p>'. '品號(Part no.) : '. $row['onproduct_part_name'].'</p>';
             echo '<p>'. '花色 (Flower Color) : '. $row['onproduct_color'].'</p>';
@@ -223,22 +224,26 @@ $business_data = getBusinessData($onadd_part_no,$onadd_growing,$onadd_quantity_d
                         </thead>
                         <tbody>
                             <?php
+                                for($size_n=0;$size_n<count($business_data);$size_n++){
                                 $n = 0;
+                                echo '<tbody>';    
                                 for($i = 0 ;$i < 12;$i++){                              
-                                    if($business_data[$n]['onbuda_day'] == ($i+1)){
-                                        $team_array[$i]['quantity'] = $business_data[$n]['quantity'];
+                                    if($business_data[$size_n]['onbuda_day'] == ($i+1)){
+                                        $team_array[$i]['quantity'] = $business_data[$size_n]['quantity'];
                                         $n++;                                   
                                     }else{
                                         $team_array[$i]['quantity'] = "0";
                                     }
                                 }
-                                echo '<td>'.$permissions_mapping[$onadd_growing].'寸'.'</td>';
+                                echo '<td>'.$permissions_mapping[$business_data[$size_n]['onbuda_size']].'寸'.'</td>';
                                 for($i = 0 ;$i < 12;$i++){
                                     if($team_array[$i]['quantity'] != "0")
-                                        echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).')">'.$team_array[$i]['quantity'].'</a></td>';//品號
+                                        echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).','.$business_data[$size_n]['onbuda_size'].')">'.$team_array[$i]['quantity'].'</a></td>';//品號
                                     else
                                         echo '<td>0</td>';
-                                }  
+                                }
+                                echo '</tbody>';                            
+                            }
                             ?>
                         </tbody>
                     </table>

@@ -100,12 +100,13 @@ if(!empty($op)) {
 		$onbuda_part_no=GetParam('onadd_part_no');
 		$year=GetParam('year');
 		$month=GetParam('month');
+		$size=GetParam('size');
 		if(empty($onbuda_part_no)){
 			$ret_code = 0;
 		}else{
 			$ret_msg = '';
 			$ret_code = 1;
-			$ret_data = getExpectedList($onbuda_part_no,$year,$month);
+			$ret_data = getExpectedList($onbuda_part_no,$year,$month,$size);
 		}
 		break;
 
@@ -128,8 +129,8 @@ if(!empty($op)) {
 	$onadd_growing = GetParam('onadd_growing');
 	$onadd_quantity_del = GetParam('onadd_quantity_del');
 	$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no,$onadd_growing);
-	$business_data = getBusinessData($onadd_part_no,$onadd_growing,$onadd_quantity_del);
-	// printr($user_list);
+	$business_data = getBusinessData($onadd_part_no,$onadd_quantity_del);
+	// printr($business_data);
 	// exit;
 	$data_list = getDataDetails($onadd_part_no,$onadd_growing);
 	// $user_list = getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del);
@@ -319,14 +320,14 @@ if(!empty($op)) {
 				location.href = "./../";
 			});
 		});
-		function customer_list(onadd_part_no,year,month){
+		function customer_list(onadd_part_no,year,month,size){
 			$('#month_customers_title').html(year+" 年 "+month+" 月 - "+onadd_part_no+" 客戶明細(預計出貨)");
 			$('#modal_month_customers').modal();
 			$.ajax({
 				url: './details_table.php',
 				type: 'post',
 				dataType: 'json',
-				data: {op:"get_customer_list", onadd_part_no:onadd_part_no, year:year, month:month},
+				data: {op:"get_customer_list", onadd_part_no:onadd_part_no, year:year, month:month, size:size},
 				beforeSend: function(msg) {
 					$("#ajax_loading").show();
 				},
@@ -629,27 +630,31 @@ if(!empty($op)) {
         						<th>十二月</th>
         					</tr>
         				</thead>
-        				<tbody>
-        					<?php
-        					$n = 0;
-        					for($i = 0 ;$i < 12;$i++){        						
-        						if($business_data[$n]['onbuda_day'] == ($i+1)){
-        							$team_array[$i]['quantity'] = $business_data[$n]['quantity'];
-        							$n++;        							
-        						}else{
-        							$team_array[$i]['quantity'] = "0";
-        						}
-                            }
-        					echo '<td>'.$permissions_mapping[$onadd_growing].'寸'.'</td>';
-        					for($i = 0 ;$i < 12;$i++){
-        						if($team_array[$i]['quantity'] != "0")
-                                    echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).')">'.$team_array[$i]['quantity'].'</a></td>';//品號
-                               	else
-                               		echo '<td>0</td>';
-                            }        					
 
+        					<?php
+        					
+        					for($size_n=0;$size_n<count($business_data);$size_n++){
+        						$n = 0;
+        						echo '<tbody>';    
+        						for($i = 0 ;$i < 12;$i++){        						
+        							if($business_data[$size_n]['onbuda_day'] == ($i+1)){
+        								$team_array[$i]['quantity'] = $business_data[$size_n]['quantity'];
+        								$n++;        							
+        							}else{
+        								$team_array[$i]['quantity'] = "0";
+        							}
+            	                }
+        						echo '<td>'.$permissions_mapping[$business_data[$size_n]['onbuda_size']].'寸'.'</td>';
+        						for($i = 0 ;$i < 12;$i++){
+        							if($team_array[$i]['quantity'] != "0")
+            	                        echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).','.$business_data[$size_n]['onbuda_size'].')">'.$team_array[$i]['quantity'].'</a></td>';//品號
+            	                   	else
+            	                   		echo '<td>0</td>';
+            	             	}
+            	             	echo '</tbody>';        					
+                        	}
                             ?>
-                         </tbody>
+                         
                      </table>
                  </div>
              </div>

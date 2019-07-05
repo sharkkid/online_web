@@ -24,9 +24,12 @@ function getUser($where='', $offset=30, $rows=0) {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
+			$sql_getdata = "select distinct onproduct_isbought from onliine_product_data where onproduct_status>=0 and onproduct_part_no like '".$row['onadd_part_no']."'";
+			$qresult2 = $conn->query($sql_getdata);
+			
+			$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];
 			$ret_data[] = $row;
 		}
-		$qresult->free();
 	}
 	$conn->close();
 	return $ret_data;

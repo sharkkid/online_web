@@ -318,13 +318,11 @@ function getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del) {
 	return $ret_data;
 }
 
-function getBusinessData($onbuda_part_no,$onbuda_size,$onbuda_year) {
+function getBusinessData($onbuda_part_no,$onbuda_year) {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="select * , SUM(onbuda_quantity) as quantity from onliine_business_data where onbuda_part_no='$onbuda_part_no' AND onbuda_size='$onbuda_size' AND onbuda_year='$onbuda_year' group by onbuda_day";
-	
-
+	$sql="select *,SUM(onbuda_quantity) as quantity from onliine_business_data where onbuda_part_no='$onbuda_part_no' AND onbuda_year='$onbuda_year' group by onbuda_size";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -542,15 +540,25 @@ function getHistoryEditQty($where='') {
 	return $ret_data;
 }
 
-function getExpectedList($onbuda_part_no,$year,$month) {
+function getExpectedList($onbuda_part_no,$year,$month,$size) {
+	$DEVICE_SYSTEM = array(
+		1=>"1.7",
+		2=>"2.5",
+		3=>"2.8",
+		4=>"3.0",
+		5=>"3.5",
+		6=>"3.6",
+		7=>"其他"
+	);
 	$ret_data = array();
 	$conn = getDB();
-	$sql="SELECT * FROM `onliine_business_data` WHERE onbuda_part_no = '$onbuda_part_no' AND onbuda_day = $month AND onbuda_year = $year";
+	$sql="SELECT * FROM `onliine_business_data` WHERE onbuda_part_no = '$onbuda_part_no' AND onbuda_day = $month AND onbuda_year = $year AND onbuda_size = $size";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
 			$row['onbuda_date'] = date('Y-m-d',$row['onbuda_date']);
 			$row['onbuda_add_date'] = date('Y-m-d',$row['onbuda_add_date']);
+			$row['onbuda_size'] = $DEVICE_SYSTEM[$row['onbuda_size']];
 			$ret_data[] = $row;
 		}
 		$qresult->free();

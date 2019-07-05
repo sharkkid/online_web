@@ -81,144 +81,38 @@ if(!empty($op)) {
 		}
 		break;
 
-		case 'upd':
-		$onadd_sn=GetParam('onadd_sn');
-		$onadd_add_date=GetParam('onadd_add_date');//建立日期
-		$onadd_mod_date=GetParam('onadd_mod_date');//修改日期
-		$onadd_part_no=GetParam('onadd_part_no');//品號
-		$onadd_part_name=GetParam('onadd_part_name');//品名
-		$onadd_color=GetParam('onadd_color');//花色
-		$onadd_size=GetParam('onadd_size');//花徑
-		$onadd_height=GetParam('onadd_height');//高度
-		$onadd_pot_size=GetParam('onadd_pot_size');//適合開花盆徑
-		$onadd_supplier=GetParam('onadd_supplier');//供應商
-		$onadd_planting_date=GetParam('onproduct_planting_date');//下種日期
-		$onadd_quantity=GetParam('onadd_quantity');//下種數量
-		$onadd_quantity_cha=GetParam('onadd_quantity_cha');//換盆數量
-		$onadd_quantity_cha123 =($onadd_quantity - $onadd_quantity_cha);
-		if($onadd_quantity_cha123<=0) {
-			$onadd_status = -1;
-		} else {
-			$onadd_status = 1;
-		}
-		$onadd_growing=GetParam('onadd_growing');//預計成長大小
-		// $onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
+		case 'upd3':
+		$onproduct_sn=GetParam('onproduct_sn');
+		$onproduct_isbought=GetParam('onproduct_isbought');//苗種來源
+		$onproduct_mod_date=strtotime('now');//修改日期
+		$onproduct_part_no=GetParam('onproduct_part_no');//品號
+		$onproduct_part_name=GetParam('onproduct_part_name');//品名
+		$onproduct_color=GetParam('onproduct_color');//花色
+		$onproduct_size=GetParam('onproduct_size');//花徑
+		$onproduct_height=GetParam('onproduct_height');//高度
+		$onproduct_pot_size=GetParam('onproduct_pot_size');//適合開花盆徑
+		$onproduct_supplier=GetParam('onproduct_supplier');//供應商
+		$onproduct_growing=GetParam('onproduct_growing');//預計成長大小
+
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
-		if(empty($onadd_planting_date)||empty($onadd_quantity)){
-			$ret_msg = "*為必填！";
-		} else { 
-			$user = getUserByAccount($onadd_part_no);
-			$onadd_planting_date = str2time($onadd_planting_date);
-			$now = time();
-			$conn = getDB();
-			$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}');";
-				if($conn->query($sql)) {
-					$ret_msg = "新增成功！";
-				} else {
-					$ret_msg = "新增失敗！";
-				}
-			$conn->close();
-		}
-		break;
 
-		//汰除---------------------------------------------
-		case 'upd1':
-		$onadd_sn=GetParam('onadd_sn');
-		$list = getUserBySn($onadd_sn);
-		$onadd_part_no = $list['onadd_part_no'];
-		$onadd_part_name = $list['onadd_part_name'];
-		$onadd_quantity=GetParam('onadd_quantity');//下種數量
-		$jsuser_sn = GetParam('supplier');//編輯人員
-		$onadd_quantity_del=GetParam('onadd_quantity_del');//汰除數量
-		$onelda_reason=GetParam('onelda_reason');//汰除原因
-		$jsuser_sn = GetParam('supplier');//編輯人員
-		$onadd_quantity_del123 = ($onadd_quantity - $onadd_quantity_del);
-		if($onadd_quantity_del123<=0) {
-			$onadd_status = -1;
-		} else {
-			$onadd_status = 1;
-		}
-
-		if(empty($onadd_quantity_del)){
-			$ret_msg = "*為必填！";
-		} else {
-			$now = time();
-			$conn = getDB();
-			$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_del123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
-			if($conn->query($sql1)) {
-				$ret_msg = "修改完成！";
+		$user = getUserByAccount($onadd_part_no);
+		$onadd_planting_date = str2time($onadd_planting_date);
+		$now = time();
+		$conn = getDB();
+			$sql = "UPDATE onliine_product_data SET onproduct_isbought = '$onproduct_isbought',onproduct_date = '$onproduct_mod_date',onproduct_part_no = '$onproduct_part_no',onproduct_part_name='$onproduct_part_name',onproduct_color='$onproduct_color',onproduct_size='$onproduct_size',onproduct_height='$onproduct_height',onproduct_pot_size='$onproduct_pot_size',onproduct_supplier='$onproduct_supplier',onproduct_growing='$onproduct_growing' WHERE onproduct_sn = $onproduct_sn";
+			if($conn->query($sql)) {
+				$ret_msg = "修改成功！";
 			} else {
 				$ret_msg = "修改失敗！";
 			}
-		}
-
-		if(empty($onelda_reason)){
-			$ret_msg = "*為必填！";
-		} else {
-			$now = time();
-			$conn = getDB();
-			$sql = "INSERT INTO online_elimination_data (onelda_add_date, onelda_mod_date, onelda_quantity, onelda_reason, onadd_sn, onadd_part_no, onadd_part_name) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_quantity_del}', '{$onelda_reason}', '{$onadd_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
-			if($conn->query($sql)) {
-				$ret_msg = "修改完成！";
-			} else {
-				$ret_msg = "修改失敗！";
-			}			
-			$conn->close();
-		} 
+		$conn->close();
+		
 		break;
-		//汰除---------------------------------------------
 
-		//出貨---------------------------------------------
-		case 'upd2':
-		$onadd_sn=GetParam('onadd_sn');
-		$list = getUserBySn($onadd_sn);
-		$onadd_part_no = $list['onadd_part_no'];
-		$onadd_part_name = $list['onadd_part_name'];
-		$onadd_quantity=GetParam('onadd_quantity');//下種數量
-		$jsuser_sn = GetParam('supplier');//編輯人員
-		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//汰除數量
-		$onshda_client=GetParam('onshda_client');//汰除數量
-		$onadd_quantity_shi123 = ($onadd_quantity - $onadd_quantity_shi);
-		if($onadd_quantity_shi123<=0) {
-			$onadd_status = -1;
-		} else {
-			$onadd_status = 1;
-		}
 
-		if(empty($onadd_quantity_shi)){
-			$ret_msg = "*為必填！";
-		} else {
-			$now = time();
-			$conn = getDB();
-			$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_shi123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
-			if($conn->query($sql)) {
-				$ret_msg = "修改完成！";
-			} else {
-				$ret_msg = "修改失敗！";
-			}
-			$conn->close();
-		}
-
-		if(empty($onadd_quantity_shi)){
-			$ret_msg = "*為必填！";
-		} else {
-			$now = time();
-			$conn = getDB();
-			$sql = "INSERT INTO online_shipment_data (onshda_add_date, onshda_mod_date, onshda_client, onshda_quantity, onadd_sn, onadd_part_no, onadd_part_name) " .
-				"VALUES ('{$now}', '{$now}', '{$onshda_client}', '{$onadd_quantity_shi}', '{$onadd_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
-			if($conn->query($sql)) {
-				$ret_msg = "修改完成！";
-			} else {
-				$ret_msg = "修改失敗！";
-			}			
-			$conn->close();
-		} 
-		break;
-		//出貨---------------------------------------------
-
+		//刪除---------------------------------------------
 		case 'del':
 		$onproduct_sn=GetParam('onproduct_sn');
 
@@ -512,6 +406,38 @@ if(!empty($op)) {
 					}
 				});
 			});
+
+			$('#upd_form3').validator().on('submit', function(e) {
+				if (!e.isDefaultPrevented()) {
+					e.preventDefault();
+					var param = $(this).serializeArray();
+
+					$(this).parents('.modal').modal('hide');
+					$(this)[0].reset();
+
+					 	// console.table(param);
+
+					 	$.ajax({
+					 		url: './plant_purchase_addflask.php',
+					 		type: 'post',
+					 		dataType: 'json',
+					 		data: param,
+					 		beforeSend: function(msg) {
+					 			$("#ajax_loading").show();
+					 		},
+					 		complete: function(XMLHttpRequest, textStatus) {
+					 			$("#ajax_loading").hide();
+					 		},
+					 		success: function(ret) {
+					 			alert_msg(ret.msg);
+					 		},
+					 		error: function (xhr, ajaxOptions, thrownError) {
+			                	// console.log('ajax error');
+			                     // console.log(xhr);
+			                 }
+			             });
+					 }
+					});
 
 			$('#add_form, #upd_form, #upd_form1, #upd_form2').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
@@ -869,20 +795,6 @@ if(!empty($op)) {
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-<!-- 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onproduct_quantity" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div> -->
-<!-- 									<div class="form-group">
-										<label class="col-sm-2 control-label">下種日期&nbsp;</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="datetimepicker2" name="onproduct_planting_date" value="<?php echo (empty($device['onproduct_planting_date'])) ? '' : date('Y-m-d', $device['onproduct_planting_date']);?>" placeholder="">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div> -->
 									<div class="form-group">
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">

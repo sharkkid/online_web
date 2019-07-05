@@ -377,7 +377,12 @@ if(!empty($op)) {
         						<?php
         						foreach ($user_list as $row) {
         							echo '<tr>';
-        							echo '<td>'.'P-00'.$row['onadd_sn'].'</td>';//品號
+        							if($row['onadd_plant_st'] == 0){//產品編號
+										echo '<td>'.date('Y',$row['onadd_planting_date']).'-00'.$row['onadd_sn'].'</td>';
+									}
+									else{
+										echo '<td>'.'P'.date('Y',$row['onadd_planting_date']).'-00'.$row['onadd_sn'].'</td>';
+									} 
         							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
         							echo '<td>'.date('Y-m-d',$row['onshda_add_date']).'</td>';
