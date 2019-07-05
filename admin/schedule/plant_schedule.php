@@ -833,7 +833,7 @@ if(!empty($op)) {
 								<th>下種日期</th>
 								<th>下種數量</th>
 								<!-- <th>預計成長大小</th> -->
-								<th>下一階段換盆/下種日期</th>
+								<th>下階段換盆　 |　下種日期</th>
 								<!-- <th>總下種週期</th>       							 -->
 								<th>供應商</th>
 								<th>操作</th>
@@ -841,17 +841,6 @@ if(!empty($op)) {
 						</thead>
 						<tbody>
 							<?php
-        						// $setting_list = getsetting();
-        						// foreach ($setting_list as $i=>$v) {
-        						// 	$onchba_size = $v['onchba_size'];
-        						// 	$onchba_cycle = $v['onchba_cycle'];
-        						// }
-								$list_setting="";
-								$onchba_cycle="";
-								$list_setting1 = getSettingBySn(1.7);
-								$list_setting2 = getSettingBySn(2.5);
-								$list_setting5 = getSettingBySn(3.5);
-
 							foreach ($user_list as $row) {
 								echo '<tr>';
         							echo '<td>'.'P-00'.$row['onadd_sn'].'</td>';//品號
@@ -863,29 +852,7 @@ if(!empty($op)) {
         							echo '<td>'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
         							}
         							echo '<td>'.$row['onadd_quantity'].'</td>';//品名
-        							// if($row['onadd_plant_st']==2){        							
-        							// 	echo '<td>'.''.'</td>';
-        							// }else{
-        							// 	echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
-        							// }	
-        							switch ($row['onadd_growing']) {
-        								case 1:
-        									$onchba_cycle = $list_setting1['onchba_cycle'];
-        									break;
-        								case 2:
-        									$onchba_cycle = $list_setting2['onchba_cycle'];
-        									break;
-        								case 5:
-        									$onchba_cycle = $list_setting5['onchba_cycle'];
-        									break;
-        							}
-        							if($row['onadd_plant_st']==2){
-        								$onchba_cycle=1;
-        								$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							}else{
-        								$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							}
-        							echo '<td>'.$test.'</td>';
+        							echo '<td>'.$row['expected_date'].'　|　'.$row['onadd_planting_date'].'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							// echo '<td>'.$onadd_cycle.'月'.'</td>';
         							echo '<td>'.$row['onadd_supplier'].'</td>';//品名

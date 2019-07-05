@@ -34,18 +34,16 @@ if(!empty($op)) {
 	exit;
 } else {
 	// search
-	if(($onshda_client = GetParam('onshda_client'))) {
-		$search_where[] = "onshda_client like '%{$onshda_client}%'";
-		$search_query_string['onshda_client'] = $onshda_client;
+	if(($onadd_part_no = GetParam('onadd_part_no'))) {
+		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
+		$search_query_string['onadd_part_no'] = $onadd_part_no;
 	}
-	if(($onshda_quantity = GetParam('onshda_quantity'))) {
-		$search_where[] = "onshda_quantity like '%{$onshda_quantity}%'";
-		$search_query_string['onshda_quantity'] = $onshda_quantity;
+
+	if(($onadd_part_name = GetParam('onadd_part_name'))) {
+		$search_where[] = "onadd_part_name like '%{$onadd_part_name}%'";
+		$search_query_string['onadd_part_name'] = $onadd_part_name;
 	}
-    if(($onshda_status = GetParam('onshda_status', -1))>=0) {
-		$search_where[] = "onshda_status='{$onshda_status}'";
-		$search_query_string['onshda_status'] = $onshda_status;
-	}
+
 	if(($start = GetParam('start',""))) {
 		$start_c = str2time($start ." 00:00");
 		$search_where[] = "onshda_add_date>={$start_c}";

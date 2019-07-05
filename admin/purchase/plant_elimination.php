@@ -31,18 +31,16 @@ if(!empty($op)) {
 	exit;
 } else {
 	// search
-	if(($onelda_quantity = GetParam('onelda_quantity'))) {
-		$search_where[] = "onelda_quantity like '%{$onelda_quantity}%'";
-		$search_query_string['onelda_quantity'] = $onelda_quantity;
+	if(($onadd_part_no = GetParam('onadd_part_no'))) {
+		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
+		$search_query_string['onadd_part_no'] = $onadd_part_no;
 	}
-	if(($onelda_reason = GetParam('onelda_reason'))) {
-		$search_where[] = "onelda_reason like '%{$onelda_reason}%'";
-		$search_query_string['onelda_reason'] = $onelda_reason;
+
+		if(($onadd_part_name = GetParam('onadd_part_name'))) {
+		$search_where[] = "onadd_part_name like '%{$onadd_part_name}%'";
+		$search_query_string['onadd_part_name'] = $onadd_part_name;
 	}
-    if(($onelda_status = GetParam('onelda_status', -1))>=0) {
-		$search_where[] = "onelda_status='{$onelda_status}'";
-		$search_query_string['onelda_status'] = $onelda_status;
-	}
+
 	if(($start = GetParam('start',""))) {
 		$start_c = str2time($start ." 00:00");
 		$search_where[] = "onelda_add_date>={$start_c}";
@@ -76,7 +74,7 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$user_list = getUser($search_where, $pg_offset, $pg_rows);
+	$user_list = getUser($search_where, $pg_offset, $pg_rows);	
 }
 ?>
 <!DOCTYPE html>

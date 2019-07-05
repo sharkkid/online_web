@@ -341,7 +341,6 @@ function getProductData($onproduct_sn) {
 	$conn = getDB();
 	
 	$sql="select * from onliine_product_data where onproduct_sn='$onproduct_sn'";	
-
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {

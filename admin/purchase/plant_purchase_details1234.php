@@ -1,26 +1,5 @@
 <?php
 include_once("./func_plant_purchase_details.php");
-$status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
-$DEVICE_SYSTEM = array(
-	1=>"1.7",
-	2=>"2.5",
-	3=>"2.8",
-	4=>"3.0",
-	5=>"3.5",
-	6=>"3.6",
-	7=>"其他"
-		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
-);
-$permissions_mapping = array(
-	1=>'<font color="#666666">1.7</font>',
-	2=>'<font color="#666666">2.5</font>',
-	3=>'<font color="#666666">2.8</font>',
-	4=>'<font color="#666666">3.0</font>',
-	5=>'<font color="#666666">3.5</font>',
-	6=>'<font color="#666666">3.6</font>',
-	7=>'<font color="#666666">其他</font>' 
-);
-
 $op=GetParam('op');
 if(!empty($op)) {
 	$ret_code = 1;
@@ -242,26 +221,15 @@ if(!empty($op)) {
 	exit;
 } else {
 	// search
-	if(($onadd_part_no = GetParam('onadd_part_no'))) {
-		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
-		$search_query_string['onadd_part_no'] = $onadd_part_no;
+	if(($onproduct_part_no = GetParam('onproduct_part_no'))) {
+		$search_where[] = "onproduct_part_no like '%{$onproduct_part_no}%'";
+		$search_query_string['onproduct_part_no'] = $onproduct_part_no;
 	}
-	if(($onadd_part_name = GetParam('onadd_part_name'))) {
-		$search_where[] = "onadd_part_name like '%{$onadd_part_name}%'";
-		$search_query_string['onadd_part_name'] = $onadd_part_name;
+	if(($onproduct_part_name = GetParam('onproduct_part_name'))) {
+		$search_where[] = "onproduct_part_name like '%{$onproduct_part_name}%'";
+		$search_query_string['onproduct_part_name'] = $onproduct_part_name;
 	}
-	if(($onadd_supplier = GetParam('onadd_supplier'))) {
-		$search_where[] = "onadd_supplier like '%{$onadd_supplier}%'";
-		$search_query_string['onadd_supplier'] = $onadd_supplier;
-	}
-	if(($onadd_status = GetParam('onadd_status', -1))>=0) {
-		$search_where[] = "onadd_status='{$onadd_status}'";
-		$search_query_string['onadd_status'] = $onadd_status;
-	}
-	if(($onadd_growing = GetParam('onadd_growing', -1))>=0) {
-		$search_where[] = "onadd_growing='{$onadd_growing}'";
-		$search_query_string['onadd_growing'] = $onadd_growing;
-	}
+	
 	$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
 	$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
 
@@ -272,9 +240,7 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$user_list = getUseradd($search_where, $pg_offset, $pg_rows);
-	// printr($user_list);
-	// exit;
+	$user_list = getProducts($search_where, $pg_offset, $pg_rows);
 }
 ?>
 <!DOCTYPE html>
@@ -309,17 +275,14 @@ if(!empty($op)) {
 	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
 	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
-	<link rel="stylesheet" href="amazeui/css/amazeui.min.css">
-	<link rel="stylesheet" href="default/style.css">
-	<script src="amazeui/js/jquery.min.js"></script>
-	<script src="amazeui/js/amazeui.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			<?php
 					//	init search parm
-			print "$('#search [name=onadd_status] option[value={$onadd_status}]').prop('selected','selected');";
-			print "$('#search [name=onadd_growing] option[value={$onadd_growing}]').prop('selected','selected','selected','selected','selected','selected','selected');";
+			// print "$('#search [name=onadd_status] option[value={$onadd_status}]').prop('selected','selected');";
+			// print "$('#search [name=onadd_growing] option[value={$onadd_growing}]').prop('selected','selected','selected','selected','selected','selected','selected');";
 			?>
+			
 
 			$('button.upd').on('click', function(){
 				$('#upd-modal').modal();
@@ -351,8 +314,7 @@ if(!empty($op)) {
 			                	// $('#upd_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
 			                	$('#upd_form input[name=onadd_quantity]').val(d.onadd_quantity);
 			                	// $('#upd_form input[name=onadd_growing]').val(d.onadd_growing);
-			                	$('#upd_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');
-			                	$('#upd_form input[name=onadd_change_basin]').val(d.onadd_change_basin);			                	
+			                	$('#upd_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
 			                	$('#upd_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
 			                }
 			            },
@@ -429,6 +391,49 @@ if(!empty($op)) {
 			});
 			//出貨-----------------------------------------------------------
 
+			//修改-----------------------------------------------------------
+			$('button.upd3').on('click', function(){
+				$('#upd-modal3').modal();
+				$('#upd3_form')[0].reset();
+
+								$.ajax({
+					url: './plant_purchase.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                // console.log(ret);
+			                if(ret.code==1) {
+			                	var d = ret.data;
+			                	$('#upd3_form input[name=onadd_sn]').val(d.onadd_sn);
+			                	$('#upd3_form input[name=onadd_part_no]').val(d.onadd_part_no);
+			                	$('#upd3_form input[name=onadd_part_name]').val(d.onadd_part_name);
+			                	$('#upd3_form input[name=onadd_color]').val(d.onadd_color);
+			                	$('#upd3_form input[name=onadd_size]').val(d.onadd_size);
+			                	$('#upd3_form input[name=onadd_height]').val(d.onadd_height);
+			                	$('#upd3_form input[name=onadd_pot_size]').val(d.onadd_pot_size);
+			                	$('#upd3_form input[name=onadd_supplier]').val(d.onadd_supplier);
+			                	$('#upd3_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
+			                	$('#upd3_form input[name=onadd_quantity]').val(d.onadd_quantity);
+			                	$('#upd3_form input[name=onadd_growing]').val(d.onadd_growing);
+			                	$('#upd3_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
+			                	$('#upd3_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                 //    console.log(thrownError);
+		                }
+		            });
+			});			
+			//修改-----------------------------------------------------------
+
 			bootbox.setDefaults({
 				locale: "zh_TW",
 			});
@@ -459,15 +464,15 @@ if(!empty($op)) {
 				});
 			});
 
-			$('#add_form, #upd_form, #upd_form1, #upd_form2').validator().on('submit', function(e) {
+			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd3_form').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
 					e.preventDefault();
 					var param = $(this).serializeArray();
-
+					// console.log(param);
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
 
-					 	// console.table(param);
+					 	console.table(param);
 
 					 	$.ajax({
 					 		url: './plant_purchase.php',
@@ -485,28 +490,100 @@ if(!empty($op)) {
 					 		},
 					 		error: function (xhr, ajaxOptions, thrownError) {
 			                	// console.log('ajax error');
-			                     // console.log(xhr);
+			                 //     console.log(thrownError);
 			                 }
 			             });
 					 }
 					});
 			$('#datetimepicker1').datetimepicker({
-				minView: 2,
-				language:  'zh-TW',
-				format: 'yyyy-mm-dd',
-				useCurrent: false
-			});
-
-			$('#datetimepicker2').datetimepicker({
-				minView: 2,
-				language:  'zh-TW',
-				format: 'yyyy-mm-dd',
-				useCurrent: false
-			});
-			$('button.cancel').on('click', function() {
-				location.href = "./../";
-			});
+		        	minView: 2,
+		            language:  'zh-TW',
+		            format: 'yyyy-mm-dd',
+		            useCurrent: false
+		        });
+		        
+		        $('#datetimepicker2').datetimepicker({
+		        	minView: 2,
+		            language:  'zh-TW',
+		            format: 'yyyy-mm-dd',
+		            useCurrent: false
+		        });
+		        $('#datetimepicker3').datetimepicker({
+		        	minView: 2,
+		            language:  'zh-TW',
+		            format: 'yyyy-mm-dd',
+		            useCurrent: false
+		        });
+		        $('button.cancel').on('click', function() {
+					location.href = "./../";
+				});
 		});
+
+			//產品履歷----------------------------------------------------------
+			function history(onadd_part_no,onadd_name){
+				$('#history_title').html(onadd_part_no+" - "+onadd_name+" 產品履歷");
+				$('#history_modal').modal();
+				$.ajax({
+					url: './plant_purchase.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get_history_list", onadd_part_no:onadd_part_no},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+						console.log(ret);
+						$('#history_cotent').html('<div class="col-md-12"><div class="col-sm-12"><label for="addModalInput1" class="col-sm-2 control-label">操作日期</label><label for="addModalInput1" class="col-sm-2 control-label">下種日期(數量)</label><label for="addModalInput1" class="col-sm-2 control-label">換盆日期(數量)</label><label for="addModalInput1" class="col-sm-2 control-label">出貨日期(數量)</label></label><label for="addModalInput1" class="col-sm-2 control-label">汰除日期(數量)</label></div></div>');
+						$.each(ret.data, function(key,value){	
+							if(key < ret.data.length){
+								var temp = "";
+								switch(value.flag){
+									case 0:
+										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>';
+									break;
+									case 1:
+										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>';
+									break;
+									case 2:
+										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>';
+									break;
+									case 3:
+										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>';
+									break;
+								}
+																		
+								$('#history_cotent').html($('#history_cotent').html()+'<div class="col-md-12"><div class="col-sm-15">'+temp+'</div></div>');								
+							}
+
+						});
+						
+					},
+					error: function (xhr, ajaxOptions, thrownError) {
+				   	console.log('ajax error');
+				        // console.log(xhr);
+				    }
+				});
+			}
+			//產品履歷----------------------------------------------------------
 	</script>
 </head>
 
@@ -521,30 +598,493 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>出貨週期預定</h4>
+					<h4>庫存管理</h4>
 				</div>
 			</div>
 		</div>
+
+		<!-- modal -->
+		<div id="add-modal" class="modal add-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="add_form" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">新增資料</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="add">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花色<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花徑<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">高度<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">供應商<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">下種日期&nbsp;</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="datetimepicker1" name="onadd_planting_date" placeholder="">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onadd_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="reset" class="btn btn-default">清空</button>
+							<button type="submit" class="btn btn-primary">新增</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div id="upd-modal" class="modal upd-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd_form" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">換盆</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd">
+									<input type="hidden" name="onadd_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">換盆日期&nbsp;<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="datetimepicker2" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>        								
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label" >換盆數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_replant_number" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>	
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onadd_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">更新</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!--修改----------------------------------------------------------->
+		<div id="upd-modal3" class="modal upd-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd3_form" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">修改</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd5">
+									<input type="hidden" name="onadd_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">換盆日期&nbsp;</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="datetimepicker3" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>        								
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onadd_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">更新</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!--汰除----------------------------------------------------------->
+		<div id="upd-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd_form1" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">汰除</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd1">
+									<input type="hidden" name="onadd_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> 
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">汰除數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity_del" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">汰除原因<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onelda_reason">
+												<option value="4">其他</option>
+												<option value="3">黑頭</option>
+												<option value="2">褐斑</option>
+												<option selected="selected" value="1">軟腐</option>
+											</select>
+										</div>
+									</div>        								
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">更新</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--汰除----------------------------------------------------------->
+
+		<!--出貨----------------------------------------------------------->
+		<div id="upd-modal2" class="modal upd-modal2" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd_form2" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">出貨</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd2">
+									<input type="hidden" name="onadd_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> 
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">出貨數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_plant_year" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">出貨對象<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onshda_client" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>         								
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">更新</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--出貨----------------------------------------------------------->
+
+		<!--苗種履歷----------------------------------------------------------->
+		<div id="history_modal" class="modal upd-modal2" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title" id="history_title">品號 - 品名 - 產品履歷</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row" id="history_cotent">
+								<div class="col-md-12">									
+									<div class="col-sm-15">
+										<label for="addModalInput1" class="col-sm-2 control-label">操作日期</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">下種日期(數量)</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">換盆日期(數量)</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">出貨日期(數量)</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">汰除日期(數量)</label>
+									</div>	
+								</div>
+
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--苗種履歷----------------------------------------------------------->
 
 		<!-- container -->
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-12">
 
-					<!-- nav toolbar -->
-
-					<!-- search -->
 					<div id="search" style="clear:both;">
 						<form autocomplete="off" method="get" action="./plant_purchase_details1234.php" id="search_form" class="form-inline alert alert-info" role="form">
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
 										<label for="searchInput1">品號</label>
-										<input type="text" class="form-control" id="searchInput1" name="onadd_part_no" value="<?php echo $onadd_part_no;?>" placeholder="">
+										<input type="text" class="form-control" id="searchInput1" name="onproduct_part_no" value="<?php echo $onproduct_part_no;?>" placeholder="">
 									</div>
 									<div class="form-group">
 										<label for="searchInput4">品名</label>
-										<input type="text" class="form-control" id="searchInput4" name="onadd_part_name" value="<?php echo $onadd_part_name;?>" placeholder="">
+										<input type="text" class="form-control" id="searchInput4" name="onproduct_part_name" value="<?php echo $onproduct_part_name;?>" placeholder="">
 									</div>
 
 									<button type="submit" class="btn btn-info" op="search">搜尋</button>
@@ -552,71 +1092,62 @@ if(!empty($op)) {
 							</div>
 						</form>
 					</div>
-        				<!--foreach ($user_list as $row) {
-        						// 	echo '<tr>';
-        						// 	echo '<td><button type="button" class="btn btn-info btn-xs" onclick="location.href=\'./details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.$row['onadd_quantity_del'].'&start='.$start.'&end='.$end.'\'">查看</button></td>';
-        						// 	echo '<td>'.$row['onadd_part_no'].'</td>';//品號
-        						// 	echo '<td>'.$row['onadd_part_name'].'</td>';//品名
-        						// 	echo '</tr>';
-        						// }
-        					-->
+					<table class="table table-striped table-hover table-condensed tablesorter">
+        				<thead>
+        					<tr>
+        						<th>操作</th>
+        						<th>品號</th>
+        						<th>品名</th>
+        					</tr>
+        				</thead>
+        				<tbody>
+        					<?php
+        					foreach ($user_list as $row) {
+        						echo '<tr>';
+        						echo '<td><button type="button" class="btn btn-info btn-xs" onclick="location.href=\'			./details_table1234.php?onproduct_sn='.$row['onproduct_sn'].'&onproduct_part_no='.$row['onproduct_part_no'		].'	&onproduct_growing='.$row['onproduct_growing'].'&onadd_quantity_del='.date('Y').'\'		">查看</button></td>';
+        						echo '<td>'.$row['onproduct_part_no'].'</td>';//品號
+        						echo '<td>'.$row['onproduct_part_name'].'</td>';//品名
+        						echo '</tr>';
+        					}
+        					?>
+        				</tbody>
+        			</table>
 
-        				</div>
+
+
+        				<?php include('./../htmlModule/page.php');?>
+
         			</div>
         		</div>
-        		<table class="table table-striped table-hover table-condensed tablesorter">
-        			<thead>
-        				<tr>
-        					<th>操作</th>
-        					<th>品號</th>
-        					<th>品名</th>
-        				</tr>
-        			</thead>
-        			<tbody>
-        				<?php
-        						// $setting_list = getsetting();
-        						// foreach ($setting_list as $i=>$v) {
-        						// 	$onchba_size = $v['onchba_size'];
-        						// 	$onchba_cycle = $v['onchba_cycle'];
-        						// }
-        				foreach ($user_list as $row) {
-        					echo '<tr>';
-        					echo '<td><button type="button" class="btn btn-info btn-xs" onclick="location.href=\'./details_table1234.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.$row['onadd_quantity_del'].'&start='.$start.'&end='.$end.'\'">查看</button></td>';
-        							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td>'.$row['onadd_part_name'].'</td>';//品名
-        							echo '</tr>';
-        						}
-        						?>
-        					</tbody>
-        				</table>
+        	</div>
 
-        				<!--Start footer-->
-        				<footer class="footer">
-        					<span>Copyright &copy; 2019. Online Plant</span>
-        				</footer>
-        				<!--end footer-->
+        	<!--Start footer-->
+        	<footer class="footer">
+        		<span>Copyright &copy; 2019. Online Plant</span>
+        	</footer>
+        	<!--end footer-->
 
-        			</section>
-        			<!--end main content-->
+        </section>
+        <!--end main content-->
 
-        			<!--Common plugins-->
-        			<!-- <script src="./../../js1/jquery.min.js"></script> -->
-        			<!-- <script src="./../../js1/bootstrap.min.js"></script> -->
-        			<script src="./../../js1/pace.min.js"></script>
-        			<script src="./../../js1/jasny-bootstrap.min.js"></script>
-        			<script src="./../../js1/jquery.slimscroll.min.js"></script>
-        			<script src="./../../js1/jquery.nanoscroller.min.js"></script>
-        			<script src="./../../js1/metismenu.min.js"></script>
-        			<script src="./../../js1/float-custom.js"></script>
-        			<!--page script-->
-        			<script src="./../../js1/d3.min.js"></script>
-        			<script src="./../../js1/c3.min.js"></script>
-        			<!-- iCheck for radio and checkboxes -->
-        			<script src="./../../js1/icheck.min.js"></script>
-        			<!-- Datatables-->
-        			<script src="./../../js1/jquery.datatables.min.js"></script>
-        			<script src="./../../js1/datatables.responsive.min.js"></script>
-        			<script src="./../../js1/jquery.toast.min.js"></script>
-        			<script src="./../../js1/dashboard-alpha.js"></script>
-        		</body>
-        		</html>?>
+        <!--Common plugins-->
+        <!-- <script src="./../../js1/jquery.min.js"></script> -->
+        <!-- <script src="./../../js1/bootstrap.min.js"></script> -->
+        <script src="./../../js1/pace.min.js"></script>
+        <script src="./../../js1/jasny-bootstrap.min.js"></script>
+        <script src="./../../js1/jquery.slimscroll.min.js"></script>
+        <script src="./../../js1/jquery.nanoscroller.min.js"></script>
+        <script src="./../../js1/metismenu.min.js"></script>
+        <script src="./../../js1/float-custom.js"></script>
+        <!--page script-->
+        <script src="./../../js1/d3.min.js"></script>
+        <script src="./../../js1/c3.min.js"></script>
+        <!-- iCheck for radio and checkboxes -->
+        <script src="./../../js1/icheck.min.js"></script>
+        <!-- Datatables-->
+        <script src="./../../js1/jquery.datatables.min.js"></script>
+        <script src="./../../js1/datatables.responsive.min.js"></script>
+        <script src="./../../js1/jquery.toast.min.js"></script>
+        <script src="./../../js1/dashboard-alpha.js"></script>
+    </body>
+    </html>?>

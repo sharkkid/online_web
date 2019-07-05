@@ -20,7 +20,6 @@ function getUser($where='', $offset=30, $rows=0) {
 		$sql="select * from online_elimination_data where onelda_status>=0 order by onelda_add_date desc, onelda_sn desc limit $offset, $rows";
 	else
 		$sql="select * from online_elimination_data where onelda_status>=0 and ( $where ) order by onelda_add_date desc, onadd_sn desc limit $offset, $rows";
-
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {

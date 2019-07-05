@@ -36,9 +36,9 @@ function getUserQty($where='') {
 	$ret_data = 0;
 	$conn = getDB();
 	if(empty($where))
-		$sql="select count(*) from onliine_add_data where onadd_status>=0 onadd_plant_st=1";
+		$sql="select count(*) from onliine_product_data where onproduct_status>=0";
 	else
-		$sql="select count(*) from onliine_add_data where onadd_status>=0 onadd_plant_st=1 and ( $where )";
+		$sql="select count(*) from onliine_product_data where onproduct_status>=0 and ( $where )";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
@@ -169,6 +169,25 @@ function getUseradd($where='', $offset=30, $rows=0) {
 	else
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=1 and ( $where ) GROUP BY onadd_part_no";
 
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getProducts($where='', $offset=30, $rows=0) {
+	$ret_data = array();
+	$conn = getDB();
+	if(empty($where))
+		$sql="select * from  onliine_product_data where onproduct_status>=0 GROUP BY onproduct_part_no limit $offset, $rows";
+	else
+		$sql="select * from  onliine_product_data where onproduct_status>=0 and $where GROUP BY onproduct_part_no limit $offset, $rows";
+	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {

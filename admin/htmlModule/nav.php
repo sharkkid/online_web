@@ -88,7 +88,7 @@
                         <li>
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-tag"></i> 業務專區 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">
-                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details.php">品種資料</a></li>
+                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_pdetails.php">品種資料</a></li>
                             </ul>
                              <ul class="nav-second-level nav" aria-expanded="true">
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details.php">業績統計</a></li>

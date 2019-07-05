@@ -20,43 +20,14 @@ function getSQL($qry) {
 }
 
 
-$onadd_part_no = GetParam('onadd_part_no');
-$onadd_growing = GetParam('onadd_growing');
+$onadd_part_no = GetParam('onproduct_part_no');
+$onadd_growing = GetParam('onproduct_growing');
+$onadd_quantity_del = GetParam('onproduct_quantity_del');
+$onproduct_sn = GetParam('onproduct_sn');
 $onadd_quantity_del = GetParam('onadd_quantity_del');
-// onadd_quantity_del
-// $onadd_part_no = 'PP-0052';
-// $onadd_growing = '1';
-// $onadd_quantity_del ='2019';
-$user_list = getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del);
-// $onadd_part_name = $user_list['onadd_part_name'];
-// printr($user_list);
-// printr($onadd_part_name);
-// exit;
-//------------------------------------------------------------data
 
-    // search
-if(($onadd_part_no = GetParam('onadd_part_no'))) {
-    $search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
-    $search_query_string['onadd_part_no'] = $onadd_part_no;
-}
-if(($onadd_part_name = GetParam('onadd_part_name'))) {
-    $search_where[] = "onadd_part_name like '%{$onadd_part_name}%'";
-    $search_query_string['onadd_part_name'] = $onadd_part_name;
-}
-if(($onadd_supplier = GetParam('onadd_supplier'))) {
-    $search_where[] = "onadd_supplier like '%{$onadd_supplier}%'";
-    $search_query_string['onadd_supplier'] = $onadd_supplier;
-}
-if(($onadd_status = GetParam('onadd_status', -1))>=0) {
-    $search_where[] = "onadd_status='{$onadd_status}'";
-    $search_query_string['onadd_status'] = $onadd_status;
-}
-if(($onadd_growing = GetParam('onadd_growing', -1))>=0) {
-    $search_where[] = "onadd_growing='{$onadd_growing}'";
-    $search_query_string['onadd_growing'] = $onadd_growing;
-}
-$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
-$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
+$user_list = getProductData($onproduct_sn);
+$business_data = getBusinessData($onadd_part_no,$onadd_growing,$onadd_quantity_del);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -97,7 +68,39 @@ $search_query_string = isset($search_query_string) ? http_build_query($search_qu
             print "$('#search [name=onadd_status] option[value={$onadd_status}]').prop('selected','selected');";
             print "$('#search [name=onadd_growing] option[value={$onadd_growing}]').prop('selected','selected','selected','selected','selected','selected','selected');";
             ?>
+
         });
+        function customer_list(onadd_part_no,year,month){
+            $('#month_customers_title').html(year+" 年 "+month+" 月 - "+onadd_part_no+" 客戶明細(預計出貨)");
+            $('#modal_month_customers').modal();
+            $.ajax({
+                url: './details_table.php',
+                type: 'post',
+                dataType: 'json',
+                data: {op:"get_customer_list", onadd_part_no:onadd_part_no, year:year, month:month},
+                beforeSend: function(msg) {
+                    $("#ajax_loading").show();
+                },
+                complete: function(XMLHttpRequest, textStatus) {
+                    $("#ajax_loading").hide();
+                },
+                success: function(ret) {
+                    $('#month_customers_cotent').html('<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨尺寸</label><label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label></div></div>');
+                    $.each(ret.data, function(key,value){   
+                        if(key < ret.data.length){                                      
+                            $('#month_customers_cotent').html($('#month_customers_cotent').html()+'<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_client+'</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_quantity+'</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_date+'</label></label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_size+'吋</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_add_date+'</label></div></div>');                             
+                        }
+
+                    });
+                    
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                console.log('ajax error');
+                    // console.log(xhr);
+                }
+            });
+            // $('#month_customers_cotent').html($('#month_customers_cotent').html()+'<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label><label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label></div></div>');
+        }
     </script>
 </head>
 
@@ -110,7 +113,7 @@ $search_query_string = isset($search_query_string) ? http_build_query($search_qu
         <div class="page-header">
             <div class="row">
                 <div class="col-sm-6">
-                    <h4>產品明細＆可供量表</h4>
+                    <h4>產品預計出貨明細表</h4>
                 </div>
             </div>
         </div>
@@ -123,14 +126,46 @@ $search_query_string = isset($search_query_string) ? http_build_query($search_qu
         <?php
         foreach ($user_list as $row) {
             echo '<h3>'.$onadd_part_no.'</h3>';
-            echo '<p>'. '品號(Part no.) : '. $row['onadd_part_name'].'</p>';
-            echo '<p>'. '花色 (Flower Color) : '. $row['onadd_color'].'</p>';
-            echo '<p>'. '花徑 (Flower Size) : '. $row['onadd_size'].'</p>';
-            echo '<p>'. '高度 (Plant Height) : '. $row['onadd_height'].'</p>';
-            echo '<p>'. '適合開花盆徑 (Suitable flowering pot size) : '. $row['onadd_pot_size'].'</p>';
+            echo '<p>'. '品號(Part no.) : '. $row['onproduct_part_name'].'</p>';
+            echo '<p>'. '花色 (Flower Color) : '. $row['onproduct_color'].'</p>';
+            echo '<p>'. '花徑 (Flower Size) : '. $row['onproduct_size'].'</p>';
+            echo '<p>'. '高度 (Plant Height) : '. $row['onproduct_height'].'</p>';
+            echo '<p>'. '適合開花盆徑 (Suitable flowering pot size) : '. $row['onproduct_pot_size'].'</p>';
         }
         ?> 
     </div>
+
+    <!--顯示月份出貨明細----------------------------------------------------------->
+        <div id="modal_month_customers" class="modal upd-modal2" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form autocomplete="off" method="post" action="./" id="upd_form2" class="form-horizontal" role="form" data-toggle="validator">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title" id="month_customers_title">出貨</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" id="month_customers_cotent">
+                                <div class="col-md-12">                                 
+                                    <div class="col-sm-10">
+                                        <label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label>
+                                        <label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label>
+                                        <label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label>
+                                        <label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label>
+                                    </div>  
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--顯示月份出貨明細----------------------------------------------------------->
 
     <!-- container -->
     <div  class="container-fluid">
@@ -143,33 +178,21 @@ $search_query_string = isset($search_query_string) ? http_build_query($search_qu
 
                 <!-- details_table.php?onadd_part_no=PP-0052&onadd_growing=1&onadd_quantity_del=2019 -->
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#home">2019</a></li>
-                    <li><a data-toggle="tab" href="#menu1">2020</a></li>
-                    <li><a data-toggle="tab" href="#menu2">2021</a></li>
-                    <li><a data-toggle="tab" href="#menu3">2022</a></li>
-                    <li><a data-toggle="tab" href="#menu3">2023</a></li>
+                    <?php
+                    $font_size = '';
+                    // echo GetParam('onadd_quantity_del');
+                    for($i=0;$i<5;$i++){
+                        $n = (2019+$i);
+                        if($n == GetParam('onadd_quantity_del')){
+                            echo '<li class="active"><a style="color:#000000;">'.$n.'</a></li>';
+                        }
+                        else{
+                            echo '<li class="active"><a style="color:#23b7e5;" href="'.WT_URL_ROOT.'/admin/purchase/details_table1234.php?onproduct_sn='.GetParam('onproduct_sn').'&onproduct_part_no='.GetParam('onproduct_part_no').'&onproduct_growing='.GetParam('onproduct_growing').'&onadd_quantity_del='.$n.'">'.$n.'</a></li>';
+                        }
+                    }
+                    ?>
                 </ul>
 
-                <!-- content 
-                <table class="table table-striped table-hover table-condensed tablesorter">
-                    <thead>
-                        <tr>
-                            <th>月份</th>
-                            <th>規格</th>
-                            <th>數量</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        foreach ($user_list as $row) {
-                            echo '<tr>';
-                                    echo '<td>'.$row['onadd_quantity_shi'].'月'.'</td>';//品號
-                                    echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                    echo '</td></tr>';
-                                }
-                            </tbody>
-                        </table>
-                    -->
                 </div>
             </div>
         </div>
@@ -200,92 +223,22 @@ $search_query_string = isset($search_query_string) ? http_build_query($search_qu
                         </thead>
                         <tbody>
                             <?php
-                            echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==1 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
+                                $n = 0;
+                                for($i = 0 ;$i < 12;$i++){                              
+                                    if($business_data[$n]['onbuda_day'] == ($i+1)){
+                                        $team_array[$i]['quantity'] = $business_data[$n]['quantity'];
+                                        $n++;                                   
+                                    }else{
+                                        $team_array[$i]['quantity'] = "0";
+                                    }
                                 }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==2 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==3 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==4 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==5 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==6 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==7 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==8 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==9 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==10 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==11 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-                            foreach ($user_list as $row) {
-                                if ($row['onadd_quantity_shi']==12 ){
-                                    echo '<td>'.$row['SUM(onadd_quantity)'].'</td>';//品號
-                                }else{
-                                     echo '<td>'.''.'</td>';//品號
-                                }
-                            }
-
+                                echo '<td>'.$permissions_mapping[$onadd_growing].'寸'.'</td>';
+                                for($i = 0 ;$i < 12;$i++){
+                                    if($team_array[$i]['quantity'] != "0")
+                                        echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).')">'.$team_array[$i]['quantity'].'</a></td>';//品號
+                                    else
+                                        echo '<td>0</td>';
+                                }  
                             ?>
                         </tbody>
                     </table>
