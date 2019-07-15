@@ -71,14 +71,14 @@ $business_data = getBusinessData($onadd_part_no,$onadd_quantity_del);
             ?>
 
         });
-        function customer_list(onadd_part_no,year,month){
+        function customer_list(onadd_part_no,year,month,size){
             $('#month_customers_title').html(year+" 年 "+month+" 月 - "+onadd_part_no+" 客戶明細(預計出貨)");
             $('#modal_month_customers').modal();
             $.ajax({
                 url: './details_table.php',
                 type: 'post',
                 dataType: 'json',
-                data: {op:"get_customer_list", onadd_part_no:onadd_part_no, year:year, month:month},
+                data: {op:"get_customer_list", onadd_part_no:onadd_part_no, year:year, month:month, size:size},
                 beforeSend: function(msg) {
                     $("#ajax_loading").show();
                 },

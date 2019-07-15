@@ -844,17 +844,17 @@ if(!empty($op)) {
 							foreach ($user_list as $row) {
 								echo '<tr>';
 									if($row['onadd_planting_st'] == 1){//產品編號
-										echo '<td>'.date('Y',$row['onadd_planting_date']).'-00'.$row['onadd_sn'].'</td>';
+										echo '<td>'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
 									}
 									else{
-										echo '<td>'.'P'.date('Y',$row['onadd_planting_date']).'-00'.$row['onadd_sn'].'</td>';
+										echo '<td>'.'P'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
 									} 								
         							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
         							if($row['onadd_plant_st']==2){
         							echo '<td>'.''.'</td>';
         							}else{						
-        							echo '<td>'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
+        							echo '<td>'.date('Y-m-d',str2time($row['onadd_planting_date'])).'</td>';
         							}
         							echo '<td>'.$row['onadd_quantity'].'</td>';//品名
         							echo '<td>'.$row['expected_date'].'　|　'.$row['onadd_planting_date'].'</td>';

@@ -52,6 +52,35 @@ function getUseradd($where='', $offset=30, $rows=0) {
 	return $ret_data;
 }
 
+function getLatestOnaddSn($onadd_part_no,$planting_n) {
+	$ret_data = "";
+	$conn = getDB();
+
+	$sql="select onadd_sn from onliine_add_data where onadd_status>=0 and onadd_plant_st=1 GROUP BY onadd_sn DESC limit 0,1";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['onadd_sn'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function IsfirtPlant($onadd_sn) {
+	$ret_data = "0";
+	$conn = getDB();
+	$sql="select onadd_sn from onliine_firstplant_data  where onadd_sn = {$onadd_sn} and onfp_status >= 1";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		$ret_data = "1";
+	}
+	$conn->close();
+	return $ret_data;
+}
+
 function getProducts($where='', $offset=30, $rows=0) {
 	$ret_data = array();
 	$conn = getDB();

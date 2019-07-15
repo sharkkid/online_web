@@ -604,7 +604,7 @@ if(!empty($op)) {
 									break;
 								}
 																		
-								$('#history_cotent').html($('#history_cotent').html()+'<div class="col-md-12"><div class="col-sm-15">'+temp+'</div></div>');								
+								$('#history_cotent').html($('#history_cotent').html()+'<div class="col-md-12"><div class="col-sm-12">'+temp+'</div></div>');								
 							}
 
 						});
@@ -974,10 +974,10 @@ if(!empty($op)) {
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 							<h4 class="modal-title" id="history_title">品號 - 品名 - 產品履歷</h4>
 						</div>
-						<div class="modal-body">
+						<div class="row">
 							<div class="row" id="history_cotent">
 								<div class="col-md-12">									
-									<div class="col-sm-15">
+									<div class="col-sm-12">
 										<label for="addModalInput1" class="col-sm-2 control-label">操作日期</label>
 										<label for="addModalInput1" class="col-sm-2 control-label">下種日期(數量)</label>
 										<label for="addModalInput1" class="col-sm-2 control-label">換盆日期(數量)</label>

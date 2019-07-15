@@ -100,12 +100,13 @@ if(!empty($op)) {
 		$onbuda_part_no=GetParam('onadd_part_no');
 		$year=GetParam('year');
 		$month=GetParam('month');
+		$size=GetParam('size');
 		if(empty($onbuda_part_no)){
 			$ret_code = 0;
 		}else{
 			$ret_msg = '';
 			$ret_code = 1;
-			$ret_data = getExpectedList($onbuda_part_no,$year,$month);
+			$ret_data = getExpectedList($onbuda_part_no,$year,$month,$size);
 		}
 		break;
 
@@ -128,8 +129,8 @@ if(!empty($op)) {
 	$onadd_growing = GetParam('onadd_growing');
 	$onadd_quantity_del = GetParam('onadd_quantity_del');
 	$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no,$onadd_growing);
-	$business_data = getBusinessData($onadd_part_no,$onadd_growing,$onadd_quantity_del);
-	// printr($user_list);
+	$business_data = getBusinessData($onadd_part_no,$onadd_quantity_del);
+	// printr($business_data);
 	// exit;
 	$data_list = getDataDetails($onadd_part_no,$onadd_growing);
 	// $user_list = getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del);
@@ -319,14 +320,14 @@ if(!empty($op)) {
 				location.href = "./../";
 			});
 		});
-		function customer_list(onadd_part_no,year,month){
+		function customer_list(onadd_part_no,year,month,size){
 			$('#month_customers_title').html(year+" 年 "+month+" 月 - "+onadd_part_no+" 客戶明細(預計出貨)");
 			$('#modal_month_customers').modal();
 			$.ajax({
 				url: './details_table.php',
 				type: 'post',
 				dataType: 'json',
-				data: {op:"get_customer_list", onadd_part_no:onadd_part_no, year:year, month:month},
+				data: {op:"get_customer_list", onadd_part_no:onadd_part_no, year:year, month:month, size:size},
 				beforeSend: function(msg) {
 					$("#ajax_loading").show();
 				},
@@ -365,14 +366,14 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>品種資料</h4>
+					<h4>可供量表</h4>
 				</div>
 			</div>
 		</div>
 
 		<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 			<ul class="nav nav-pills pull-right toolbar">
-				<!-- <li><button type="button" class="btn btn-primary btn-xs upd1"><i class="glyphicon glyphicon-plus"></i>預計出貨資料</button></li> -->
+				<li><button type="button" class="btn btn-primary btn-xs upd1"><i class="glyphicon glyphicon-plus"></i>預計出貨資料</button></li>
 			</ul>
 		</div>
 
@@ -539,7 +540,7 @@ if(!empty($op)) {
 						for($i=0;$i<5;$i++){
 							$n = (2019+$i);
 							if($n == GetParam('onadd_quantity_del')){
-								echo '<li class="active"><a style="color:#000000;" href="'.WT_URL_ROOT.'"/admin/purchase/details_table.php?onadd_part_no=PA2&onadd_growing=2&onadd_quantity_del='.$n.'">'.$n.'</a></li>';
+								echo '<li class="active"><a style="color:#000000;">'.$n.'</a></li>';
 							}
 							else{
 								echo '<li class="active"><a style="color:#23b7e5;" href="'.WT_URL_ROOT.'/admin/purchase/details_table.php?onadd_part_no='.GetParam('onadd_part_no').'&onadd_growing='.GetParam('onadd_growing').'&onadd_quantity_del='.$n.'">'.$n.'</a></li>';
@@ -575,12 +576,98 @@ if(!empty($op)) {
         <div class="container-fluid">
         	<div class="row">
         		<div class="col-md-8">
-        			
+        			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
+        				<thead>
+        					<tr>
+        						<th rowspan="2">出售</br>尺寸</th>
+        						<th colspan="12" class="tableheader" align="center">可供出售月份(系統計算)</th>
+        					</tr>
+        					<tr>
+        						<th>一月</th>
+        						<th>二月</th>
+        						<th>三月</th>
+        						<th>四月</th>
+        						<th>五月</th>
+        						<th>六月</th>
+        						<th>七月</th>
+        						<th>八月</th>
+        						<th>九月</th>
+        						<th>十月</th>
+        						<th>十一月</th>
+        						<th>十二月</th>
+        					</tr>
+        				</thead>
+        				<tbody>
+        					<?php
+        					
+        					echo '<td>'.$permissions_mapping[$onadd_growing].'寸'.'</td>';
+        					for($i = 1 ;$i <= 12;$i++){
+        						echo '<td>'.$user_list[$i].'</td>';//預計成熟月份數量
+                            } 
 
+                             ?>
+                         </tbody>
+                     </table>
+
+                     <table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
+        				<thead>
+        					<tr>
+        						<th rowspan="2">預計</br>尺寸</th>
+        						<th colspan="12" class="tableheader" align="center">預計出貨月份</th>
+        					</tr>
+        					<tr>
+        						<th>一月</th>
+        						<th>二月</th>
+        						<th>三月</th>
+        						<th>四月</th>
+        						<th>五月</th>
+        						<th>六月</th>
+        						<th>七月</th>
+        						<th>八月</th>
+        						<th>九月</th>
+        						<th>十月</th>
+        						<th>十一月</th>
+        						<th>十二月</th>
+        					</tr>
+        				</thead>
+
+        					<?php
+        					
+        					for($size_n=0;$size_n<count($business_data);$size_n++){
+        						$n = 0;
+        						echo '<tbody>';    
+        						for($i = 0 ;$i < 12;$i++){        						
+        							if($business_data[$size_n]['onbuda_day'] == ($i+1)){
+        								$team_array[$i]['quantity'] = $business_data[$size_n]['quantity'];
+        								$n++;        							
+        							}else{
+        								$team_array[$i]['quantity'] = "0";
+        							}
+            	                }
+        						echo '<td>'.$permissions_mapping[$business_data[$size_n]['onbuda_size']].'寸'.'</td>';
+        						for($i = 0 ;$i < 12;$i++){
+        							if($team_array[$i]['quantity'] != "0")
+            	                        echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).','.$business_data[$size_n]['onbuda_size'].')">'.$team_array[$i]['quantity'].'</a></td>';//品號
+            	                   	else
+            	                   		echo '<td>0</td>';
+            	             	}
+            	             	echo '</tbody>';        					
+                        	}
+                            ?>
+                         
+                     </table>
+                 </div>
+             </div>
+         </div>
+         <?php
+         	// $data = "2019-05-01";
+         	// echo substr($data,0,4);
+         	// echo substr($data,6,-3);
+         ?>
          <!--Start footer-->
          <footer class="footer">
          	<span>Copyright &copy; 2019. Online Plant</span>
-         </footer>
+         </footer> 
          <!--end footer-->
 
      </section>
