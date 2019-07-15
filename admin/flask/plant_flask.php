@@ -631,7 +631,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>瓶苗管理</h4>
+					<h4>瓶苗庫存管理</h4>
 				</div>
 			</div>
 		</div>
@@ -1007,9 +1007,9 @@ if(!empty($op)) {
 					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 						<ul class="nav nav-pills pull-right toolbar">
 							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_addflask.php'"><i class="glyphicon glyphicon-plus"></i>新品項建立</button></li>
-							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_addflask.php'"></i> 返回瓶苗資料建立</button></li>
+							<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_addflask.php'"></i> 返回瓶苗資料建立</button></li> -->
 						</ul>
-					</div>
+					</div>返回
 
 					<!-- search -->
 					<div id="search" style="clear:both;">

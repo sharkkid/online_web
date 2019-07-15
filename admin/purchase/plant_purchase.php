@@ -670,7 +670,7 @@ if(!empty($op)) {
 
 			//產品履歷----------------------------------------------------------
 			function history(onadd_part_no,onadd_name){
-				$('#history_title').html(onadd_part_no+" - "+onadd_name+" 產品履歷");
+				$('#history_title').html(onadd_part_no+" - "+onadd_name+" 苗種履歷");
 				$('#history_modal').modal();
 				$.ajax({
 					url: './plant_purchase.php',
@@ -747,7 +747,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>庫存管理</h4>
+					<h4>苗種庫存管理</h4>
 				</div>
 			</div>
 		</div>
@@ -1198,7 +1198,7 @@ if(!empty($op)) {
 							<div class="row" id="history_cotent">
 								<div class="col-md-12">									
 									<div class="col-sm-15">
-										<label for="addModalInput1" class="col-sm-2 control-label">操作日期</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">資料建立日期</label>
 										<label for="addModalInput1" class="col-sm-2 control-label">下種日期(數量)</label>
 										<label for="addModalInput1" class="col-sm-2 control-label">換盆日期(數量)</label>
 										<label for="addModalInput1" class="col-sm-2 control-label">出貨日期(數量)</label>
@@ -1226,7 +1226,7 @@ if(!empty($op)) {
 				<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 						<ul class="nav nav-pills pull-right toolbar">
 							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_add.php'"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li>
-							<li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_add.php'"></i> 返回苗種資料建立</button></li>
+							<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_add.php'"></i> 返回苗種資料建立</button></li> -->
 						</ul>
 					</div>
 

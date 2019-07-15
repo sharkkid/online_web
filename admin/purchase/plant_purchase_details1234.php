@@ -598,7 +598,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>庫存管理</h4>
+					<h4>產品預計出貨清單</h4>
 				</div>
 			</div>
 		</div>

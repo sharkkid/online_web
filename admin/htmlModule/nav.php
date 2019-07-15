@@ -62,7 +62,7 @@
                                 <li><a href="<?php echo WT_SERVER;?>/admin/flask/plant_flask.php">瓶苗資料管理</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_elimination.php">汰除統計報表</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_shipment.php">出貨統計報表</a></li>
-                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details1234.php">預估出貨週期</a></li>                                 
+                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details1234.php">產品預計出貨清單</a></li>                                 
                             </ul>
                         </li>
                         <!-- <li>
