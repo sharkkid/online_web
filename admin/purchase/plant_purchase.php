@@ -1,5 +1,6 @@
 <?php
 include_once("./func_plant_purchase.php");
+
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
 		1=>"1.7",
@@ -60,12 +61,15 @@ if(!empty($op)) {
 				$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st) " .
 				"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '1');";
 
-				$sql3 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_quantity}','{$onadd_part_no}');";
+				
 
 				if($conn->query($sql)) {
-					if($conn->query($sql2))
+					$onadd_id = mysqli_insert_id($conn);
+					if($conn->query($sql2)){
+						$sql3 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_quantity}','{$onadd_part_no}','{$onadd_id}');";
 						if($conn->query($sql3))
 							$ret_msg = "新增成功！";
+					}
 					else
 						$ret_msg = "新增失敗！";
 				} else {
@@ -101,7 +105,12 @@ if(!empty($op)) {
 				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle) " .
 				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}');";
 				if($conn->query($sql)) {
-					$ret_msg = "新增成功！";
+					$onadd_id = mysqli_insert_id($conn);
+						$sql3 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_quantity}','{$onadd_part_no}','{$onadd_id}');";
+						if($conn->query($sql3))
+							$ret_msg = "新增成功！";
+						else
+							$ret_msg = "新增失敗！";
 
 				} else {
 					$ret_msg = "新增失敗！";
@@ -179,11 +188,20 @@ if(!empty($op)) {
 		$now = time();
 		$conn = getDB();
 		$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}',onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}' WHERE onadd_sn='{$onadd_sn}';";
+		$sql2 = "UPDATE onliine_firstplant_data	SET onfp_plant_amount = '{$onadd_quantity}' WHERE onadd_sn='{$onadd_sn}' and onfp_status >= 1;";
 
 		if($conn->query($sql)) {
-			$ret_msg = "更新成功！";
+			$ret_msg = "更新成功！".IsfirtPlant($onadd_sn);
+			if(IsfirtPlant($onadd_sn) == "1"){
+				if($conn->query($sql2)) {
+					$ret_msg = "更新成功！";
+				}
+				else{
+					$ret_msg = "更新失敗！";
+				}
+			}
 		} else {
-			$ret_msg = "更新失敗！".$sql;
+			$ret_msg = "更新失敗！";
 		}
 		$conn->close();
 		
@@ -207,7 +225,7 @@ if(!empty($op)) {
 		$onadd_quantity_cha123 =($onadd_quantity - $onadd_replant_number);
 
 		$onadd_status = ($onadd_quantity_cha123 < 0) ? -1 : 1;
-		
+		$first_n_changed = getProductFirstQty($onadd_sn) - $onadd_replant_number;
 
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
 		// $onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
@@ -215,7 +233,8 @@ if(!empty($op)) {
 
 		if(empty($onadd_planting_date)||empty($onadd_quantity)){
 			$ret_msg = "*為必填！ onadd_quantity=".$onadd_quantity;
-		} else { 
+		} 
+		else { 
 			$user = getUserByAccount($onadd_part_no);
 			$onadd_planting_date = str2time($onadd_planting_date);
 			$now = time();
@@ -224,8 +243,22 @@ if(!empty($op)) {
 				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle) " .
 				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}');";
 
-				$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
-				($conn->query($sql) && $conn->query($sql1)) ? $ret_msg = "換盆成功！" : $ret_msg = "換盆失敗！";
+				if($conn->query($sql)){
+					$onadd_id = mysqli_insert_id($conn);
+
+					// //新增第一筆下種數量紀錄
+					$sql2 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_replant_number}','{$onadd_part_no}','{$onadd_id}');";
+					//更新原本產品數量 (扣除換盆)
+					$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
+					//更新原本產品的第一筆下種數量(扣除換盆)
+					$sql3 = "UPDATE onliine_firstplant_data SET onfp_plant_amount='{$first_n_changed}' WHERE onadd_sn='{$onadd_sn}'";
+					if($conn->query($sql2) && $conn->query($sql1) && $conn->query($sql3)){
+						$ret_msg = "換盆成功！";
+					}
+					else{
+						$ret_msg = "換盆失敗！";
+					}
+				}				
 				if($onadd_quantity_cha123 == 0){
 					$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
 					$conn->query($sql);
@@ -347,12 +380,12 @@ if(!empty($op)) {
 
 		//產品履歷---------------------------------------------
 		case 'get_history_list':
-		$onadd_part_no = GetParam('onadd_part_no');
+		$onadd_sn = GetParam('onadd_sn');
 
-		if(empty($onadd_part_no)){
+		if(empty($onadd_sn)){
 			$ret_msg = "查詢失敗！";
 		} else {
-			$ret_data = getHistory_List($onadd_part_no);
+			$ret_data = getHistory_List($onadd_sn);
 		}
 		break;
 		//產品履歷---------------------------------------------
@@ -669,14 +702,14 @@ if(!empty($op)) {
 		});
 
 			//產品履歷----------------------------------------------------------
-			function history(onadd_part_no,onadd_name){
+			function history(onadd_part_no,onadd_name,onadd_sn){
 				$('#history_title').html(onadd_part_no+" - "+onadd_name+" 苗種履歷");
 				$('#history_modal').modal();
 				$.ajax({
 					url: './plant_purchase.php',
 					type: 'post',
 					dataType: 'json',
-					data: {op:"get_history_list", onadd_part_no:onadd_part_no},
+					data: {op:"get_history_list", onadd_sn:onadd_sn},
 					beforeSend: function(msg) {
 						$("#ajax_loading").show();
 					},
@@ -701,15 +734,15 @@ if(!empty($op)) {
 										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
 										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
 										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>';
+										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>';
 									break;
 									case 2:
 										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
 										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
 										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>'+
-										'<label for="addModalInput1" class="col-sm-2 control-label"></label>';
+										'<label for="addModalInput1" class="col-sm-2 control-label"></label>'+
+										'<label for="addModalInput1" class="col-sm-2 control-label">'+value.mod_date+' ('+value.quantity+')</label>';
 									break;
 									case 3:
 										temp ='<label for="addModalInput1" class="col-sm-2 control-label">'+value.add_date+'</label>'+
@@ -720,7 +753,7 @@ if(!empty($op)) {
 									break;
 								}
 																		
-								$('#history_cotent').html($('#history_cotent').html()+'<div class="col-md-12"><div class="col-sm-15">'+temp+'</div></div>');								
+								$('#history_cotent').html($('#history_cotent').html()+'<div class="col-md-12"><div class="col-sm-12">'+temp+'</div></div>');								
 							}
 
 						});
@@ -1188,16 +1221,16 @@ if(!empty($op)) {
 		<!--苗種履歷----------------------------------------------------------->
 		<div id="history_modal" class="modal upd-modal2" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
+				<div class="modal-content" style="width: 1002px;">
 					<form autocomplete="off" method="post" action="./" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 							<h4 class="modal-title" id="history_title">品號 - 品名 - 產品履歷</h4>
 						</div>
-						<div class="modal-body">
+						<div class="row">
 							<div class="row" id="history_cotent">
 								<div class="col-md-12">									
-									<div class="col-sm-15">
+									<div class="col-sm-12">
 										<label for="addModalInput1" class="col-sm-2 control-label">資料建立日期</label>
 										<label for="addModalInput1" class="col-sm-2 control-label">下種日期(數量)</label>
 										<label for="addModalInput1" class="col-sm-2 control-label">換盆日期(數量)</label>
@@ -1277,9 +1310,9 @@ if(!empty($op)) {
 							foreach ($product_list as $row) {
 								echo '<tr>';
 									if($row['onadd_part_no'] == 0){
-        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
 									}else{
-										echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+										echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
 									}
         							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
@@ -1301,14 +1334,10 @@ if(!empty($op)) {
 
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
 
-        							$first_plant_amount = getProductFirstQty($row['onadd_part_no']);//第一次下種時間
-        							if($first_plant_amount != 1){//育成率
-        								echo '<td>'.round($row['onadd_quantity']/getProductFirstQty($row['onadd_part_no'])*100).'%</td>';
-        							}
-        							else{
-        								echo '<td></td>';
-        							}
-        							
+        							$first_plant_amount = getProductFirstQty($row['onadd_sn']);//第一次下種時間
+        							//育成率 (公式 (數量-汰除)/數量)
+        							$incubation_rate = ($first_plant_amount-getEliQtyBySn($row['onadd_sn']))/$first_plant_amount;
+        							echo '<td>'.number_format(($incubation_rate*100),2).'%</td>'; 				
         							$note = (!empty($row['onadd_quantity_cha'])) ? '<td>換盆</td>' : '<td></td>';
         							echo $note;
         							echo '<td>'.$row['onadd_supplier'].'</td>';

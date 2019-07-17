@@ -83,29 +83,32 @@ function getUseradd($where='', $offset=30, $rows=0) {
 	return $ret_data;
 }
 
-function getProductFirstQty($onadd_part_no) {
+function getProductFirstQty($onadd_sn) {
 	$ret_data = 0;
 	$conn = getDB();	
-	$sql="select onadd_planting_date,onadd_quantity from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 and onadd_part_no like '$onadd_part_no' order by onadd_planting_date ASC limit 0,1";
+	$sql="select onfp_plant_amount from onliine_firstplant_data where onfp_status>=1 and onadd_sn like '$onadd_sn'";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$ret_data = $row['onadd_quantity'];
+			$ret_data = $row['onfp_plant_amount'];
 		}
 		$qresult->free();
+	}
+	else{
+		$ret_data = 1;
 	}
 	$conn->close();
 	return $ret_data;
 }
 
 //flag 0:下種 1:出貨 2:汰除 3:換盆
-function getHistory_List($onadd_part_no) {
+function getHistory_List($onadd_sn) {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="select onadd_add_date as add_date,onadd_planting_date as mod_date,onadd_quantity as quantity,onadd_quantity_cha from onliine_add_data where onadd_status>=0 and onadd_plant_st=2 and onadd_part_no like '$onadd_part_no' order by onadd_add_date";
-
+	$sql="select onadd_add_date as add_date,onadd_planting_date as mod_date,onadd_quantity as quantity,onadd_quantity_cha from onliine_add_data where onadd_status>=0 and onadd_sn like '$onadd_sn' order by onadd_add_date";
+	// echo $sql;
 	$qresult = $conn->query($sql);
 
 	if ($qresult->num_rows > 0) {
@@ -121,7 +124,7 @@ function getHistory_List($onadd_part_no) {
 		$qresult->free();
 	}
 
-	$sql="select onshda_add_date as add_date,onshda_mod_date as mod_date,onshda_quantity as quantity from online_shipment_data where onshda_status>=0 and onadd_plant_st=2 and onadd_part_no like '$onadd_part_no'";
+	$sql="select onshda_add_date as add_date,onshda_mod_date as mod_date,onshda_quantity as quantity from online_shipment_data where onshda_status>=0 and onadd_sn like '$onadd_sn'";
 
 	$qresult = $conn->query($sql);
 	
@@ -133,7 +136,7 @@ function getHistory_List($onadd_part_no) {
 		$qresult->free();
 	}
 
-	$sql="select onelda_add_date as add_date,onelda_mod_date as mod_date,onelda_quantity as quantity from online_elimination_data where onelda_status>=0 and onadd_plant_st=2 and onadd_part_no like '$onadd_part_no'";
+	$sql="select onelda_add_date as add_date,onelda_mod_date as mod_date,onelda_quantity as quantity from online_elimination_data where onelda_status>=0 and onadd_sn like '$onadd_sn'";
 
 		$qresult = $conn->query($sql);
 		
@@ -458,6 +461,42 @@ function getHistoryEditQty($where='') {
 	if ($qresult->num_rows > 0) {
 		$ret_data = $qresult->num_rows;
 		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getLatestOnaddSn($onadd_part_no,$planting_n) {
+	$ret_data = "";
+	$conn = getDB();
+
+	$sql="select onadd_sn from onliine_add_data where onadd_status>=0 and onadd_plant_st=1 GROUP BY onadd_sn DESC limit 0,1";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['onadd_sn'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getEliQtyBySn($onadd_sn) {
+	$ret_data = 0;
+	$conn = getDB();	
+	$sql="SELECT sum(onelda_quantity) as qty FROM `online_elimination_data` where onelda_status>=1 and onadd_sn like '$onadd_sn'";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['qty'];
+		}
+		$qresult->free();
+	}
+	else{
+		$ret_data = 0;
 	}
 	$conn->close();
 	return $ret_data;

@@ -267,6 +267,14 @@ function update_image_url($image_url,$onproduct_sn) {
 	$qresult = $conn->query($sql);
 }
 
+function add_image_url($image_url,$onproduct_sn) {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="INSERT INTO `onliine_pic_data`(`onpic_status`, `onpic_img_path`, `onproduct_sn`) VALUES (1,'{$image_url}','{$onproduct_sn}')";
+	echo $sql;
+	$qresult = $conn->query($sql);
+}
+
 function uploadFile($fileInfo, $allowExt = array('jpeg', 'jpg', 'gif', 'png'), $maxSize = 2097152, $flag = true, $uploadPath = './images/upload') {
     // 存放錯誤訊息
     $mes = '';
@@ -304,7 +312,6 @@ function uploadFile($fileInfo, $allowExt = array('jpeg', 'jpg', 'gif', 'png'), $
                 $mes = '上傳的文件被 PHP 擴展程式中斷';
                 break;
         }
-
         exit($mes);
     }
 

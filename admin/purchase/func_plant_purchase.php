@@ -119,12 +119,12 @@ function getProductsQty($where='') {
 }
 
 //flag 0:下種 1:出貨 2:汰除 3:換盆
-function getHistory_List($onadd_part_no) {
+function getHistory_List($onadd_sn) {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="select onadd_add_date as add_date,onadd_planting_date as mod_date,onadd_quantity as quantity,onadd_quantity_cha from onliine_add_data where onadd_status>=0 and onadd_part_no like '$onadd_part_no' order by onadd_add_date";
-
+	$sql="select onadd_add_date as add_date,onadd_planting_date as mod_date,onadd_quantity as quantity,onadd_quantity_cha from onliine_add_data where onadd_status>=0 and onadd_sn like '$onadd_sn' order by onadd_add_date";
+	// echo $sql;
 	$qresult = $conn->query($sql);
 
 	if ($qresult->num_rows > 0) {
@@ -140,7 +140,7 @@ function getHistory_List($onadd_part_no) {
 		$qresult->free();
 	}
 
-	$sql="select onshda_add_date as add_date,onshda_mod_date as mod_date,onshda_quantity as quantity from online_shipment_data where onshda_status>=0 and onadd_part_no like '$onadd_part_no'";
+	$sql="select onshda_add_date as add_date,onshda_mod_date as mod_date,onshda_quantity as quantity from online_shipment_data where onshda_status>=0 and onadd_sn like '$onadd_sn'";
 
 	$qresult = $conn->query($sql);
 	
@@ -152,7 +152,7 @@ function getHistory_List($onadd_part_no) {
 		$qresult->free();
 	}
 
-	$sql="select onelda_add_date as add_date,onelda_mod_date as mod_date,onelda_quantity as quantity from online_elimination_data where onelda_status>=0 and onadd_part_no like '$onadd_part_no'";
+	$sql="select onelda_add_date as add_date,onelda_mod_date as mod_date,onelda_quantity as quantity from online_elimination_data where onelda_status>=0 and onadd_sn like '$onadd_sn'";
 
 		$qresult = $conn->query($sql);
 		
@@ -227,10 +227,10 @@ function getUserQtyadd($where='') {
 	return $ret_data;
 }
 
-function getProductFirstQty($onfp_part_no) {
+function getProductFirstQty($onadd_sn) {
 	$ret_data = 0;
 	$conn = getDB();	
-	$sql="select onfp_plant_amount from onliine_firstplant_data where onfp_status>=0 and onfp_part_no like '$onfp_part_no'";
+	$sql="select onfp_plant_amount from onliine_firstplant_data where onfp_status>=1 and onadd_sn like '$onadd_sn'";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
@@ -241,6 +241,25 @@ function getProductFirstQty($onfp_part_no) {
 	}
 	else{
 		$ret_data = 1;
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getEliQtyBySn($onadd_sn) {
+	$ret_data = 0;
+	$conn = getDB();	
+	$sql="SELECT sum(onelda_quantity) as qty FROM `online_elimination_data` where onelda_status>=1 and onadd_sn like '$onadd_sn'";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['qty'];
+		}
+		$qresult->free();
+	}
+	else{
+		$ret_data = 0;
 	}
 	$conn->close();
 	return $ret_data;
@@ -350,17 +369,44 @@ function getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del) {
 function getBusinessData($onbuda_part_no,$onbuda_year) {
 	$ret_data = array();
 	$conn = getDB();
+	$data_array = array();
 
-	$sql="select *,SUM(onbuda_quantity) as quantity from onliine_business_data where onbuda_part_no='$onbuda_part_no' AND onbuda_year='$onbuda_year' group by onbuda_size";
+	$sql="select * from onliine_business_data where onbuda_part_no='$onbuda_part_no' AND onbuda_year='$onbuda_year' ";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
 			$ret_data[] = $row;
+			switch($row['onbuda_size']){
+				case "1":
+					$data_array[1][$row['onbuda_day']] += intval($row['onbuda_quantity']);
+					$data_array[1]['size'] = 1;
+					break;
+				case "2":
+					$data_array[2][$row['onbuda_day']] += intval($row['onbuda_quantity']);
+					$data_array[2]['size'] = 2;
+					break;
+				case "3":
+					$data_array[3][$row['onbuda_day']] += intval($row['onbuda_quantity']);
+					$data_array[3]['size'] = 3;
+					break;
+				case "4":
+					$data_array[4][$row['onbuda_day']] += intval($row['onbuda_quantity']);
+					$data_array[4]['size'] = 4;
+					break;
+				case "5":
+					$data_array[5][$row['onbuda_day']] += intval($row['onbuda_quantity']);
+					$data_array[5]['size'] = 5;
+					break;
+				case "6":
+					$data_array[6][$row['onbuda_day']] += intval($row['onbuda_quantity']);
+					$data_array[6]['size'] = 6;
+					break;
+			}
 		}
 		$qresult->free();
 	}
 	$conn->close();
-	return $ret_data;
+	return $data_array;
 }
 
 function getProductData($onproduct_sn) {
@@ -726,5 +772,38 @@ function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
 	return $ret_data;
 }
 
+function getPicQty($onproduct_sn) {
+	$ret_data = '';
+	$conn = getDB();
+
+	$sql="SELECT COUNT(*) FROM `onliine_pic_data` WHERE onproduct_sn = '{$onproduct_sn}'";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['COUNT(*)'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getPic($onproduct_sn) {
+	$ret_data = array();
+	$conn = getDB();
+
+	$sql="SELECT * FROM `onliine_pic_data` WHERE onproduct_sn = '{$onproduct_sn}'";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
 
 ?>

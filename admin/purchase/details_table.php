@@ -1,6 +1,6 @@
 <?php
 include_once("./func_plant_purchase.php");
-// printr(getExpectedShipByMonth(2019,'PA2',2));
+// printr(getProductData(1));
 // exit();
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
@@ -39,6 +39,21 @@ if(!empty($op)) {
 		if(!empty($onproduct_sn)){
 			$ret_code = 1;
 			$ret_data = getProductData($onproduct_sn);
+			// $ret_msg = "123";
+		} else {
+			$ret_code = 0;
+		}
+		// printr($ret_data);
+		// exit;
+
+		break;
+
+		case 'IsOver5Pics':
+		$onproduct_sn=GetParam('onproduct_sn');
+		$ret_data = array();
+		if(!empty($onproduct_sn)){
+			$ret_code = 1;
+			$ret_data = getPicQty($onproduct_sn);
 			// $ret_msg = "123";
 		} else {
 			$ret_code = 0;
@@ -133,8 +148,8 @@ if(!empty($op)) {
 	// printr($business_data);
 	// exit;
 	$data_list = getDataDetails($onadd_part_no,$onadd_growing);
-	// $user_list = getDetails($onadd_part_no,$onadd_growing,$onadd_quantity_del);
-	// search
+	// printr($data_list);
+	// exit;
 	if(($onadd_part_no = GetParam('onadd_part_no'))) {
 		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
 		$search_query_string['onadd_part_no'] = $onadd_part_no;
@@ -210,7 +225,8 @@ if(!empty($op)) {
 			$('button.upd1').on('click', function(){
 				$('#upd-modal1').modal();
 				$('#upd_form1')[0].reset();
-				var onproduct_sn = $("#onproduct_sn").html()
+				var onproduct_sn = $("#hidden_onproduct_sn").html();
+				// console.log($("#hidden_onproduct_sn").html());	
 				$.ajax({
 					url: './details_table.php',
 					type: 'post',
@@ -351,7 +367,33 @@ if(!empty($op)) {
 			});
 			// $('#month_customers_cotent').html($('#month_customers_cotent').html()+'<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label><label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label></div></div>');
 		}
-
+	function upd_btn_click(onproduct_sn) {
+		$.ajax({
+				url: './details_table.php',
+				type: 'post',
+				dataType: 'json',
+				data: {op:"IsOver5Pics", onproduct_sn:onproduct_sn},
+				beforeSend: function(msg) {
+					$("#ajax_loading").show();
+				},
+				complete: function(XMLHttpRequest, textStatus) {
+					$("#ajax_loading").hide();
+				},
+				success: function(ret) {
+					if(ret.data >= 5){
+						alert("圖片至多只能上傳5張！");
+					}
+					else{
+						$('#Upload_Image_Modal').modal('show');
+	  					$('#onproduct_sn').val(onproduct_sn);
+					}
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+			   	console.log('ajax error');
+			        // console.log(xhr);
+			    }
+			});
+	}
 	</script>
 </head>
 
@@ -359,10 +401,8 @@ if(!empty($op)) {
 	<?php include('./../htmlModule/nav.php');?>
 	<!--main content start-->
 	<section class="main-content">
-
-
-
 		<!--page header start-->
+		<div style="visibility: hidden;" id="hidden_onproduct_sn"><?php echo $data_list[0]['onproduct_sn']; ?></div>
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
@@ -373,8 +413,31 @@ if(!empty($op)) {
 
 		<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 			<ul class="nav nav-pills pull-right toolbar">
+				<li><button type="button" class="btn btn-primary btn-xs" onClick="upd_btn_click(<?php echo $data_list[0]['onproduct_sn'];?>)"><i class="glyphicon glyphicon-plus"></i>新增更多圖片</button></li>
 				<li><button type="button" class="btn btn-primary btn-xs upd1"><i class="glyphicon glyphicon-plus"></i>預計出貨資料</button></li>
 			</ul>
+		</div>
+
+		<!--modal-->
+		<div class='modal fade' id='Upload_Image_Modal' role='dialog'>
+			<div class='modal-dialog modal-lg'>
+				<div class='modal-content'>
+					<div class='modal-body'>
+						<h4 class="modal-title">照片上傳</h4>
+						<form action="./upload_image.php" method="post" enctype="multipart/form-data">
+						    <!-- 限制上傳檔案的最大值 -->
+						    <input type="hidden" name="MAX_FILE_SIZE" value="2097152">
+						    <input type="hidden" id="onproduct_sn" name="onproduct_sn" value="">
+						    <input type="hidden" id="onproduct_type" name="onproduct_type" value="2">
+						    <input type="hidden" id="parameters" name="parameters" value="<?php echo "details_table.php?onadd_part_no=".GetParam('onadd_part_no')."&onadd_growing=".GetParam('onadd_growing').'&onadd_quantity_del='.GetParam('onadd_quantity_del'); ?>">
+						    <!-- accept 限制上傳檔案類型 -->
+						    <input type="file" name="myFile" accept="image/jpeg,image/jpg,image/gif,image/png">
+
+						    <input type="submit" value="上傳檔案">
+						</form>
+					</div>	
+				</div>		
+			</div>			
 		</div>
 
 		<!--顯示月份出貨明細----------------------------------------------------------->
@@ -423,11 +486,12 @@ if(!empty($op)) {
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="upd1">
 									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onbuda_part_no">
+									<input type="hidden" name="onbuda_part_name">
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="hidden" name="onbuda_part_no">
-											<input type="hidden" name="onbuda_part_name">
+											
 											<input type="text" class="form-control" id="addModalInput1" name="onbuda_quantity" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
@@ -481,20 +545,36 @@ if(!empty($op)) {
 					<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
 						<!-- Indicators -->
 						<ol class="carousel-indicators">
-							<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-							<li data-target="#carousel-example-generic" data-slide-to="1"></li>
-							<!--<li data-target="#carousel-example-generic" data-slide-to="2"></li>-->
+							<?php
+							$pics = getPic($data_list[0]['onproduct_sn']);
+							for($i=0;$i<count($pics);$i++){
+								if($i==0)
+									echo '<li data-target="#carousel-example-generic" data-slide-to="'.$i.'" class="active"></li>';
+								else
+									echo '<li data-target="#carousel-example-generic" data-slide-to="'.$i.'"></li>';
+							}
+							?>
 						</ol>
 						<div class="carousel-inner">
-							<div class="item active">
-								<!-- <img class="img-responsive" src="images/511.png" alt="banana ball python"> -->
-								<?php
-								if(!empty($data_list[0]['onproduct_pic_url']))
-									echo "<img src='".$data_list[0]['onproduct_pic_url']."'>";
+							<?php
+								if(!empty($data_list[0]['onproduct_pic_url'])){									
+									for($i=0;$i<count($pics);$i++){
+										if($i==0){
+											echo '<div class="item active">';
+												echo "<img src='".$pics[$i]['onpic_img_path']."'>";
+											echo '</div>';
+										}
+										else{
+											echo '<div class="item">';
+												echo "<img src='".$pics[$i]['onpic_img_path']."'>";
+											echo '</div>';
+										}
+									}
+								}
 								else
 									echo "<img src='images/nopic.png' >";
-								?>
-							</div>
+							?>
+							
 						</div>
 					</div>
 					<a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
@@ -548,27 +628,6 @@ if(!empty($op)) {
 						}
 						?>
 					</ul>
-
-                <!-- content 
-                <table class="table table-striped table-hover table-condensed tablesorter">
-                    <thead>
-                        <tr>
-                            <th>月份</th>
-                            <th>規格</th>
-                            <th>數量</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        foreach ($user_list as $row) {
-                            echo '<tr>';
-                                    echo '<td>'.$row['onadd_quantity_shi'].'月'.'</td>';//品號
-                                    echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
-                                    echo '<td>'.$row['quantity'].'</td>';//品號
-                                    echo '</td></tr>';
-                                }
-                            </tbody>
-                        </table>
-                    -->
                 </div>
             </div>
         </div>
@@ -631,26 +690,18 @@ if(!empty($op)) {
         					</tr>
         				</thead>
 
-        					<?php
-        					
-        					for($size_n=0;$size_n<count($business_data);$size_n++){
-        						$n = 0;
-        						echo '<tbody>';    
-        						for($i = 0 ;$i < 12;$i++){        						
-        							if($business_data[$size_n]['onbuda_day'] == ($i+1)){
-        								$team_array[$i]['quantity'] = $business_data[$size_n]['quantity'];
-        								$n++;        							
-        							}else{
-        								$team_array[$i]['quantity'] = "0";
-        							}
-            	                }
-        						echo '<td>'.$permissions_mapping[$business_data[$size_n]['onbuda_size']].'寸'.'</td>';
-        						for($i = 0 ;$i < 12;$i++){
-        							if($team_array[$i]['quantity'] != "0")
-            	                        echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i+1).','.$business_data[$size_n]['onbuda_size'].')">'.$team_array[$i]['quantity'].'</a></td>';//品號
-            	                   	else
-            	                   		echo '<td>0</td>';
-            	             	}
+        					<?php        					
+        					for($size_n=1;$size_n <= 6;$size_n++){
+        						echo '<tbody>'; 
+        						if(!empty($business_data[$size_n]['size'])){
+	            	             	echo '<td>'.$permissions_mapping[$business_data[$size_n]['size']].'寸'.'</td>';
+	        						for($i = 1 ;$i <= 12;$i++){
+	        							if(!empty($business_data[$size_n][$i]))
+	            	                        echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i).','.$business_data[$size_n]['size'].')">'.$business_data[$size_n][$i].'</a></td>';//品號
+	            	                   	else
+	            	                   		echo '<td>0</td>';
+	            	             	}
+	            	             }
             	             	echo '</tbody>';        					
                         	}
                             ?>

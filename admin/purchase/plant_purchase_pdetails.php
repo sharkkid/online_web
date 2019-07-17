@@ -556,7 +556,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>可供量統計報表</h4>
+					<h4>品種資料</h4>
 				</div>
 			</div>
 		</div>
@@ -571,6 +571,8 @@ if(!empty($op)) {
 						    <!-- 限制上傳檔案的最大值 -->
 						    <input type="hidden" name="MAX_FILE_SIZE" value="2097152">
 						    <input type="hidden" id="onproduct_sn" name="onproduct_sn" value="">
+						    <input type="hidden" id="onproduct_type" name="onproduct_type" value="1">
+						    <input type="hidden" id="parameters" name="parameters" value="<?php echo "plant_purchase_pdetails.php"; ?>">
 						    <!-- accept 限制上傳檔案類型 -->
 						    <input type="file" name="myFile" accept="image/jpeg,image/jpg,image/gif,image/png">
 
@@ -624,8 +626,8 @@ if(!empty($op)) {
         				<?php
         				$produce_image = '';
         				$image_btn_name = '';
-        				for($i = 0;$i < count($AllProductData);$i++){
-        					if($AllProductData[$i]['onproduct_pic_url'] != ''){
+        				for($i = 0;$i < count($AllProductData);$i++){        					
+        					if(!empty($AllProductData[$i]['onproduct_pic_url'])){
         						$produce_image = $AllProductData[$i]['onproduct_pic_url'];
         						$image_btn_name = '更新照片';
         					}else{
@@ -645,8 +647,6 @@ if(!empty($op)) {
 		        					</div>
 		        				</li>';
         				}
-        					
-        				
         				?>
         				<!-- <li>
         					<div class="am-panel am-panel-default">
