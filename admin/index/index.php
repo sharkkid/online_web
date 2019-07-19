@@ -159,16 +159,19 @@ $op=GetParam('op');
 								$('#onadd_content').html("即將到達換盆日期");
 							}
 							if(flag == 1){
-						    	$('#myModal').modal('show');
-						    	flag = 0;
+								if(!$('#myModal').hasClass('in')){
+									$('#myModal').modal('show');
+									flag = 0;
+								}						    	
+						    	
 							}
 						 //    console.log(ret.data);
 							console.log(count);	
 						  } else {
-						    clearInterval(interval);
-						    $('#myModal').modal('toogle');
+						  	$('#myModal').modal('toogle');
+						    clearInterval(interval);							
 						  }
-						}, 1500)
+						}, 2500)
 					}
 				},
 				error: function (xhr, ajaxOptions, thrownError) {	
@@ -177,7 +180,9 @@ $op=GetParam('op');
 				});
 
 		$("#btn_modal").click(function() {
-			$('#myModal').modal('hide');	
+			if($('#myModal').hasClass('in')){
+				$('#myModal').modal('hide');
+			}				
 			count++;
 			flag = 1;
 		});

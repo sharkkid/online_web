@@ -345,4 +345,21 @@ function uploadFile($fileInfo, $allowExt = array('jpeg', 'jpg', 'gif', 'png'), $
 
     return $destination;
 }
+
+function getSizeQtyBySn($onadd_part_no,$onadd_part_name) {
+	$ret_data = array();
+	$conn = getDB();
+
+	$sql="SELECT Sum(onadd_quantity) as sum,onadd_growing FROM `onliine_add_data` WHERE onadd_part_no = '{$onadd_part_no}' and onadd_part_name = '{$onadd_part_name}' and onadd_status >= 1 group by onadd_growing order by onadd_growing";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
 ?>

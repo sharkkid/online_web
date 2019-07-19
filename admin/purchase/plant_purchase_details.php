@@ -634,15 +634,23 @@ if(!empty($op)) {
         						$produce_image = './images/nopic.png';
         						$image_btn_name = '上傳照片';
         					}
+        					$product_size_n = getSizeQtyBySn($AllProductData[$i]['onproduct_part_no'],$AllProductData[$i]['onproduct_part_name']);
+        					// printr($product_size_n);
+        					// exit();
         					echo '<li>
 		        					<div class="am-panel am-panel-default">
 		        						<div class="am-panel-bd">
 		        						<button class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
 		        							<img class="am-img-responsive" src="'.$produce_image.'" height="170" width="150">
 		        							<h3 style="text-align:center"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
-		        							<div style="text-align:center;>
-		        								<span class="list-product-price-span">1.7寸：25000 </span>
-		        							</div>        						
+		        							<div style="text-align:center;>';
+		        								for($n=0;$n<6;$n++){
+		        									if($product_size_n[$n]['onadd_growing'] != null){
+		        										echo '<span class="">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 盆</span><br>';
+		        									}		        									
+		        								}
+
+		        			echo			'</div>        						
 		        						</div>
 		        					</div>
 		        				</li>';
