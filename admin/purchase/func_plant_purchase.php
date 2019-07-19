@@ -679,16 +679,24 @@ function getWorkListByMonth() {
 	return $ret_data;
 }
 
-function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
+function getExpectedShipByMonth($year,$onadd_part_no) {
 	$year_start = strtotime($year."/1/1");
     $year_end = strtotime(($year)."/12/31");
-
+	// 1=>"1.7",
+	// 2=>"2.5",
+	// 3=>"2.8",
+	// 4=>"3.0",
+	// 5=>"3.5",
+	// 6=>"3.6",
 	$list_setting1 = getSettingBySn(1.7);
 	$list_setting2 = getSettingBySn(2.5);
+	$list_setting3 = getSettingBySn(2.8);
+	$list_setting4 = getSettingBySn(3.0);
 	$list_setting5 = getSettingBySn(3.5);
+	$list_setting5 = getSettingBySn(3.6);
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select onadd_planting_date,onadd_quantity,onadd_growing from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_growing='$onadd_growing' AND onadd_planting_date";
+	$sql="select onadd_planting_date,onadd_quantity,onadd_growing from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_planting_date";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -699,8 +707,17 @@ function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
         		case 2:
         			$onchba_cycle = $list_setting2['onchba_cycle'];
         			break;
+        		case 3:
+        			$onchba_cycle = $list_setting3['onchba_cycle'];
+        			break;
+        		case 4:
+        			$onchba_cycle = $list_setting4['onchba_cycle'];
+        			break;
         		case 5:
         			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			break;
+        		case 6:
+        			$onchba_cycle = $list_setting6['onchba_cycle'];
         			break;
         	}
 
@@ -719,55 +736,59 @@ function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
         		$row['count'] = $row['onadd_quantity'];
         		$ret_data[] = $row;
         	}
+        	// printr($ret_data);
 		}
 		$qresult->free();
 	}
 	$conn->close();
 
 	$expected_number = array();
-	for($i=1;$i<=12;$i++)
-		$expected_number[$i] = 0;
+	for($i=0;$i<8;$i++)
+		for($j=1;$j<=12;$j++)
+		$expected_number[$i][$j] = 0;
 
 	for($i=0;$i<count($ret_data);$i++){
+		$n = 0;
 		switch ($ret_data[$i]['month']) {
 			case '01':
-				$expected_number['1'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['1'] += $ret_data[$i]['count'];
 				break;
 			case '02':
-				$expected_number['2'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['2'] += $ret_data[$i]['count'];
 				break;
 			case '03':
-				$expected_number['3'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['3'] += $ret_data[$i]['count'];
 				break;
 			case '04':
-				$expected_number['4'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['4'] += $ret_data[$i]['count'];
 				break;
 			case '05':
-				$expected_number['5'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['5'] += $ret_data[$i]['count'];
 				break;
 			case '06':
-				$expected_number['6'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['6'] += $ret_data[$i]['count'];
 				break;
 			case '07':
-				$expected_number['7'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['7'] += $ret_data[$i]['count'];
 				break;
 			case '08':
-				$expected_number['8'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['8'] += $ret_data[$i]['count'];
 				break;
 			case '09':
-				$expected_number['9'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['9'] += $ret_data[$i]['count'];
 				break;
 			case '10':
-				$expected_number['10'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['10'] += $ret_data[$i]['count'];
 				break;
 			case '11':
-				$expected_number['11'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['11'] += $ret_data[$i]['count'];
 				break;
 			case '12':
-				$expected_number['12'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_growing']]['12'] += $ret_data[$i]['count'];
 				break;
 		}
 	}
+
 	$ret_data = $expected_number;
 	return $ret_data;
 }
@@ -782,6 +803,23 @@ function getPicQty($onproduct_sn) {
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
 			$ret_data = $row['COUNT(*)'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getSizeQtyBySn($onadd_sn) {
+	$ret_data = '';
+	$conn = getDB();
+
+	$sql="SELECT COUNT(*) as total FROM `onliine_add_data` WHERE onadd_sn = '{$onadd_sn}' and onadd_status >= 1 group by onadd_growing";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['total'];
 		}
 		$qresult->free();
 	}

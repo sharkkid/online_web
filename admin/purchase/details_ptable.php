@@ -143,7 +143,7 @@ if(!empty($op)) {
 	$onadd_part_no = GetParam('onadd_part_no');
 	$onadd_growing = GetParam('onadd_growing');
 	$onadd_quantity_del = GetParam('onadd_quantity_del');
-	$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no,$onadd_growing);
+	$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no);
 	$business_data = getBusinessData($onadd_part_no,$onadd_quantity_del);
 	// printr($business_data);
 	// exit;
@@ -651,12 +651,21 @@ if(!empty($op)) {
         				</thead>
         				<tbody>
         					<?php
-        					
-        					echo '<td>'.$permissions_mapping[$onadd_growing].'寸'.'</td>';
-        					for($i = 1 ;$i <= 12;$i++){
-        						echo '<td>'.$user_list[$i].'</td>';//預計成熟月份數量
-                            } 
+        					for($i=0;$i<8;$i++){
+        						$n = 0;
+        						for($j=1;$j<=12;$j++){
+        							$n += $user_list[$i][$j];
+        						}
+        						if($n != 0){
+        							echo '<tbody>';
+        							echo '<td>'.$permissions_mapping[$i].'寸'.'</td>';
+		        					for($j = 1 ;$j <= 12;$j++){
+		        						echo '<td>'.$user_list[$i][$j].'</td>';//預計成熟月份數量
+		                            }
+		                            echo '</tbody>';
+        						}
 
+        					}
                              ?>
                          </tbody>
                      </table>

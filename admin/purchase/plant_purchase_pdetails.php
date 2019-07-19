@@ -642,11 +642,11 @@ if(!empty($op)) {
 		        						<div class="am-panel-bd">
 		        						<button class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
 		        							<img class="am-img-responsive" src="'.$produce_image.'" height="170" width="150">
-		        							<h3 style="text-align:center"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
+		        							<h3 style="text-align:center"><a href="details_ptable.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
 		        							<div style="text-align:center;>';
 		        								for($n=0;$n<6;$n++){
 		        									if($product_size_n[$n]['onadd_growing'] != null){
-		        										echo '<span class="">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 盆</span><br>';
+		        										echo '<span class="">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 株</span><br>';
 		        									}		        									
 		        								}
 
@@ -656,28 +656,6 @@ if(!empty($op)) {
 		        				</li>';
         				}
         				?>
-        				<!-- <li>
-        					<div class="am-panel am-panel-default">
-        						<div class="am-panel-bd">
-        							<img class="am-img-responsive" src="./images/521.png" height="170" width="150">
-        							<h3 style="text-align:center"><a href="details_table.php?onadd_part_no=PP-0052&onadd_growing=1&onadd_quantity_del=2019">Snow Elf(小白)</a></h3>
-        							<div style="text-align:center;>
-        								<span class="list-product-price-span">1.7寸：25000 </span>
-        							</div>        						
-        						</div>
-        					</div>
-        				</li>
-        				<li>
-        					<div class="am-panel am-panel-default">
-        						<div class="am-panel-bd">
-        							<img class="am-img-responsive" src="./images/111.png" height="100" width="150">
-        							<h3 style="text-align:center"><a href="details_table.php?onadd_part_no=PA2&onadd_growing=2&onadd_quantity_del=2019">	Pink Girl 粉紅女孩</a></h3>
-        							<div style="text-align:center;>
-        								<span class="list-product-price-span">2.5寸：48000 </span>
-        							</div>        							
-        						</div>
-        					</div>
-        				</li> -->
 
         			</ul>
 
