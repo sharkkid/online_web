@@ -259,6 +259,25 @@ function getAllProductData($where='') {
 	return $ret_data;
 }
 
+function getAllProductData_page($where='',$offset=30, $rows=0) {
+	$ret_data = array();
+	$conn = getDB();
+	if($rows == 0)
+		$sql="select * from onliine_product_data order by onproduct_part_no";
+	else
+		$sql="select * from onliine_product_data order by onproduct_part_no limit $offset, $rows";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
 function update_image_url($image_url,$onproduct_sn) {
 	$ret_data = array();
 	$conn = getDB();
@@ -362,4 +381,5 @@ function getSizeQtyBySn($onadd_part_no,$onadd_part_name) {
 	$conn->close();
 	return $ret_data;
 }
+
 ?>

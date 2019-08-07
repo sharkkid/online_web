@@ -258,14 +258,14 @@ if(!empty($op)) {
 
 	// page
 	$pg_page = GetParam('pg_page', 1);
-	$pg_rows = 20;
+	$pg_rows = 8;
 	$pg_total = GetParam('pg_total')=='' ? getUserQty($search_where) : GetParam('pg_total');
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	// echo $search_where;
+	// echo $pg_pages;
 	// exit();
-	$AllProductData = getAllProductData($search_where);
+	$AllProductData = getAllProductData_page($search_where,$pg_offset,$pg_rows);
 
 }
 ?>
@@ -643,14 +643,14 @@ if(!empty($op)) {
 		        						<button class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
 		        							<img class="am-img-responsive" src="'.$produce_image.'" height="170" width="150">
 		        							<h3 style="text-align:center"><a href="details_ptable.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
-		        							<div style="text-align:center;>';
+		        							';
 		        								for($n=0;$n<6;$n++){
 		        									if($product_size_n[$n]['onadd_growing'] != null){
-		        										echo '<span class="">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 株</span><br>';
+		        										echo '<span style="text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 株</span><br>';
 		        									}		        									
 		        								}
 
-		        			echo			'</div>        						
+		        			echo			'        						
 		        						</div>
 		        					</div>
 		        				</li>';
@@ -660,7 +660,7 @@ if(!empty($op)) {
         			</ul>
 
         		</div>
-
+        		<?php include('./../htmlModule/page.php');?>
         		<!--Start footer-->
         		<footer class="footer">
         			<span>Copyright &copy; 2019. Online Plant</span>
