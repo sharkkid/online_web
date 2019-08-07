@@ -41,6 +41,7 @@ if(!empty($op)) {
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
+
 		// if($onadd_growing==1){
 		// 	$list_setting = getSettingBySn(1.7);
 		// 	$onchba_cycle = $list_setting['onchba_cycle'];
@@ -667,6 +668,13 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="">
@@ -766,6 +774,13 @@ if(!empty($op)) {
 										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onproduct_height" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
