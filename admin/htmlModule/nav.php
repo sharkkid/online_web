@@ -47,14 +47,14 @@
                 <div class="nano-content">
                     <ul class="metisMenu nav" id="menu">
                         <li class="nav-heading"><span>主要項目</span></li>
-                        <li class="active">
+                        <!-- <li class="active">
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-pencil"></i> 品種建立 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_add.php">苗種資料建立</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/flask/plant_purchase_addflask.php">瓶苗資料建立</a></li>
                                  
                             </ul>
-                        </li>
+                        </li> -->
                         <li class="active">
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-home"></i> 庫存管理 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">

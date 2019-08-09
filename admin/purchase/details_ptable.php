@@ -591,7 +591,8 @@ if(!empty($op)) {
 			foreach ($data_list as $row) {
 				echo '<div style="display:none" id="onproduct_sn">'.$row['onproduct_sn'].'</div>';
 				echo '<h3>'.$onproduct_part_no.'</h3>';
-				echo '<p>'. '品號(Part no.) : '. $row['onproduct_part_name'].'</p>';
+				echo '<p>'. '品號(Part no.) : '. $row['onproduct_part_no'].'</p>';
+				echo '<p>'. '品名(Part name.) : '. $row['onproduct_part_name'].'</p>';
 				echo '<p>'. '花色 (Flower Color) : '. $row['onproduct_color'].'</p>';
 				echo '<p>'. '花徑 (Flower Size) : '. $row['onproduct_size'].'</p>';
 				echo '<p>'. '高度 (Plant Height) : '. $row['onproduct_height'].'</p>';

@@ -50,6 +50,52 @@ function getProducts($where='', $offset=30, $rows=0) {
 	return $ret_data;
 }
 
+function getAllProductsNo() {
+	$ret_data = array();
+	$conn = getDB();
+
+	$sql="select onproduct_part_no,onproduct_part_name from  onliine_product_data where onproduct_status>=0 and onproduct_plant_st = 2";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[0][] = $row['onproduct_part_no'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getProductByPartNo($onproduct_part_no) {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select * from onliine_product_data where onproduct_part_no='{$onproduct_part_no}'";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		if ($row = $qresult->fetch_assoc()) {
+			$ret_data = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function IsProductExit($onproduct_part_no,$onproduct_part_name) {
+	$ret_data = "0";
+	$conn = getDB();
+	$sql="select * from onliine_product_data where onproduct_part_no='{$onproduct_part_no}'' and onproduct_part_name='{$onproduct_part_name}'";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		$ret_data = "1";
+	}
+	$conn->close();
+	return $ret_data;
+}
+
 function getProductBySn($onproduct_sn) {
 	$ret_data = array();
 	$conn = getDB();
