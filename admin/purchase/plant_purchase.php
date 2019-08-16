@@ -428,6 +428,10 @@ if(!empty($op)) {
 	exit;
 } else {
 	// search
+	if(($onadd_sn = GetParam('onadd_sn'))) {
+		$search_where[] = "onadd_sn like '%{$onadd_sn}%'";
+		$search_query_string['onadd_sn'] = $onadd_sn;
+	}
 	if(($onadd_part_no = GetParam('onadd_part_no'))) {
 		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
 		$search_query_string['onadd_part_no'] = $onadd_part_no;
@@ -883,6 +887,90 @@ if(!empty($op)) {
 					}
 				});
 			});
+			//產生QR Code-------------------------------------------------------
+			$('button.qr').on('click', function(){
+				$('#qr_modal').modal();
+				$.ajax({
+					url: './plant_purchase.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                // console.log(ret);
+			                if(ret.code==1) {
+			                	var d = ret.data;
+			                	// console.log("log="+document.getElementById('qr_part_no').html);
+			                	$('#qr_download').attr('data-onadd_sn',d.onadd_sn);
+			                	$('#qr_part_no').html("品號："+d.onadd_part_no);
+			                	$('#qr_part_name').html("品名："+d.onadd_part_name);
+			                	$('#qr_plant_date').html("下種日期："+d.onadd_planting_date);
+			                	$('#qr_part_number').html("數量："+d.onadd_quantity);
+			                	var src = $('#qr_img').attr('src');
+			                	$('#qr_img').attr('src',src+"onadd_part_no="+d.onadd_sn);
+			                	document.getElementById('qr_cotent_recover').appendChild(document.getElementById('qr_cotent').cloneNode(true));
+			                	$('#qr_cotent_recover').attr('style','display:none');
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                    // console.log(xhr);
+		                }
+		            });
+			});
+			//下載QR Code-------------------------------------------------------
+			$('button.qr_download').on('click', function(){
+				$('#qr_modal').modal();
+				$.ajax({
+					url: './plant_purchase.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                // console.log(ret);
+			                if(ret.code==1) {
+			                	
+			                	$('#qr_img').attr('style','margin-left: 0px;padding-left: 0px;width: 85px;padding-right: 0px;border-top-width: 20px;padding-top: 20px;');
+			                	$('#qr_sec_cotent').attr('style','padding-left: 25px;');
+			                	$('#qr_sec_cotent2').attr('style','padding-left: 25px;');
+			                	$('#qr_part_no').attr('style','font-size: 14px;font-weight:bold;');
+			                	$('#qr_part_name').attr('style','font-size: 14px;font-weight:bold;');
+			                	$('#qr_plant_date').attr('style','font-size: 14px;font-weight:bold;');
+			                	$('#qr_part_number').attr('style','font-size: 14px;font-weight:bold;');
+			                	PrintElem('qr_cotent');
+
+			                	setTimeout(
+								    function() {		
+								    	var qr = document.getElementById('qr_cotent_recover').children[0].children[0];					
+								    	var data = document.getElementById('qr_cotent_recover').children[0].children[1];    	
+								    	$('#qr_cotent').empty();
+								    	$('#qr_cotent').append(qr);
+								    	$('#qr_cotent').append(data);
+								    	// $('#qr_cotent').html($('#qr_cotent').html()+data.children[1]);
+								    	$('#qr_cotent').removeAttr('style');
+								    	document.getElementById('qr_cotent_recover').removeChild(document.getElementById('qr_cotent_recover').children[0]);
+								    	document.getElementById('qr_cotent_recover').appendChild(document.getElementById('qr_cotent').cloneNode(true));
+								    }, 500);
+			                	
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                    // console.log(xhr);
+		                }
+		            });
+			});
 
 			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd3_form').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
@@ -1004,6 +1092,46 @@ if(!empty($op)) {
 				});
 			}
 			//產品履歷----------------------------------------------------------
+			function PrintElem(elem)
+			{
+			    var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+
+			    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+			    mywindow.document.write('</head><body >');
+			    mywindow.document.write('<h1>' + document.title  + '</h1>');
+			    document.getElementById(elem).setAttribute("style", "width: 240px; height: 170px;");
+			    mywindow.document.write(document.getElementById(elem).innerHTML);
+			    mywindow.document.write('</body></html>');
+
+			    mywindow.document.close(); // necessary for IE >= 10
+			    mywindow.focus(); // necessary for IE >= 10*/
+
+			    domtoimage.toBlob(document.getElementById(elem))
+				    .then(function(blob) {
+				      window.saveAs(blob, $('#qr_part_no').html());
+				    });
+			    mywindow.close();
+
+			    return true;
+			}
+
+			function insert(str, index, value) {
+			    return str.substr(0, index) + value + str.substr(index);
+			}
+			function downloadAsImg( el, filename, scale ){
+			    if( scale!=undefined ) var props = {
+			        width: el.clientWidth*scale*1.412,
+			        height: el.clientHeight*scale,
+			        style: {
+			            'transform': 'scale('+scale+')',
+			            'transform-origin': 'top left'
+			        }
+			    }
+			    domtoimage.toBlob( el, props==undefined ? {} : props).then(function (blob) {
+			        window.saveAs(blob, filename==undefined ? 'image.png' : filename);
+			    });
+			}
+
 	</script>
 </head>
 
@@ -1393,6 +1521,45 @@ if(!empty($op)) {
 		</div>
 		<!--苗種履歷----------------------------------------------------------->
 
+		<!--QR Code產生Modal----------------------------------------------------------->
+		<div id="qr_modal" class="modal upd-modal2" tabindex="-1" role="dialog">
+			<div class="modal-dialog mw-100 w-75">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title" id="history_title">二維條碼</h4>
+						</div>
+						<div class="row" id="qr_container">
+							<div class="row" id="qr_cotent">
+								<div class="col-sm-4" id="qr_sec_cotent">
+									<img id="qr_img" style="margin-left: 20px;padding-left: 10px;" 
+										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">	
+								</div>
+								<div class="col-sm-8" id="qr_sec_cotent2">
+									<br>
+									<div id="qr_part_no" style="font-size: 20px;font-weight:bold;">品號：</div>
+									<div id="qr_part_name" style="font-size: 20px;font-weight:bold;">品名：</div>
+									<div id="qr_plant_date" style="font-size: 20px;font-weight:bold;">下種日期：</div>
+									<div id="qr_part_number" style="font-size: 20px;font-weight:bold;">數量：</div>
+
+								</div>
+							</div>
+							<div id="qr_cotent_recover" >
+								
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button id="qr_download" type="button" class="btn btn-primary qr_download">下載二維條碼</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--QR Code產生Modal----------------------------------------------------------->
+
 		<!-- modal -->
 		<div id="add-modal" class="modal add-modal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
@@ -1624,7 +1791,7 @@ if(!empty($op)) {
         							// 2019/6/19新增 - 展開收回操作列表
         							echo '<td>
 	        							    <div id="collapse'.$row['onadd_sn'].'" class="collapse">
-	        							      <button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
+	        							      <button type="button" class="btn btn-warning btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
 	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
 	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;';
         							if($permmsion == '系統管理員'){
@@ -1632,7 +1799,8 @@ if(!empty($op)) {
 	        							echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}
 
-	        						echo '	</div>
+	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'">產生二維條碼</button>&nbsp;
+	        								</div>
 	        							 </td>';
         							echo '</tr>';
         						}
@@ -1674,5 +1842,7 @@ if(!empty($op)) {
         <script src="./../../js1/datatables.responsive.min.js"></script>
         <script src="./../../js1/jquery.toast.min.js"></script>
         <script src="./../../js1/dashboard-alpha.js"></script>
+        <script src="./../../lib/dom-to-image.js"></script>
+        <script src="./../../lib/FileSaver.js"></script>
     </body>
-    </html>?>
+    </html>
