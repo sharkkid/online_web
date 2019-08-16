@@ -980,7 +980,7 @@ if(!empty($op)) {
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
 
-					 	console.table(param);
+					 	// console.table(param);
 
 					 	$.ajax({
 					 		url: './plant_purchase.php',

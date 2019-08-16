@@ -20,6 +20,7 @@ $permissions_mapping = array(
     6=>'<font color="#666666">3.6</font>',
     7=>'<font color="#666666">其他</font>' 
 );
+$permmsion = '系統管理員';
 
 $op=GetParam('op');
 if(!empty($op)) {
@@ -291,6 +292,82 @@ if(!empty($op)) {
 		} 
 		break;
 		//出貨---------------------------------------------
+
+		case 'upd3':
+		$onproduct_sn=GetParam('onproduct_sn');//sn
+		$onproduct_part_no=GetParam('onproduct_part_no');//品號
+		$onproduct_part_name=GetParam('onproduct_part_name');//品名
+		$onproduct_color=GetParam('onproduct_color');//花色
+		$onproduct_size=GetParam('onproduct_size');//花徑
+		$onproduct_height=GetParam('onproduct_height');//高度
+		$onproduct_pot_size=GetParam('onproduct_pot_size');//適合開花盆徑
+		$onproduct_supplier=GetParam('onproduct_supplier');//供應商
+		$onproduct_planting_date=GetParam('onproduct_planting_date');//下種日期
+		$onproduct_quantity=GetParam('onproduct_quantity');//下種數量
+		$onproduct_growing=GetParam('onproduct_growing');//預計成長大小
+		$onproduct_quantity_shi=GetParam('onproduct_quantity_shi');//換盆年
+		$onproduct_isbought=GetParam('onproduct_isbought');//苗種來源
+		$onproduct_quantity_cha=$test;//換盆月
+		$jsuser_sn = GetParam('supplier');//編輯人員
+
+		if(empty($onproduct_part_no)||empty($onproduct_part_name)||empty($onproduct_growing)){
+			$ret_msg = "*為必填123！";
+		} else { 
+			$user = getUserByAccount($onproduct_part_no);
+			$onproduct_planting_date = str2time($onproduct_planting_date);
+			$now = time();
+			$conn = getDB();
+				$sql = "UPDATE onliine_product_data SET onproduct_part_no = '$onproduct_part_no', onproduct_part_name = '$onproduct_part_name', onproduct_color ='$onproduct_color', onproduct_size = '$onproduct_size', onproduct_height = '$onproduct_height', onproduct_pot_size = '$onproduct_pot_size', onproduct_supplier = '$onproduct_supplier',onproduct_growing ='$onproduct_growing', jsuser_sn = '$jsuser_sn', onproduct_isbought = '$onproduct_isbought' WHERE onproduct_sn = $onproduct_sn;";
+
+				if($conn->query($sql)) {
+					$ret_msg = "更新成功！";
+
+				} else {
+					$ret_msg = "更新失敗！".$sql;
+				}
+			$conn->close();
+		}
+		break;
+
+		case 'upd5':
+		$onadd_sn=GetParam('onadd_sn');
+		$onadd_part_no=GetParam('onadd_part_no');//品號
+		$onadd_part_name=GetParam('onadd_part_name');//品名
+		$onadd_color=GetParam('onadd_color');//花色
+		$onadd_size=GetParam('onadd_size');//花徑
+		$onadd_height=GetParam('onadd_height');//高度
+		$onadd_pot_size=GetParam('onadd_pot_size');//適合開花盆徑
+		$onadd_location=GetParam('onadd_location');//放置區
+		$onadd_supplier=GetParam('onadd_supplier');//供應商
+		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
+		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+		$onadd_growing=GetParam('onadd_growing');//預計成長大小
+		$jsuser_sn = GetParam('supplier');//編輯人員
+
+
+		// $user = getUserByAccount($onadd_part_no);
+		$onadd_planting_date = strtotime($onadd_planting_date);
+		$now = time();
+		$conn = getDB();
+		$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}',onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}' WHERE onadd_sn='{$onadd_sn}';";
+		$sql2 = "UPDATE onliine_firstplant_data	SET onfp_plant_amount = '{$onadd_quantity}' WHERE onadd_sn='{$onadd_sn}' and onfp_status >= 1;";
+
+		if($conn->query($sql)) {
+			$ret_msg = "更新成功！";
+			if(IsfirtPlant($onadd_sn) == "1"){
+				if($conn->query($sql2)) {
+					$ret_msg = "更新成功！";
+				}
+				else{
+					$ret_msg = "更新失敗！";
+				}
+			}
+		} else {
+			$ret_msg = "更新失敗！".$sql;
+		}
+		$conn->close();
+		
+		break;
 
 		case 'del':
 		$onadd_sn=GetParam('onadd_sn');
@@ -684,6 +761,50 @@ if(!empty($op)) {
 			});
 			//汰除-----------------------------------------------------------
 
+			//修改-----------------------------------------------------------
+			$('button.upd3').on('click', function(){
+				$('#upd-modal3').modal();
+				$('#upd3_form')[0].reset();
+
+								$.ajax({
+					url: './plant_flask.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                // console.log(ret);
+			                if(ret.code==1) {
+			                	var d = ret.data;
+			                	$('#upd3_form input[name=onadd_sn]').val(d.onadd_sn);
+			                	$('#upd3_form input[name=onadd_part_no]').val(d.onadd_part_no);
+			                	$('#upd3_form input[name=onadd_part_name]').val(d.onadd_part_name);
+			                	$('#upd3_form input[name=onadd_color]').val(d.onadd_color);
+			                	$('#upd3_form input[name=onadd_size]').val(d.onadd_size);
+			                	$('#upd3_form input[name=onadd_height]').val(d.onadd_height);
+			                	$('#upd3_form input[name=onadd_pot_size]').val(d.onadd_pot_size);
+			                	$('#upd3_form input[name=onadd_location]').val(d.onadd_location);
+			                	$('#upd3_form input[name=onadd_supplier]').val(d.onadd_supplier);
+			                	$('#upd3_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
+			                	$('#upd3_form input[name=onadd_quantity]').val(d.onadd_quantity);
+			                	$('#upd3_form input[name=onadd_growing]').val(d.onadd_growing);
+			                	$('#upd3_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
+			                	$('#upd3_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                 //    console.log(thrownError);
+		                }
+		            });
+			});			
+			//修改-----------------------------------------------------------
+
 			//出貨-----------------------------------------------------------
 			$('button.upd2').on('click', function(){
 				$('#upd-modal2').modal();
@@ -747,7 +868,93 @@ if(!empty($op)) {
 				});
 			});
 
-			$('#add_form, #upd_form, #upd_form1, #upd_form2').validator().on('submit', function(e) {
+			//產生QR Code-------------------------------------------------------
+			$('button.qr').on('click', function(){
+				$('#qr_modal').modal();
+				$.ajax({
+					url: './plant_flask.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                // console.log(ret);
+			                if(ret.code==1) {
+			                	var d = ret.data;
+			                	// console.log("log="+document.getElementById('qr_part_no').html);
+			                	$('#qr_download').attr('data-onadd_sn',d.onadd_sn);
+			                	$('#qr_part_no').html("品號："+d.onadd_part_no);
+			                	$('#qr_part_name').html("品名："+d.onadd_part_name);
+			                	$('#qr_plant_date').html("下種日期："+d.onadd_planting_date);
+			                	$('#qr_part_number').html("數量："+d.onadd_quantity);
+			                	var src = $('#qr_img').attr('src');
+			                	$('#qr_img').attr('src',src+"onadd_part_no="+d.onadd_sn);
+			                	document.getElementById('qr_cotent_recover').appendChild(document.getElementById('qr_cotent').cloneNode(true));
+			                	$('#qr_cotent_recover').attr('style','display:none');
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                    // console.log(xhr);
+		                }
+		            });
+			});
+			//下載QR Code-------------------------------------------------------
+			$('button.qr_download').on('click', function(){
+				$('#qr_modal').modal();
+				$.ajax({
+					url: './plant_flask.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                // console.log(ret);
+			                if(ret.code==1) {
+			                	
+			                	$('#qr_img').attr('style','margin-left: 0px;padding-left: 0px;width: 85px;padding-right: 0px;border-top-width: 20px;padding-top: 20px;');
+			                	$('#qr_sec_cotent').attr('style','padding-left: 25px;');
+			                	$('#qr_sec_cotent2').attr('style','padding-left: 25px;');
+			                	$('#qr_part_no').attr('style','font-size: 14px;font-weight:bold;');
+			                	$('#qr_part_name').attr('style','font-size: 14px;font-weight:bold;');
+			                	$('#qr_plant_date').attr('style','font-size: 14px;font-weight:bold;');
+			                	$('#qr_part_number').attr('style','font-size: 14px;font-weight:bold;');
+			                	PrintElem('qr_cotent');
+
+			                	setTimeout(
+								    function() {		
+								    	var qr = document.getElementById('qr_cotent_recover').children[0].children[0];					
+								    	var data = document.getElementById('qr_cotent_recover').children[0].children[1];    	
+								    	$('#qr_cotent').empty();
+								    	$('#qr_cotent').append(qr);
+								    	$('#qr_cotent').append(data);
+								    	// $('#qr_cotent').html($('#qr_cotent').html()+data.children[1]);
+								    	$('#qr_cotent').removeAttr('style');
+								    	document.getElementById('qr_cotent_recover').removeChild(document.getElementById('qr_cotent_recover').children[0]);
+								    	document.getElementById('qr_cotent_recover').appendChild(document.getElementById('qr_cotent').cloneNode(true));
+								    }, 500);
+			                	
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                    // console.log(xhr);
+		                }
+		            });
+			});
+
+
+			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd3_form').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
 					e.preventDefault();
 					var param = $(this).serializeArray();
@@ -773,12 +980,12 @@ if(!empty($op)) {
 					 		},
 					 		error: function (xhr, ajaxOptions, thrownError) {
 			                	// console.log('ajax error');
-			                     // console.log(xhr);
+			                 //     console.log(thrownError);
 			                 }
 			             });
 					 }
 					});
-			$('#datetimepicker1').datetimepicker({
+				$('#datetimepicker1').datetimepicker({
 		        	minView: 2,
 		            language:  'zh-TW',
 		            format: 'yyyy-mm-dd',
@@ -795,7 +1002,7 @@ if(!empty($op)) {
 					location.href = "./../";
 				});
 		});
-//產品履歷----------------------------------------------------------
+		//產品履歷----------------------------------------------------------
 			function history(onadd_part_no,onadd_name,onadd_sn){
 				$('#history_title').html(onadd_part_no+" - "+onadd_name+" 苗種履歷");
 				$('#history_modal').modal();
@@ -860,6 +1067,45 @@ if(!empty($op)) {
 				});
 			}
 			//產品履歷----------------------------------------------------------
+			function PrintElem(elem)
+			{
+			    var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+
+			    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+			    mywindow.document.write('</head><body >');
+			    mywindow.document.write('<h1>' + document.title  + '</h1>');
+			    document.getElementById(elem).setAttribute("style", "width: 240px; height: 170px;");
+			    mywindow.document.write(document.getElementById(elem).innerHTML);
+			    mywindow.document.write('</body></html>');
+
+			    mywindow.document.close(); // necessary for IE >= 10
+			    mywindow.focus(); // necessary for IE >= 10*/
+
+			    domtoimage.toBlob(document.getElementById(elem))
+				    .then(function(blob) {
+				      window.saveAs(blob, $('#qr_part_no').html());
+				    });
+			    mywindow.close();
+
+			    return true;
+			}
+
+			function insert(str, index, value) {
+			    return str.substr(0, index) + value + str.substr(index);
+			}
+			function downloadAsImg( el, filename, scale ){
+			    if( scale!=undefined ) var props = {
+			        width: el.clientWidth*scale*1.412,
+			        height: el.clientHeight*scale,
+			        style: {
+			            'transform': 'scale('+scale+')',
+			            'transform-origin': 'top left'
+			        }
+			    }
+			    domtoimage.toBlob( el, props==undefined ? {} : props).then(function (blob) {
+			        window.saveAs(blob, filename==undefined ? 'image.png' : filename);
+			    });
+			}
 	</script>
 </head>
 
@@ -1107,6 +1353,118 @@ if(!empty($op)) {
 		</div>
 		<!--出貨----------------------------------------------------------->
 
+		<!--修改----------------------------------------------------------->
+		<div id="upd-modal3" class="modal upd-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd3_form" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">修改</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd5">
+									<input type="hidden" name="onadd_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">換盆日期&nbsp;</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="datetimepicker3" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>        								
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onadd_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">更新</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
 		<!--苗種履歷----------------------------------------------------------->
 		<div id="history_modal" class="modal upd-modal2" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
@@ -1139,6 +1497,45 @@ if(!empty($op)) {
 			</div>
 		</div>
 		<!--苗種履歷----------------------------------------------------------->
+
+		<!--QR Code產生Modal----------------------------------------------------------->
+		<div id="qr_modal" class="modal upd-modal2" tabindex="-1" role="dialog">
+			<div class="modal-dialog mw-100 w-75">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title" id="history_title">二維條碼</h4>
+						</div>
+						<div class="row" id="qr_container">
+							<div class="row" id="qr_cotent">
+								<div class="col-sm-4" id="qr_sec_cotent">
+									<img id="qr_img" style="margin-left: 20px;padding-left: 10px;" 
+										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/flask/plant_flask.php?">	
+								</div>
+								<div class="col-sm-8" id="qr_sec_cotent2">
+									<br>
+									<div id="qr_part_no" style="font-size: 20px;font-weight:bold;">品號：</div>
+									<div id="qr_part_name" style="font-size: 20px;font-weight:bold;">品名：</div>
+									<div id="qr_plant_date" style="font-size: 20px;font-weight:bold;">下種日期：</div>
+									<div id="qr_part_number" style="font-size: 20px;font-weight:bold;">數量：</div>
+
+								</div>
+							</div>
+							<div id="qr_cotent_recover" >
+								
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button id="qr_download" type="button" class="btn btn-primary qr_download">下載二維條碼</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--QR Code產生Modal----------------------------------------------------------->
 
 		<!-- modal -->
 		<div id="add-modal" class="modal add-modal" tabindex="-1" role="dialog">
@@ -1378,7 +1775,8 @@ if(!empty($op)) {
 	        							echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}
 
-	        						echo '	</div>
+	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'">產生二維條碼</button>&nbsp;
+	        								</div>
 	        							 </td>';
         							echo '</tr>';
         						}
@@ -1420,5 +1818,7 @@ if(!empty($op)) {
         <script src="./../../js1/datatables.responsive.min.js"></script>
         <script src="./../../js1/jquery.toast.min.js"></script>
         <script src="./../../js1/dashboard-alpha.js"></script>
+        <script src="./../../lib/dom-to-image.js"></script>
+        <script src="./../../lib/FileSaver.js"></script>
     </body>
     </html>?>

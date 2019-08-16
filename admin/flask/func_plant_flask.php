@@ -287,6 +287,19 @@ function getSettingBySn($onchba_size) {
 	$conn->close();
 	return $ret_data;
 }
+
+function IsfirtPlant($onadd_sn) {
+	$ret_data = "0";
+	$conn = getDB();
+	$sql="select onadd_sn from onliine_firstplant_data  where onadd_sn = {$onadd_sn} and onfp_status >= 1";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		$ret_data = "1";
+	}
+	$conn->close();
+	return $ret_data;
+}
+
 function getUserByAccount($account) {
 	$ret_data = array();
 	$conn = getDB();
