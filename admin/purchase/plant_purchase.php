@@ -1,6 +1,8 @@
 <?php
 include_once("./func_plant_purchase.php");
-
+// printr(qr_download(8));
+// exit();
+$qr_sn = "";
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
 		1=>"1.7",
@@ -47,43 +49,76 @@ if(!empty($op)) {
 		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//換盆年
 		$onadd_quantity_cha=$test;//換盆月
 		$onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
+		$onproduct_pic_url=GetParam('onproduct_pic_url');//產品圖片
+		$IsUploadImg=IsNewProduct($onadd_part_no,$onadd_part_name);//產品是否已存在
+		if(!empty($onproduct_pic_url))
+			$onproduct_pic_url = ".".$onproduct_pic_url;
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
 		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)){
 			$ret_msg = "*為必填！";
 		} else { 
-			$user = getUserByAccount($onadd_part_no);
-			$onadd_planting_date = str2time($onadd_planting_date);
-			$now = time();
-			$conn = getDB();
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}');";
+			if($IsUploadImg == "0"){
+				$user = getUserByAccount($onadd_part_no);
+				$onadd_planting_date = str2time($onadd_planting_date);
+				$now = time();
+				$conn = getDB();
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}');";
 
-				$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st) " .
-				"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '1');";
+					$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st,onproduct_pic_url) " .
+					"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '1', '{$onproduct_pic_url}');";
 
-				
-
-				if($conn->query($sql)) {
-					$onadd_id = mysqli_insert_id($conn);
-					if(IsProductExit($onadd_part_no,$onadd_part_name)=="0"){
-						$conn->query($sql2);
+					if($conn->query($sql)) {
+						$onadd_id = mysqli_insert_id($conn);
+						if(IsProductExit($onadd_part_no,$onadd_part_name)=="0"){
+							$conn->query($sql2);
+						}
+						// if($conn->query($sql2)){
+							$sql3 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_quantity}','{$onadd_part_no}','{$onadd_id}');";
+							if($conn->query($sql3)){
+								$ret_msg = "新增成功！";
+							}
+							else{
+								$ret_msg = "新增失敗！";
+							}
+						// }
+						// else
+						// 	$ret_msg = "新增失敗！";
+					} else {
+						$ret_msg = "新增失敗！";
 					}
-					// if($conn->query($sql2)){
-						$sql3 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_quantity}','{$onadd_part_no}','{$onadd_id}');";
-						if($conn->query($sql3)){
-							$ret_msg = "新增成功！";
-						}
-						else{
-							$ret_msg = "新增失敗A！";
-						}
-					// }
-					// else
-					// 	$ret_msg = "新增失敗！";
-				} else {
-					$ret_msg = "新增失敗B！".$sql;
-				}
-			$conn->close();
+				$conn->close();
+			}
+			else{
+				$user = getUserByAccount($onadd_part_no);
+				$onadd_planting_date = str2time($onadd_planting_date);
+				$now = time();
+				$conn = getDB();
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}');";
+
+					$sql2 = "UPDATE onliine_product_data SET onproduct_part_no = '{$onadd_part_no}', onproduct_part_name = '{$onadd_part_name}', onproduct_color = '{$onadd_color}', onproduct_size = '{$onadd_size}', onproduct_height = '{$onadd_height}', onproduct_pot_size = '{$onadd_pot_size}', onproduct_supplier = '{$onadd_supplier}', onproduct_growing = '{$onadd_growing}', onproduct_isbought = '{$onadd_isbought}',onproduct_pic_url = '{$onproduct_pic_url}' 
+					    WHERE onproduct_part_no like '{$onadd_part_no}' and onproduct_part_name like '{$onadd_part_name}';";
+
+					if($conn->query($sql)) {
+						$onadd_id = mysqli_insert_id($conn);						
+							$conn->query($sql2);
+							$sql3 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_quantity}','{$onadd_part_no}','{$onadd_id}');";
+							if($conn->query($sql3)){
+								$ret_msg = "新增成功！";
+							}
+							else{
+								$ret_msg = "新增失敗！";
+							}
+						// }
+						// else
+						// 	$ret_msg = "新增失敗！";
+					} else {
+						$ret_msg = "新增失敗！";
+					}
+				$conn->close();
+			}
 		}
 		break;
 
@@ -140,6 +175,18 @@ if(!empty($op)) {
 
 		break;
 
+		case 'download':
+		$onadd_sn=GetParam('onadd_sn');
+		$ret_data = array();
+		if(!empty($onadd_sn)){
+			$ret_code = 1;
+			$ret_data = qr_download($onadd_sn);
+		} else {
+			$ret_code = 0;
+		}
+
+		break;
+
 		case 'upd3':
 		$onproduct_sn=GetParam('onproduct_sn');//sn
 		$onproduct_part_no=GetParam('onproduct_part_no');//品號
@@ -170,7 +217,7 @@ if(!empty($op)) {
 					$ret_msg = "更新成功！";
 
 				} else {
-					$ret_msg = "更新失敗！".$sql;
+					$ret_msg = "更新失敗！";
 				}
 			$conn->close();
 		}
@@ -211,7 +258,7 @@ if(!empty($op)) {
 				}
 			}
 		} else {
-			$ret_msg = "更新失敗！".$sql;
+			$ret_msg = "更新失敗！";
 		}
 		$conn->close();
 		
@@ -220,6 +267,14 @@ if(!empty($op)) {
 		//換盆
 		case 'upd':
 		$onadd_sn=GetParam('onadd_sn');
+		$onadd_newpot_sn=GetParam('onadd_newpot_sn');
+		$sn = "0";
+		if($onadd_newpot_sn == "0"){
+			$sn = $onadd_sn;
+		}
+		else{
+			$sn = $onadd_newpot_sn;
+		}
 		$onadd_add_date=GetParam('onadd_add_date');//建立日期
 		$onadd_mod_date=GetParam('onadd_mod_date');//修改日期
 		$onadd_part_no=GetParam('onadd_part_no');//品號
@@ -250,19 +305,42 @@ if(!empty($op)) {
 			$now = time();
 			$conn = getDB();
 			if($onadd_status != -1) {
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}');";
+				// $sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle) " .
+				// "VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}');";
+
+				// if($conn->query($sql)){
+				// 	$onadd_id = mysqli_insert_id($conn);
+
+				// 	// //新增第一筆下種數量紀錄
+				// 	$sql2 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_replant_number}','{$onadd_part_no}','{$onadd_id}');";
+				// 	//更新原本產品數量 (扣除換盆)
+				// 	$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
+				// 	//更新原本產品的第一筆下種數量(扣除換盆)
+				// 	$sql3 = "UPDATE onliine_firstplant_data SET onfp_plant_amount='{$first_n_changed}' WHERE onadd_sn='{$onadd_sn}'";
+				// 	if($conn->query($sql2) && $conn->query($sql1) && $conn->query($sql3)){
+				// 		$ret_msg = "換盆成功！";
+				// 	}
+				// 	else{
+				// 		$ret_msg = "換盆失敗！";
+				// 	}
+				// }				
+				// if($onadd_quantity_cha123 == 0){
+				// 	$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
+				// 	$conn->query($sql);
+				// }	
+				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_newpot_sn) " .
+				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$sn}');";
 
 				if($conn->query($sql)){
 					$onadd_id = mysqli_insert_id($conn);
 
-					// //新增第一筆下種數量紀錄
-					$sql2 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_replant_number}','{$onadd_part_no}','{$onadd_id}');";
+					//新增第一筆下種數量紀錄
+					// $sql2 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_replant_number}','{$onadd_part_no}','{$onadd_id}');";
 					//更新原本產品數量 (扣除換盆)
 					$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
 					//更新原本產品的第一筆下種數量(扣除換盆)
-					$sql3 = "UPDATE onliine_firstplant_data SET onfp_plant_amount='{$first_n_changed}' WHERE onadd_sn='{$onadd_sn}'";
-					if($conn->query($sql2) && $conn->query($sql1) && $conn->query($sql3)){
+					// $sql3 = "UPDATE onliine_firstplant_data SET onfp_plant_amount='{$first_n_changed}' WHERE onadd_sn='{$onadd_sn}'";
+					if($conn->query($sql1)){
 						$ret_msg = "換盆成功！";
 					}
 					else{
@@ -272,7 +350,7 @@ if(!empty($op)) {
 				if($onadd_quantity_cha123 == 0){
 					$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
 					$conn->query($sql);
-				}			
+				}		
 			}
 			else if($onadd_status == -1){
 				$ret_msg = "錯誤！換盆數量高於原下種數量！";
@@ -287,7 +365,13 @@ if(!empty($op)) {
 		//汰除---------------------------------------------
 		case 'upd1':
 		$onadd_sn=GetParam('onadd_sn');
-		$list = getUserBySn($onadd_sn);
+		$onadd_newpot_sn=GetParam('onadd_newpot_sn');
+		if($onadd_newpot_sn == "0"){
+			$list = getUserBySn($onadd_sn);
+		}
+		else{
+			$list = getUserBySn($onadd_newpot_sn);
+		}
 		$onadd_part_no = $list['onadd_part_no'];
 		$onadd_part_name = $list['onadd_part_name'];
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
@@ -310,7 +394,7 @@ if(!empty($op)) {
 			$conn = getDB();
 			$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_del123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
 			$sql = "INSERT INTO online_elimination_data (onelda_add_date, onelda_mod_date, onelda_quantity, onelda_reason, onadd_sn, onadd_part_no, onadd_part_name) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_quantity_del}', '{$onelda_reason}', '{$onadd_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
+				"VALUES ('{$now}', '{$now}', '{$onadd_quantity_del}', '{$onelda_reason}', '{$onadd_newpot_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
 			if($conn->query($sql1) && $conn->query($sql)) {
 				$ret_msg = "汰除完成！";
 				if($onadd_quantity_del123 == 0){
@@ -547,6 +631,34 @@ if(!empty($op)) {
 		$(document).ready(function() {
 			var all_part_no = null;
 			var all_part_name = null;
+			var all_produce_img = null;
+
+
+		    $("body").on("change", ".upl", function (){
+		        preview(this);
+		        var files = $("#myFile").get(0).files;   		     
+		        var formData = new FormData();   
+    			formData.append("myFile", files[0]); 
+    			formData.append("onproduct_type", "4"); 
+    			$.ajax({   
+			        url: './upload_image.php',   
+			        data: formData,    
+			        dataType: "json",   
+			        type: "POST",   
+			        cache: false,   
+			        contentType: false,   
+			        processData: false,   
+			        error: function(xhr) {   
+			        },   
+			        success: function(json) {   
+			            
+			        },   
+			        complete: function(json){
+			        	$('#img_newName').html(json.responseText);   
+			        }   
+			    });  
+		    });
+
 			<?php
 			//	init search parm
 			// print "$('#search [name=onadd_status] option[value={$onadd_status}]').prop('selected','selected');";
@@ -598,8 +710,11 @@ if(!empty($op)) {
 							},
 							success: function(ret) {
 									var data = ret.data;
-									// console.log(data);
-							        if(ret.code==1) {
+									console.log(data);
+							        if(ret.code==1) {							        	
+							        	document.getElementById('IsUploadImg').value= (data.onproduct_pic_url != "") ? "1" : "0";
+							        	$('#img_newName').html((data.onproduct_pic_url != null) ? data.onproduct_pic_url : "");
+							        	document.getElementById('preview').setAttribute("src",((data.onproduct_pic_url != null) ? data.onproduct_pic_url : ""));
 							        	document.getElementById('dropdown_onadd_part_name').value = (data.onproduct_part_name != null) ? data.onproduct_part_name : "";
 							        	document.getElementById('dropdown_onadd_color').value = (data.onproduct_color!= null) ? data.onproduct_color : "";
 							        	document.getElementById('dropdown_onadd_size').value = (data.onproduct_size != null) ? data.onproduct_size : "";
@@ -725,8 +840,14 @@ if(!empty($op)) {
 					success: function(ret) {
 			                // console.log(ret);
 			                if(ret.code==1) {
-			                	var d = ret.data;			                	
+			                	var d = ret.data;		
 			                	$('#upd_form input[name=onadd_sn]').val(d.onadd_sn);
+			                	if(d.onadd_newpot_sn == 0){	                	
+				                	$('#upd_form input[name=onadd_newpot_sn]').val(d.onadd_sn);
+				                }
+				                else{
+				                	$('#upd_form input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
+				                }
 			                	$('#upd_form input[name=onadd_part_no]').val(d.onadd_part_no);
 			                	$('#upd_form input[name=onadd_part_name]').val(d.onadd_part_name);
 			                	$('#upd_form input[name=onadd_color]').val(d.onadd_color);
@@ -771,6 +892,13 @@ if(!empty($op)) {
 			                	$('#upd_form1 input[name=onadd_sn]').val(d.onadd_sn);
 			                	$('#upd_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
 			                	$('#upd_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
+			                	if(d.onadd_newpot_sn == "0"){
+				                	$('#upd_form1 input[name=onadd_newpot_sn]').val(d.onadd_sn);
+				                }
+				                else{
+				                	$('#upd_form1 input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
+				                }
+			                	
 			                }
 			            },
 			            error: function (xhr, ajaxOptions, thrownError) {
@@ -890,6 +1018,7 @@ if(!empty($op)) {
 			//產生QR Code-------------------------------------------------------
 			$('button.qr').on('click', function(){
 				$('#qr_modal').modal();
+				var qr_sn = $(this).data('qr_sn');
 				$.ajax({
 					url: './plant_purchase.php',
 					type: 'post',
@@ -905,16 +1034,22 @@ if(!empty($op)) {
 			                // console.log(ret);
 			                if(ret.code==1) {
 			                	var d = ret.data;
-			                	// console.log("log="+document.getElementById('qr_part_no').html);
-			                	$('#qr_download').attr('data-onadd_sn',d.onadd_sn);
+			                	console.log(d.img_url);
+			                	$('#temp_onadd_sn').val(d.onadd_sn);
+			                	if(d.img_url != "")
+			                		$('#qr_product_img').attr("src",d.img_url);
+			                	else
+			                		$('#qr_product_img').attr("src","./images/nopic.png");
+			                	$('#qr_sn').html("產品編號："+qr_sn);
 			                	$('#qr_part_no').html("品號："+d.onadd_part_no);
 			                	$('#qr_part_name').html("品名："+d.onadd_part_name);
 			                	$('#qr_plant_date').html("下種日期："+d.onadd_planting_date);
 			                	$('#qr_part_number').html("數量："+d.onadd_quantity);
-			                	var src = $('#qr_img').attr('src');
-			                	$('#qr_img').attr('src',src+"onadd_part_no="+d.onadd_sn);
-			                	document.getElementById('qr_cotent_recover').appendChild(document.getElementById('qr_cotent').cloneNode(true));
-			                	$('#qr_cotent_recover').attr('style','display:none');
+								$('#qr_location').html("位置："+d.onadd_location);
+			                	var src = $('#qr_img_example').attr('src');
+			                	$('#qr_img').attr('src',src+"onadd_sn="+d.onadd_sn);
+			                	// document.getElementById('qr_cotent_recover').appendChild(document.getElementById('qr_cotent').cloneNode(true));
+			                	// $('#qr_cotent_recover').attr('style','display:none');
 			                }
 			            },
 			            error: function (xhr, ajaxOptions, thrownError) {
@@ -926,11 +1061,12 @@ if(!empty($op)) {
 			//下載QR Code-------------------------------------------------------
 			$('button.qr_download').on('click', function(){
 				$('#qr_modal').modal();
+				var onadd_sn = $('#temp_onadd_sn').val();
 				$.ajax({
 					url: './plant_purchase.php',
 					type: 'post',
 					dataType: 'json',
-					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					data: {op:"download", onadd_sn:onadd_sn},
 					beforeSend: function(msg) {
 						$("#ajax_loading").show();
 					},
@@ -938,31 +1074,22 @@ if(!empty($op)) {
 						$("#ajax_loading").hide();
 					},
 					success: function(ret) {
-			                // console.log(ret);
+			                console.log(onadd_sn);
 			                if(ret.code==1) {
-			                	
-			                	$('#qr_img').attr('style','margin-left: 0px;padding-left: 0px;width: 85px;padding-right: 0px;border-top-width: 20px;padding-top: 20px;');
-			                	$('#qr_sec_cotent').attr('style','padding-left: 25px;');
-			                	$('#qr_sec_cotent2').attr('style','padding-left: 25px;');
-			                	$('#qr_part_no').attr('style','font-size: 14px;font-weight:bold;');
-			                	$('#qr_part_name').attr('style','font-size: 14px;font-weight:bold;');
-			                	$('#qr_plant_date').attr('style','font-size: 14px;font-weight:bold;');
-			                	$('#qr_part_number').attr('style','font-size: 14px;font-weight:bold;');
-			                	PrintElem('qr_cotent');
+			                	$('#qr_sticker_img').removeAttr("src");
+			                	$('#qr_sticker_img').attr("src",ret.data['img_url']);
+								$('#qr_sticker_sn').html($('#qr_sn').html());
+								$('#qr_sticker_part_no').html($('#qr_part_no').html());
+								$('#qr_sticker_part_name').html($('#qr_part_name').html());
+								$('#qr_sticker_date').html($('#qr_plant_date').html());
+								$('#qr_sticker_location').html($('#qr_location').html());
+								$('#qr_sticker_qrcode').attr("src",($('#qr_img').attr("src")));
+			                	PrintElem('qr_sticker');
 
 			                	setTimeout(
 								    function() {		
-								    	var qr = document.getElementById('qr_cotent_recover').children[0].children[0];					
-								    	var data = document.getElementById('qr_cotent_recover').children[0].children[1];    	
-								    	$('#qr_cotent').empty();
-								    	$('#qr_cotent').append(qr);
-								    	$('#qr_cotent').append(data);
-								    	// $('#qr_cotent').html($('#qr_cotent').html()+data.children[1]);
-								    	$('#qr_cotent').removeAttr('style');
-								    	document.getElementById('qr_cotent_recover').removeChild(document.getElementById('qr_cotent_recover').children[0]);
-								    	document.getElementById('qr_cotent_recover').appendChild(document.getElementById('qr_cotent').cloneNode(true));
-								    }, 500);
-			                	
+								    	document.getElementById('qr_sticker').setAttribute("style", "width: 410px; height: 720px;display:none;");
+								    }, 500);			                	
 			                }
 			            },
 			            error: function (xhr, ajaxOptions, thrownError) {
@@ -974,14 +1101,14 @@ if(!empty($op)) {
 
 			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd3_form').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
+					// var files = $("#myFile").get(0).files;   
 					e.preventDefault();
 					var param = $(this).serializeArray();
+					var onproduct_pic_url = {name:"onproduct_pic_url",value:$('#img_newName').html().substring(1,$('#img_newName').html().length)};
+					param.push(onproduct_pic_url);
 					// console.log(param);
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
-
-					 	// console.table(param);
-
 					 	$.ajax({
 					 		url: './plant_purchase.php',
 					 		type: 'post',
@@ -994,7 +1121,7 @@ if(!empty($op)) {
 					 			$("#ajax_loading").hide();
 					 		},
 					 		success: function(ret) {
-					 			alert_msg(ret.msg);
+					 			alert_msg(ret.msg);					            
 					 		},
 					 		error: function (xhr, ajaxOptions, thrownError) {
 			                	// console.log('ajax error');
@@ -1003,13 +1130,12 @@ if(!empty($op)) {
 			             });
 					 }
 					});
-			$('#datetimepicker1').datetimepicker({
+				$('#datetimepicker1').datetimepicker({
 		        	minView: 2,
 		            language:  'zh-TW',
 		            format: 'yyyy-mm-dd',
 		            useCurrent: false
 		        });
-		        
 		        $('#datetimepicker2').datetimepicker({
 		        	minView: 2,
 		            language:  'zh-TW',
@@ -1099,7 +1225,7 @@ if(!empty($op)) {
 			    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
 			    mywindow.document.write('</head><body >');
 			    mywindow.document.write('<h1>' + document.title  + '</h1>');
-			    document.getElementById(elem).setAttribute("style", "width: 240px; height: 170px;");
+			    document.getElementById(elem).setAttribute("style", "width: 410px; height: 720px;");
 			    mywindow.document.write(document.getElementById(elem).innerHTML);
 			    mywindow.document.write('</body></html>');
 
@@ -1111,7 +1237,6 @@ if(!empty($op)) {
 				      window.saveAs(blob, $('#qr_part_no').html());
 				    });
 			    mywindow.close();
-
 			    return true;
 			}
 
@@ -1132,6 +1257,50 @@ if(!empty($op)) {
 			    });
 			}
 
+			/**
+			 * 預覽圖
+			 * @param   input 輸入 input[type=file] 的 this
+			 */
+			function preview(input) {
+			 
+			    // 若有選取檔案
+			    if (input.files && input.files[0]) {
+			 
+			        // 建立一個物件，使用 Web APIs 的檔案讀取器(FileReader 物件) 來讀取使用者選取電腦中的檔案
+			        var reader = new FileReader();
+			 
+			        // 事先定義好，當讀取成功後會觸發的事情
+			        reader.onload = function (e) {
+			            
+			            console.log(e);
+			 
+			            // 這裡看到的 e.target.result 物件，是使用者的檔案被 FileReader 轉換成 base64 的字串格式，
+			            // 在這裡我們選取圖檔，所以轉換出來的，會是如 『data:image/jpeg;base64,.....』這樣的字串樣式。
+			            // 我們用它當作圖片路徑就對了。
+			            $('.preview').attr('src', e.target.result);
+			 
+			            // 檔案大小，把 Bytes 轉換為 KB
+			            var KB = format_float(e.total / 1024, 2);
+			            $('.size').text("檔案大小：" + KB + " KB");
+			        }
+			 
+			        // 因為上面定義好讀取成功的事情，所以這裡可以放心讀取檔案
+			        reader.readAsDataURL(input.files[0]);
+			    }
+			}
+ 
+			/**
+			 * 格式化
+			 * @param   num 要轉換的數字
+			 * @param   pos 指定小數第幾位做四捨五入
+			 */
+			function format_float(num, pos)
+			{
+			    var size = Math.pow(10, pos);
+			    return Math.round(num * size) / size;
+			}
+ 
+
 	</script>
 </head>
 
@@ -1139,9 +1308,7 @@ if(!empty($op)) {
 	<?php include('./../htmlModule/nav.php');?>
 	<!--main content start-->
 	<section class="main-content">
-
-
-
+		
 		<!--page header start-->
 		<div class="page-header">
 			<div class="row">
@@ -1164,6 +1331,7 @@ if(!empty($op)) {
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="upd">
 									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_newpot_sn">
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -1386,6 +1554,7 @@ if(!empty($op)) {
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="upd1">
 									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_newpot_sn">
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -1532,17 +1701,34 @@ if(!empty($op)) {
 						</div>
 						<div class="row" id="qr_container">
 							<div class="row" id="qr_cotent">
-								<div class="col-sm-4" id="qr_sec_cotent">
+								<div class="col-sm-8" id="qr_sec_cotent">
+									<!-- <input type="hidden" id="temp_onadd_sn">
+									<img id="qr_img_example" style="margin-left: 20px;padding-left: 10px;display:none;" 
+										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">
 									<img id="qr_img" style="margin-left: 20px;padding-left: 10px;" 
-										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">	
+										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">	 -->
 								</div>
-								<div class="col-sm-8" id="qr_sec_cotent2">
-									<br>
+								<div class="col-md-8" id="qr_sec_cotent2" style="border-left-width: 20px; margin-left: 30px;">
+<!-- 									<div id="qr_sn" style="font-size: 20px;font-weight:bold;">產品編號：</div>
 									<div id="qr_part_no" style="font-size: 20px;font-weight:bold;">品號：</div>
 									<div id="qr_part_name" style="font-size: 20px;font-weight:bold;">品名：</div>
 									<div id="qr_plant_date" style="font-size: 20px;font-weight:bold;">下種日期：</div>
-									<div id="qr_part_number" style="font-size: 20px;font-weight:bold;">數量：</div>
-
+									<div id="qr_location" style="font-size: 20px;font-weight:bold;">位置：</div>
+									<div id="qr_part_number" style="font-size: 20px;font-weight:bold;">數量：</div>		
+									<img id="qr_sticker_img"style="width: 400px;height: 280px;" src=""> -->
+									<img id="qr_product_img"style="width: 565px;height: 392px;margin-top: 15px;" src="">
+									<div id="qr_sn" style="margin-top: 5px;font-size: 20px;"></div>
+									<div id="qr_part_no" style="font-size: 20px;"></div>
+									<div id="qr_part_name" style="font-size: 20px;"></div>
+									<div id="qr_plant_date" style="font-size: 20px;"></div>
+									<div id="qr_location" style="font-size: 20px;"></div>								
+								</div>
+								<div class="col-sm-8" id="qr_sec_cotent">
+									<input type="hidden" id="temp_onadd_sn">
+									<img id="qr_img_example" style="margin-left: 20px;padding-left: 10px;display:none;" 
+										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">
+									<img id="qr_img" style="margin-left: 0px;padding-left: 430px;" 
+										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">	
 								</div>
 							</div>
 							<div id="qr_cotent_recover" >
@@ -1558,7 +1744,7 @@ if(!empty($op)) {
 				</div>
 			</div>
 		</div>
-		<!--QR Code產生Modal----------------------------------------------------------->
+		<!--QR Code產生Modal----------------------------------------------------------->		
 
 		<!-- modal -->
 		<div id="add-modal" class="modal add-modal" tabindex="-1" role="dialog">
@@ -1573,6 +1759,18 @@ if(!empty($op)) {
 							<div class="row">
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="add">
+									<input type="hidden" id="IsUploadImg" value="">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">產品圖片</label>
+										<div class="col-sm-10">
+											<div style="display: none;" id="img_newName"></div>
+										    <input type="file" class="upl" id="myFile" name="myFile" accept="image/jpeg,image/jpg,image/gif,image/png">
+
+										    <img class="preview" id="preview" style="max-width: 500px; max-height: 500px;">
+										    <div class="size" id="preview_size"></div>
+										    
+									    </div>
+									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">苗種來源<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -1667,17 +1865,7 @@ if(!empty($op)) {
 											</select>
 										</div>
 									</div>
-									<!-- <div class="form-group">
-										<label class="col-sm-2 control-label">產品圖片</label>
-										<div class="col-sm-10">
-											<input type="hidden" name="MAX_FILE_SIZE" value="2097152">
-										    <input type="hidden" id="onproduct_sn" name="onproduct_sn" value="37">
-										    <input type="hidden" id="onproduct_type" name="onproduct_type" value="1">
-										    <input type="hidden" id="parameters" name="parameters" value="plant_purchase_details.php">
-										    
-										    <input type="file" name="myFile" accept="image/jpeg,image/jpg,image/gif,image/png">
-									    </div>
-									</div> -->
+
 				
 								</div>
 							</div>
@@ -1691,6 +1879,25 @@ if(!empty($op)) {
 				</div>
 			</div>
 		</div>
+
+		<!--圖片上傳Modal----------------------------------------------------------->
+		<div id="upload_img_modal" class="modal upd-modal2" tabindex="-1" role="dialog">
+			<div class="modal-dialog mw-100 w-75">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<h4 class="modal-title" id="history_title">提示視窗！</h4>							
+						</div>		
+						<div style="text-align: center;font-size: 15px">確認上傳此圖片嗎？</div>				
+						<div class="modal-footer">
+							<button id="upload_img_yes" type="button" class="btn btn-primary">確認</button>
+							<button id="upload_img_no" type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--圖片上傳Modal----------------------------------------------------------->
 
 		<!-- container -->
 		<div class="container-fluid">
@@ -1729,6 +1936,18 @@ if(!empty($op)) {
 						</form>
 					</div>
 
+					<div id="qr_sticker" style="width: 410px; height: 720px;text-align:center;display:none;">
+						<img id="qr_sticker_img"style="width: 400px;height: 280px;" src="">
+						<div id="qr_sticker_sn" style="text-align:left;font-size: 30px;height: 40px;margin-top: 10px;">產品編號:2019-17</div>
+						<div id="qr_sticker_part_no" style="text-align:left;font-size: 30px;height: 40px;">品號:P1015</div>
+						<div id="qr_sticker_part_name" style="text-align:left;font-size: 30px;height: 40px;">品名:維維安Vivian (2號)</div>
+						<div id="qr_sticker_date" style="text-align:left;font-size: 30px;height: 40px;">下種日期:2019-08-01</div>
+						<div id="qr_sticker_location" style="text-align:left;font-size: 30px;height: 40px;">位置:A5</div>
+						<div style="text-align:right;">
+							<img id="qr_sticker_qrcode" style="width: 150px;" src="">
+						</div>	
+					</div>
+
 					<!-- content -->
 					<table class="table table-striped table-hover table-condensed tablesorter">
 						<thead>
@@ -1750,12 +1969,26 @@ if(!empty($op)) {
 						</thead>
 						<tbody>
 							<?php
-							foreach ($product_list as $row) {
+							foreach ($product_list as $row) {								
 								echo '<tr>';
 									if($row['onadd_part_no'] == 0){
-        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+										if($row['onadd_newpot_sn'] == 0){
+	        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+	        							}
+	        							else{
+	        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
+	        							}
 									}else{
-										echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+										if($row['onadd_newpot_sn'] == 0){
+											echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+										}
+										else{
+											echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
+										}
 									}
         							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
@@ -1777,9 +2010,16 @@ if(!empty($op)) {
 
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
 
-        							$first_plant_amount = getProductFirstQty($row['onadd_sn']);//第一次下種時間
-        							//育成率 (公式 (數量-汰除)/數量)        				
-        							$incubation_rate = ($first_plant_amount-getEliQtyBySn($row['onadd_sn']))/$first_plant_amount;
+        							//育成率 (公式 (數量-汰除)/數量)      
+        							if($row['onadd_newpot_sn'] == 0){
+	        							$first_plant_amount = getProductFirstQty($row['onadd_sn']);//第一次下種時間
+	        							$incubation_rate = getProductAllNowQty($row['onadd_sn'])/$first_plant_amount;
+	        						}
+	        						else{
+	        							$first_plant_amount = getProductFirstQty($row['onadd_newpot_sn']);//第一次下種時間
+	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
+	        						}		
+	        						// printr($first_plant_amount);
         							echo '<td>'.number_format(($incubation_rate*100),2).'%</td>'; 		
         							echo '<td>'.$row['onadd_location'].'</td>'; 				
         							$note = (!empty($row['onadd_quantity_cha'])) ? '<td>換盆</td>' : '<td></td>';
@@ -1799,7 +2039,7 @@ if(!empty($op)) {
 	        							echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}
 
-	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'">產生二維條碼</button>&nbsp;
+	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
 	        								</div>
 	        							 </td>';
         							echo '</tr>';
@@ -1826,6 +2066,7 @@ if(!empty($op)) {
         <!--Common plugins-->
         <!-- <script src="./../../js1/jquery.min.js"></script> -->
         <!-- <script src="./../../js1/bootstrap.min.js"></script> -->
+        <script src="./../../js1/bootstrap-datepicker.js"></script>
         <script src="./../../js1/pace.min.js"></script>
         <script src="./../../js1/jasny-bootstrap.min.js"></script>
         <script src="./../../js1/jquery.slimscroll.min.js"></script>

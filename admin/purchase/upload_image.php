@@ -28,6 +28,18 @@ switch ($_POST['onproduct_type']) {
 		//重定向瀏覽器 
 		header("Location: ".WT_SERVER."/admin/purchase/".$path); 
 		break;
+
+	case '3':
+		$path = $_POST['parameters'];
+		$newName = uploadFile($fileInfo);
+		add_image_url($newName,$_POST['onproduct_sn']);
+		// //重定向瀏覽器 
+		// header("Location: ".WT_SERVER."/admin/purchase/".$path); 
+
+	case '4':
+		$newName = uploadFile($fileInfo);
+		echo $newName;
+		break;
 }
 
 

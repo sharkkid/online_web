@@ -833,7 +833,7 @@ if(!empty($op)) {
 								<th>下種日期</th>
 								<th>下種數量</th>
 								<!-- <th>預計成長大小</th> -->
-								<th>下階段換盆　 |　下種日期</th>
+								<th>下階段換盆</th>
 								<!-- <th>總下種週期</th>       							 -->
 								<th>供應商</th>
 								<th>操作</th>
@@ -857,7 +857,7 @@ if(!empty($op)) {
         							echo '<td>'.date('Y-m-d',str2time($row['onadd_planting_date'])).'</td>';
         							}
         							echo '<td>'.$row['onadd_quantity'].'</td>';//品名
-        							echo '<td>'.$row['expected_date'].'　|　'.$row['onadd_planting_date'].'</td>';
+        							echo '<td>'.$row['expected_date'].'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							// echo '<td>'.$onadd_cycle.'月'.'</td>';
         							echo '<td>'.$row['onadd_supplier'].'</td>';//品名

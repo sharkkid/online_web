@@ -76,7 +76,11 @@ function getUser($where='', $offset=30, $rows=0) {
 function getWorkListByMonth($where='', $offset=30, $rows=0) {
 	$list_setting1 = getSettingBySn(1.7);
 	$list_setting2 = getSettingBySn(2.5);
-	$list_setting5 = getSettingBySn(3.5);
+	$list_setting3 = getSettingBySn(2.8);
+	$list_setting4 = getSettingBySn(3.5);
+	$list_setting5 = getSettingBySn(3.0);
+	$list_setting6 = getSettingBySn(3.5);
+	$list_setting7 = getSettingBySn(3.6);
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
@@ -94,12 +98,24 @@ function getWorkListByMonth($where='', $offset=30, $rows=0) {
         		case 2:
         			$onchba_cycle = $list_setting2['onchba_cycle'];
         			break;
+        		case 3:
+        			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			break;
+        		case 4:
+        			$onchba_cycle = $list_setting1['onchba_cycle'];
+        			break;
         		case 5:
+        			$onchba_cycle = $list_setting2['onchba_cycle'];
+        			break;
+        		case 6:
+        			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			break;
+        		case 7:
         			$onchba_cycle = $list_setting5['onchba_cycle'];
         			break;
         	}
         	if($row['onadd_plant_st']==2){
-        		$onchba_cycle=1;
+        		// $onchba_cycle=1;
         		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         	}else{
         		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
@@ -138,14 +154,18 @@ function getUseradd($where='', $offset=30, $rows=0) {
 function getUserQty($where='') {
 	$list_setting1 = getSettingBySn(1.7);
 	$list_setting2 = getSettingBySn(2.5);
-	$list_setting5 = getSettingBySn(3.5);
+	$list_setting3 = getSettingBySn(2.8);
+	$list_setting4 = getSettingBySn(3.5);
+	$list_setting5 = getSettingBySn(3.0);
+	$list_setting6 = getSettingBySn(3.5);
+	$list_setting7 = getSettingBySn(3.6);
 	$ret_data = 0;
 	$conn = getDB();
 	if(empty($where))
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
 	else
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1 and ( $where )";
-
+	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -156,16 +176,29 @@ function getUserQty($where='') {
         		case 2:
         			$onchba_cycle = $list_setting2['onchba_cycle'];
         			break;
+        		case 3:
+        			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			break;
+        		case 4:
+        			$onchba_cycle = $list_setting1['onchba_cycle'];
+        			break;
         		case 5:
+        			$onchba_cycle = $list_setting2['onchba_cycle'];
+        			break;
+        		case 6:
+        			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			break;
+        		case 7:
         			$onchba_cycle = $list_setting5['onchba_cycle'];
         			break;
         	}
+        	// echo $onchba_cycle.",";
         	if($row['onadd_plant_st']==2){
-        		$onchba_cycle=1;
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        		$test = date("Y/m/d", strtotime("+".$onchba_cycle." days", $row['onadd_planting_date']));
         	}else{
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
+        		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         	}
+
         	if(date('M',strtotime($test)) == date('M'))
         		$ret_data++;
 			// $ret_data = $row['count(*)'];

@@ -67,6 +67,54 @@ function getAllProductsNo() {
 	return $ret_data;
 }
 
+function qr_download($onadd_sn) {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select * from onliine_add_data where onadd_sn='{$onadd_sn}'";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		if ($row = $qresult->fetch_assoc()) {
+			$ret_data = $row;
+			$ret_data['onadd_planting_date'] = date('Y-m-d',$ret_data['onadd_planting_date']);
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	$img_data = getProductImg($ret_data['onadd_part_no'],$ret_data['onadd_part_name']);
+	if(!empty($img_data)){
+		if($ret_data['onadd_plant_st'] == "1")
+			$ret_data['img_url'] = $img_data;
+		else
+			$ret_data['img_url'] = "./../../admin/purchase/".substr($img_data, 2);
+	}
+	else{
+		if($ret_data['onadd_plant_st'] == "1")
+			$ret_data['img_url'] = "./images/nopic.png";
+		else
+			$ret_data['img_url'] = "./../../admin/flask/images/nopic.png";
+	}
+	
+
+	return $ret_data;
+}
+
+function getProductImg($onadd_part_no,$onadd_part_name) {
+	$ret_data = 0;
+	$conn = getDB();
+	$sql="select DISTINCT(onproduct_pic_url) from onliine_product_data where onproduct_status>=0 and onproduct_part_no like '$onadd_part_no' and onproduct_part_name like '$onadd_part_name'";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['onproduct_pic_url'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
 function getProductByPartNo($onproduct_part_no) {
 	$ret_data = array();
 	$conn = getDB();
@@ -150,10 +198,10 @@ function getProductFirstQty($onadd_sn) {
 
 //flag 0:下種 1:出貨 2:汰除 3:換盆
 function getHistory_List($onadd_sn) {
-	$ret_data = array();
+$ret_data = array();
 	$conn = getDB();
 
-	$sql="select onadd_add_date as add_date,onadd_planting_date as mod_date,onadd_quantity as quantity,onadd_quantity_cha from onliine_add_data where onadd_status>=0 and onadd_sn like '$onadd_sn' order by onadd_add_date";
+	$sql="select onadd_add_date as add_date,onadd_planting_date as mod_date,onadd_quantity as quantity,onadd_quantity_cha from onliine_add_data where onadd_status>=0 and onadd_sn like '$onadd_sn' or onadd_newpot_sn like '$onadd_sn' order by onadd_add_date";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 
@@ -170,7 +218,7 @@ function getHistory_List($onadd_sn) {
 		$qresult->free();
 	}
 
-	$sql="select onshda_add_date as add_date,onshda_mod_date as mod_date,onshda_quantity as quantity from online_shipment_data where onshda_status>=0 and onadd_sn like '$onadd_sn'";
+	$sql="select onshda_add_date as add_date,onshda_mod_date as mod_date,onshda_quantity as quantity from online_shipment_data where onshda_status>=0 and onadd_sn like '$onadd_sn' or onadd_newpot_sn like '$onadd_sn'";
 
 	$qresult = $conn->query($sql);
 	
@@ -260,15 +308,30 @@ function getProductsQty($where='') {
 function getUserBySn($onadd_sn) {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from onliine_add_data where onadd_sn='{$onadd_sn}'";
+	$sql="select * from onliine_add_data where onadd_sn='{$onadd_sn}' and onadd_plant_st = 2";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		if ($row = $qresult->fetch_assoc()) {
+			$row['onadd_planting_date'] = date("Y-m-d",$row['onadd_planting_date']);
 			$ret_data = $row;
 		}
 		$qresult->free();
 	}
+
+	$sql="SELECT * FROM `onliine_product_data` where onproduct_part_no='".$ret_data['onadd_part_no']."' and onproduct_part_name='".$ret_data['onadd_part_name']."' and onproduct_plant_st = 2";
+	// $ret_data['sql'] = $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		if ($row = $qresult->fetch_assoc()) {
+			if(!empty($row['onproduct_pic_url']))
+				$ret_data['img_url'] = "./../../admin/purchase/".substr($row['onproduct_pic_url'], 2);
+			else
+				$ret_data['img_url'] = "./../../admin/purchase/images/nopic.png";
+		}
+		$qresult->free();
+	}else
+
 	$conn->close();
 	return $ret_data;
 }
@@ -556,6 +619,42 @@ function getEliQtyBySn($onadd_sn) {
 	}
 	else{
 		$ret_data = 0;
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getProductAllNowQty($onadd_sn) {
+	$ret_data = 0;
+	$conn = getDB();	
+	$sql="select SUM(onadd_quantity) as now_total from onliine_add_data where onadd_status>=1 and onadd_sn like '$onadd_sn' or onadd_newpot_sn like '$onadd_sn'";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['now_total'];
+		}
+		$qresult->free();
+	}
+	else{
+		$ret_data = 1;
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function IsNewProduct($onproduct_part_no,$onproduct_part_name) {
+	$ret_data = "0";
+	$conn = getDB();
+
+	$sql="SELECT * FROM `onliine_product_data` WHERE onproduct_part_no like '{$onproduct_part_no}' and onproduct_part_name like '{$onproduct_part_name}' and onproduct_plant_st = 2";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = "1";
+		}
+		$qresult->free();
 	}
 	$conn->close();
 	return $ret_data;
