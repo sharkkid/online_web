@@ -1783,7 +1783,7 @@ if(!empty($op)) {
 						</div>
 
 						<div class="modal-footer">
-							<button id="qr_download" type="button" class="btn btn-primary qr_download">下載二維條碼</button>
+							<button id="qr_download" type="button" class="btn btn-primary qr_download">列印二維條碼</button>
 							<button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
 						</div>
 					</form>
