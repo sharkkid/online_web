@@ -331,12 +331,14 @@ function getUserBySn($onadd_sn) {
 		$qresult->free();
 	}
 
-	$sql="SELECT * FROM `onliine_product_data` where onproduct_part_no='".$ret_data['onadd_part_no']."' and onproduct_part_name='".$ret_data['onadd_part_name']."' and onproduct_plant_st = 1";
-	// $ret_data['sql'] = $sql;
+	// $sql="SELECT * FROM `onliine_product_data` where onproduct_part_no='".$ret_data['onadd_part_no']."' and onproduct_part_name='".$ret_data['onadd_part_name']."' and onproduct_plant_st = 1";
+	$ret_data['sql'] = $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		if ($row = $qresult->fetch_assoc()) {
 			$ret_data['img_url'] = $row['onproduct_pic_url'];
+			if($row['onproduct_pic_url'] == "")
+				$ret_data['img_url'] = "./images/nopic.png";
 		}
 		$qresult->free();
 	}

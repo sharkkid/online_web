@@ -161,6 +161,9 @@ if(!empty($op)) {
 
 		case 'get':
 		$onadd_sn=GetParam('onadd_sn');
+		setcookie("onadd_sn", $onadd_sn);
+		setcookie("qr_sn", GetParam('qr_sn'));
+		setcookie("plant_sn", GetParam('plant_sn'));
 		$ret_data = array();
 		if(!empty($onadd_sn)){
 			$ret_code = 1;
@@ -666,15 +669,15 @@ if(!empty($op)) {
 									// console.log(data.onproduct_pic_url);
 							        if(ret.code==1) {
 							        	var img = "./../purchase"+data.onproduct_pic_url.substring(1,data.onproduct_pic_url.length);
-							        	$('#img_newName').html((data.onproduct_pic_url != null) ? data.onproduct_pic_url : "");
+							        	$('#img_newName').html((data.onproduct_pic_url != "") ? data.onproduct_pic_url : "");
 							        	document.getElementById('preview').setAttribute("src",((data.onproduct_pic_url != "") ? img : "./../purchase/images/nopic.png"));
-							        	document.getElementById('dropdown_onadd_part_name').value = (data.onproduct_part_name != null) ? data.onproduct_part_name : "";
-							        	document.getElementById('dropdown_onadd_color').value = (data.onproduct_color!= null) ? data.onproduct_color : "";
-							        	document.getElementById('dropdown_onadd_size').value = (data.onproduct_size != null) ? data.onproduct_size : "";
-							        	document.getElementById('dropdown_onadd_height').value = (data.onproduct_height != null) ? data.onproduct_height : "";
-							        	document.getElementById('dropdown_onadd_location').value = (data.onproduct_location != null) ? data.onproduct_location : "";
-							        	document.getElementById('dropdown_onadd_pot_size').value = (data.onproduct_pot_size != null) ? data.onproduct_pot_size : "";
-							        	document.getElementById('dropdown_onadd_supplier').value = (data.onproduct_supplier != null) ? data.onproduct_supplier : "";
+							        	document.getElementById('dropdown_onadd_part_name').value = (data.onproduct_part_name != "") ? data.onproduct_part_name : "";
+							        	document.getElementById('dropdown_onadd_color').value = (data.onproduct_color!= "") ? data.onproduct_color : "";
+							        	document.getElementById('dropdown_onadd_size').value = (data.onproduct_size != "") ? data.onproduct_size : "";
+							        	document.getElementById('dropdown_onadd_height').value = (data.onproduct_height != "") ? data.onproduct_height : "";
+							        	document.getElementById('dropdown_onadd_location').value = (data.onproduct_location != "") ? data.onproduct_location : "";
+							        	document.getElementById('dropdown_onadd_pot_size').value = (data.onproduct_pot_size != "") ? data.onproduct_pot_size : "";
+							        	document.getElementById('dropdown_onadd_supplier').value = (data.onproduct_supplier != "") ? data.onproduct_supplier : "";
 							        	document.getElementById('dropdown_onadd_growing').value = data.onproduct_growing;
 							        }
 							    },
@@ -1976,7 +1979,8 @@ if(!empty($op)) {
 	        							echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}
 
-	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
+	        						// echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
+	        						echo '
 	        								</div>
 	        							 </td>';
         							echo '</tr>';

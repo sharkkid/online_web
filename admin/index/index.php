@@ -34,23 +34,15 @@ $pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) 
 $product_list = getWorkListByMonth();
 // printr($product_list);
 // exit();
-$list17 = getDetails('1');//計算1.7
-$list25 = getDetails('2');//計算2.5
-$list35 = getDetails('5');//計算3.5
-
-$sum17 = $list17['SUM(onadd_quantity)'];
-$sum25 = $list25['SUM(onadd_quantity)'];
-$sum35 = $list35['SUM(onadd_quantity)'];
-
-foreach ($list17 as $row) {
-	$sum17 = $row['SUM(onadd_quantity)']; 
-}
-foreach ($list25 as $row) {
-	$sum25 = $row['SUM(onadd_quantity)']; 
-}
-foreach ($list35 as $row) {
-	$sum35 = $row['SUM(onadd_quantity)']; 
-}
+$sum17 = getDetails('1');//計算1.7
+$sum25 = getDetails('2');//計算2.5
+$sum28 = getDetails('3');//計算2.8
+$sum30 = getDetails('4');//計算3.0
+$sum35 = getDetails('5');//計算3.5
+$sum36 = getDetails('6');//計算3.6
+$others = $sum28+$sum30+$sum36;
+// printr($others);
+// exit();
 
 $op=GetParam('op');
 	if(!empty($op)) {
@@ -407,10 +399,13 @@ $op=GetParam('op');
 				<div class="widget bg-primary padding-0">
 					<div class="row row-table">
 						<div class="col-xs-4 text-center pv-15 bg-light-dark">
-							<em class=" fa-3x">1.7寸</em>
+							<em class=" fa-2x">1.7寸</em>
 						</div>
 						<div class="col-xs-8 pv-15 text-center">
 							<?php
+							if(empty($sum17))
+								echo "<h2 class='mv-0'>".'0'."</h2>" ;
+							else
 							echo "<h2 class='mv-0'>"."<a style='text-decoration:none;color:white;' href='./../purchase/plant_purchase.php?onadd_growing=1'>".$sum17."</a>"."</h2>" ;
 							?>
 						</div>
@@ -421,25 +416,29 @@ $op=GetParam('op');
 				<div class="widget bg-teal padding-0">
 					<div class="row row-table">
 						<div class="col-xs-4 text-center pv-15 bg-light-dark">
-							<em class="fa-3x">2.5寸</em>
+							<em class="fa-2x">2.5寸</em>
 						</div>
 						<div class="col-xs-8 pv-15 text-center">
 							<?php
-							echo "<h2 class='mv-0'>"."<a style='text-decoration:none;color:white;' href='./../purchase/plant_purchase.php?onadd_growing=2'>".$sum25."</a>"."</h2>" ;
+							if(empty($sum25))
+								echo "<h2 class='mv-0'>".'0'."</h2>" ;
+							else
+								echo "<h2 class='mv-0'>"."<a style='text-decoration:none;color:white;' href='./../purchase/plant_purchase.php?onadd_growing=2'>".$sum25."</a>"."</h2>" ;
 							?>
 						</div>
 					</div>
 				</div><!--end widget-->
 			</div><!--end col-->
+
 			<div class="col-lg-3 col-md-6 col-sm-12">
 				<div class="widget bg-success padding-0">
 					<div class="row row-table">
 						<div class="col-xs-4 text-center pv-15 bg-light-dark">
-							<em class="fa-3x">3.5寸</em>
+							<em class="fa-2x">3.5寸</em>
 						</div>
 						<div class="col-xs-8 pv-15 text-center">
 							<?php
-							if($sum35==''){
+							if(empty($sum35)){
 								echo "<h2 class='mv-0'>".'0'."</h2>" ;
 							}else{
 								echo "<h2 class='mv-0'>"."<a style='text-decoration:none;color:white;' href='./../purchase/plant_purchase.php?onadd_growing=5'>".$sum35."</a>"."</h2>" ;
@@ -449,14 +448,23 @@ $op=GetParam('op');
 					</div>
 				</div><!--end widget-->
 			</div><!--end col-->
+
 			<div class="col-lg-3 col-md-6 col-sm-12">
 				<div class="widget bg-indigo padding-0">
 					<div class="row row-table">
 						<div class="col-xs-4 text-center pv-15 bg-light-dark">
-							<em class="fa-3x">其他</em>
+							<em class="fa-2x">其他</em>
 						</div>
 						<div class="col-xs-8 pv-15 text-center">
-							<h2 class="mv-0">0</h2>
+							<h2 class="mv-0">
+								<?php 
+								if(empty($sum35))
+									echo "<h2 class='mv-0'>0</h2>" ;								
+								else
+									echo "<h2 class='mv-0'>".$others."</h2>" ;
+								?>
+									
+								</h2>
 						</div>
 					</div>
 				</div><!--end widget-->

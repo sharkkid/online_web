@@ -12,7 +12,6 @@ function getUser($where='', $offset=30, $rows=0) {
 		$sql="select * from onliine_add_data where onadd_status>=0 order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
 	else
 		$sql="select * from onliine_add_data where onadd_status>=0 and ( $where ) order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
-
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -75,17 +74,15 @@ function getUserByAccount() {
 }
 
 function getDetails($onadd_growing) {
-	$ret_data = array();
+	$ret_data = 0;
 	$conn = getDB();
 	if(empty($where))
-		$sql="select * , SUM(onadd_quantity) from onliine_add_data where onadd_growing='$onadd_growing' GROUP BY onadd_growing";
-	else
-		$sql="select * , SUM(onadd_quantity) from onliine_add_data where onadd_growing='$onadd_growing' GROUP BY onadd_growing";
+		$sql="select SUM(onadd_quantity) from onliine_add_data where onadd_cur_size='$onadd_growing' GROUP BY onadd_growing";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$ret_data[] = $row;
+			$ret_data += (int)$row['SUM(onadd_quantity)'];
 		}
 		$qresult->free();
 	}

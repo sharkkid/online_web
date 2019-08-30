@@ -45,6 +45,7 @@ if(!empty($op)) {
 		$onadd_location=GetParam('onadd_location');//放置區
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
 		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//換盆年
 		$onadd_quantity_cha=$test;//換盆月
@@ -63,8 +64,8 @@ if(!empty($op)) {
 				$onadd_planting_date = str2time($onadd_planting_date);
 				$now = time();
 				$conn = getDB();
-					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location) " .
-					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}');";
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}', '{$onadd_cur_size}');";
 
 					$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st,onproduct_pic_url) " .
 					"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '1', '{$onproduct_pic_url}');";
@@ -95,8 +96,8 @@ if(!empty($op)) {
 				$onadd_planting_date = str2time($onadd_planting_date);
 				$now = time();
 				$conn = getDB();
-					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location) " .
-					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}');";
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}', '{$onadd_cur_size}');";
 
 					$sql2 = "UPDATE onliine_product_data SET onproduct_part_no = '{$onadd_part_no}', onproduct_part_name = '{$onadd_part_name}', onproduct_color = '{$onadd_color}', onproduct_size = '{$onadd_size}', onproduct_height = '{$onadd_height}', onproduct_pot_size = '{$onadd_pot_size}', onproduct_supplier = '{$onadd_supplier}', onproduct_growing = '{$onadd_growing}', onproduct_isbought = '{$onadd_isbought}',onproduct_pic_url = '{$onproduct_pic_url}' 
 					    WHERE onproduct_part_no like '{$onadd_part_no}' and onproduct_part_name like '{$onadd_part_name}';";
@@ -165,6 +166,9 @@ if(!empty($op)) {
 
 		case 'get':
 		$onadd_sn=GetParam('onadd_sn');
+		setcookie("onadd_sn", $onadd_sn);
+		setcookie("qr_sn", GetParam('qr_sn'));
+		setcookie("plant_sn", GetParam('plant_sn'));
 		$ret_data = array();
 		if(!empty($onadd_sn)){
 			$ret_code = 1;
@@ -236,6 +240,7 @@ if(!empty($op)) {
 		$onadd_supplier=GetParam('onadd_supplier');//供應商
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
@@ -244,7 +249,7 @@ if(!empty($op)) {
 		$onadd_planting_date = str2time($onadd_planting_date);
 		$now = time();
 		$conn = getDB();
-		$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}',onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}' WHERE onadd_sn='{$onadd_sn}';";
+		$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}',onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}' WHERE onadd_sn='{$onadd_sn}';";
 		$sql2 = "UPDATE onliine_firstplant_data	SET onfp_plant_amount = '{$onadd_quantity}' WHERE onadd_sn='{$onadd_sn}' and onfp_status >= 1;";
 
 		if($conn->query($sql)) {
@@ -258,7 +263,7 @@ if(!empty($op)) {
 				}
 			}
 		} else {
-			$ret_msg = "更新失敗！";
+			$ret_msg = "更新失敗！".$sql;
 		}
 		$conn->close();
 		
@@ -528,10 +533,14 @@ if(!empty($op)) {
 		$search_where[] = "onadd_location like '%{$onadd_location}%'";
 		$search_query_string['onadd_location'] = $onadd_location;
 	}
+	if(($onadd_cur_size = GetParam('onadd_growing'))) {
+		$search_where[] = "onadd_cur_size = {$onadd_cur_size}";
+		$search_query_string['onadd_growing'] = $onadd_cur_size;
+	}
+	
 
 	$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
 	$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
-
 	// page
 	$pg_page = GetParam('pg_page', 1);
 	$pg_rows = 20;
@@ -540,6 +549,8 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$product_list = getUser($search_where, $pg_offset, $pg_rows);
+	// printr($product_list);
+	// exit();
 }
 ?>
 <!DOCTYPE html>
@@ -712,16 +723,15 @@ if(!empty($op)) {
 									var data = ret.data;
 									console.log(data);
 							        if(ret.code==1) {							        	
-							        	document.getElementById('IsUploadImg').value= (data.onproduct_pic_url != "") ? "1" : "0";
-							        	$('#img_newName').html((data.onproduct_pic_url != null) ? data.onproduct_pic_url : "");
-							        	document.getElementById('preview').setAttribute("src",((data.onproduct_pic_url != null) ? data.onproduct_pic_url : ""));
-							        	document.getElementById('dropdown_onadd_part_name').value = (data.onproduct_part_name != null) ? data.onproduct_part_name : "";
-							        	document.getElementById('dropdown_onadd_color').value = (data.onproduct_color!= null) ? data.onproduct_color : "";
-							        	document.getElementById('dropdown_onadd_size').value = (data.onproduct_size != null) ? data.onproduct_size : "";
-							        	document.getElementById('dropdown_onadd_height').value = (data.onproduct_height != null) ? data.onproduct_height : "";
-							        	document.getElementById('dropdown_onadd_location').value = (data.onproduct_location != null) ? data.onproduct_location : "";
-							        	document.getElementById('dropdown_onadd_pot_size').value = (data.onproduct_pot_size != null) ? data.onproduct_pot_size : "";
-							        	document.getElementById('dropdown_onadd_supplier').value = (data.onproduct_supplier != null) ? data.onproduct_supplier : "";
+							        	$('#img_newName').html((data.onproduct_pic_url != "") ? data.onproduct_pic_url : "");
+							        	document.getElementById('preview').setAttribute("src",((data.onproduct_pic_url != null) ? data.onproduct_pic_url : "./images/nopic.png"));
+							        	document.getElementById('dropdown_onadd_part_name').value = (data.onproduct_part_name != "") ? data.onproduct_part_name : "";
+							        	document.getElementById('dropdown_onadd_color').value = (data.onproduct_color!= "") ? data.onproduct_color : "";
+							        	document.getElementById('dropdown_onadd_size').value = (data.onproduct_size != "") ? data.onproduct_size : "";
+							        	document.getElementById('dropdown_onadd_height').value = (data.onproduct_height != "") ? data.onproduct_height : "";
+							        	document.getElementById('dropdown_onadd_location').value = (data.onproduct_location != "") ? data.onproduct_location : "";
+							        	document.getElementById('dropdown_onadd_pot_size').value = (data.onproduct_pot_size != "") ? data.onproduct_pot_size : "";
+							        	document.getElementById('dropdown_onadd_supplier').value = (data.onproduct_supplier != "") ? data.onproduct_supplier : "";
 							        	document.getElementById('dropdown_onadd_growing').value = data.onproduct_growing;
 							        }
 							    },
@@ -959,7 +969,7 @@ if(!empty($op)) {
 						$("#ajax_loading").hide();
 					},
 					success: function(ret) {
-			                // console.log(ret);
+			                console.log(ret);
 			                if(ret.code==1) {
 			                	var d = ret.data;
 			                	$('#upd3_form input[name=onadd_sn]').val(d.onadd_sn);
@@ -971,9 +981,12 @@ if(!empty($op)) {
 			                	$('#upd3_form input[name=onadd_pot_size]').val(d.onadd_pot_size);
 			                	$('#upd3_form input[name=onadd_location]').val(d.onadd_location);
 			                	$('#upd3_form input[name=onadd_supplier]').val(d.onadd_supplier);
+			                	$('#dropdown_onadd_cur_size').val(d.onadd_cur_size);
+
 			                	$('#upd3_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
 			                	$('#upd3_form input[name=onadd_quantity]').val(d.onadd_quantity);
 			                	$('#upd3_form input[name=onadd_growing]').val(d.onadd_growing);
+
 			                	$('#upd3_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
 			                	$('#upd3_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
 			                }
@@ -1023,7 +1036,7 @@ if(!empty($op)) {
 					url: './plant_purchase.php',
 					type: 'post',
 					dataType: 'json',
-					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn'), qr_sn: qr_sn, plant_sn:"1"},
 					beforeSend: function(msg) {
 						$("#ajax_loading").show();
 					},
@@ -1031,15 +1044,22 @@ if(!empty($op)) {
 						$("#ajax_loading").hide();
 					},
 					success: function(ret) {
-			                // console.log(ret);
+			                console.log(ret);
 			                if(ret.code==1) {
 			                	var d = ret.data;
-			                	console.log(d.img_url);
+			                	// console.log(d.img_url);
 			                	$('#temp_onadd_sn').val(d.onadd_sn);
+
 			                	if(d.img_url != "")
 			                		$('#qr_product_img').attr("src",d.img_url);
 			                	else
 			                		$('#qr_product_img').attr("src","./images/nopic.png");
+
+			                	if($('#qr_product_img').width() > 565)
+			                		$('#qr_product_img').width(550);
+								if($('#qr_product_img').height() > 392)
+			                		$('#qr_product_img').height(392);
+ 
 			                	$('#qr_sn').html("產品編號："+qr_sn);
 			                	$('#qr_part_no').html("品號："+d.onadd_part_no);
 			                	$('#qr_part_name').html("品名："+d.onadd_part_name);
@@ -1060,43 +1080,55 @@ if(!empty($op)) {
 			});
 			//下載QR Code-------------------------------------------------------
 			$('button.qr_download').on('click', function(){
-				$('#qr_modal').modal();
-				var onadd_sn = $('#temp_onadd_sn').val();
-				$.ajax({
-					url: './plant_purchase.php',
-					type: 'post',
-					dataType: 'json',
-					data: {op:"download", onadd_sn:onadd_sn},
-					beforeSend: function(msg) {
-						$("#ajax_loading").show();
-					},
-					complete: function(XMLHttpRequest, textStatus) {
-						$("#ajax_loading").hide();
-					},
-					success: function(ret) {
-			                console.log(onadd_sn);
-			                if(ret.code==1) {
-			                	$('#qr_sticker_img').removeAttr("src");
-			                	$('#qr_sticker_img').attr("src",ret.data['img_url']);
-								$('#qr_sticker_sn').html($('#qr_sn').html());
-								$('#qr_sticker_part_no').html($('#qr_part_no').html());
-								$('#qr_sticker_part_name').html($('#qr_part_name').html());
-								$('#qr_sticker_date').html($('#qr_plant_date').html());
-								$('#qr_sticker_location').html($('#qr_location').html());
-								$('#qr_sticker_qrcode').attr("src",($('#qr_img').attr("src")));
-			                	PrintElem('qr_sticker');
+				var qr_sn = $('#qr_sn').html();
+				var qr_part_no = $('#qr_part_no').html();
+				var qr_part_name = $('#qr_part_name').html();
+				var qr_plant_date = $('#qr_plant_date').html();
+				var qr_location = $('#qr_location').html();
+				var img_src = $('#qr_product_img').attr("src");
+				var qr_src = $('#qr_img').attr("src");
+				var data = "?qr_sn="+qr_sn+"&qr_part_no="+qr_part_no+"&qr_part_name="+qr_part_name+"&qr_plant_date="+qr_plant_date+"&qr_location="+qr_location+"&img_src="+img_src+"&qr_src="+qr_src;
+				window.open(
+				 '<?php echo WT_SERVER;?>/admin/purchase/test.php'+data,
+				  '_blank' // <- This is what makes it open in a new window.
+				);
+				// $('#qr_modal').modal();
+				// var onadd_sn = $('#temp_onadd_sn').val();
+				// $.ajax({
+				// 	url: './plant_purchase.php',
+				// 	type: 'post',
+				// 	dataType: 'json',
+				// 	data: {op:"download", onadd_sn:onadd_sn},
+				// 	beforeSend: function(msg) {
+				// 		$("#ajax_loading").show();
+				// 	},
+				// 	complete: function(XMLHttpRequest, textStatus) {
+				// 		$("#ajax_loading").hide();
+				// 	},
+				// 	success: function(ret) {
+			 //                console.log(onadd_sn);
+			 //                if(ret.code==1) {
+			 //                	$('#qr_sticker_img').removeAttr("src");
+			 //                	$('#qr_sticker_img').attr("src",ret.data['img_url']);
+				// 				$('#qr_sticker_sn').html($('#qr_sn').html());
+				// 				$('#qr_sticker_part_no').html($('#qr_part_no').html());
+				// 				$('#qr_sticker_part_name').html($('#qr_part_name').html());
+				// 				$('#qr_sticker_date').html($('#qr_plant_date').html());
+				// 				$('#qr_sticker_location').html($('#qr_location').html());
+				// 				$('#qr_sticker_qrcode').attr("src",($('#qr_img').attr("src")));
+			 //                	PrintElem('qr_sticker');
 
-			                	setTimeout(
-								    function() {		
-								    	document.getElementById('qr_sticker').setAttribute("style", "width: 410px; height: 720px;display:none;");
-								    }, 500);			                	
-			                }
-			            },
-			            error: function (xhr, ajaxOptions, thrownError) {
-		                	// console.log('ajax error');
-		                    // console.log(xhr);
-		                }
-		            });
+			 //                	setTimeout(
+				// 				    function() {		
+				// 				    	document.getElementById('qr_sticker').setAttribute("style", "width: 410px; height: 720px;display:none;");
+				// 				    }, 500);			                	
+			 //                }
+			 //            },
+			 //            error: function (xhr, ajaxOptions, thrownError) {
+		  //               	// console.log('ajax error');
+		  //                   // console.log(xhr);
+		  //               }
+		  //           });
 			});
 
 			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd3_form').validator().on('submit', function(e) {
@@ -1220,12 +1252,12 @@ if(!empty($op)) {
 			//產品履歷----------------------------------------------------------
 			function PrintElem(elem)
 			{
-			    var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+			    var mywindow = window.open('', 'PRINT', 'height=1160,width=820');
 
 			    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
 			    mywindow.document.write('</head><body >');
 			    mywindow.document.write('<h1>' + document.title  + '</h1>');
-			    document.getElementById(elem).setAttribute("style", "width: 410px; height: 720px;");
+			    document.getElementById(elem).setAttribute("style", "width: 820px; height: 1160px;");
 			    mywindow.document.write(document.getElementById(elem).innerHTML);
 			    mywindow.document.write('</body></html>');
 
@@ -1512,7 +1544,21 @@ if(!empty($op)) {
 											<input type="text" class="form-control" id="datetimepicker3" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
 											<div class="help-block with-errors"></div>
 										</div>
-									</div>        								
+									</div>   
+									<div class="form-group">
+										<label class="col-sm-2 control-label">目前尺寸<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="dropdown_onadd_cur_size" name="onadd_cur_size">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>     								
 									<div class="form-group">
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -1716,7 +1762,7 @@ if(!empty($op)) {
 									<div id="qr_location" style="font-size: 20px;font-weight:bold;">位置：</div>
 									<div id="qr_part_number" style="font-size: 20px;font-weight:bold;">數量：</div>		
 									<img id="qr_sticker_img"style="width: 400px;height: 280px;" src=""> -->
-									<img id="qr_product_img"style="width: 565px;height: 392px;margin-top: 15px;" src="">
+									<img id="qr_product_img"style="margin-top: 15px;" src="">
 									<div id="qr_sn" style="margin-top: 5px;font-size: 20px;"></div>
 									<div id="qr_part_no" style="font-size: 20px;"></div>
 									<div id="qr_part_name" style="font-size: 20px;"></div>
@@ -1851,6 +1897,22 @@ if(!empty($op)) {
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">目前尺寸<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="dropdown_onadd_cur_size" name="onadd_cur_size">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+
 									<div class="form-group">
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -1943,7 +2005,7 @@ if(!empty($op)) {
 						<div id="qr_sticker_part_name" style="text-align:left;font-size: 30px;height: 40px;">品名:維維安Vivian (2號)</div>
 						<div id="qr_sticker_date" style="text-align:left;font-size: 30px;height: 40px;">下種日期:2019-08-01</div>
 						<div id="qr_sticker_location" style="text-align:left;font-size: 30px;height: 40px;">位置:A5</div>
-						<div style="text-align:right;">
+						<div style="text-align:left;">
 							<img id="qr_sticker_qrcode" style="width: 150px;" src="">
 						</div>	
 					</div>
@@ -1957,7 +2019,8 @@ if(!empty($op)) {
 								<th>品名</th>
 								<th>下種日期</th>
 								<th>下種數量</th>
-								<th>目前尺寸</th> <!-- 2019/6/19新增 -->
+								<th>目前尺寸</th> <!-- 2019/8/29新增 -->
+								<th>預計成長大小</th> <!-- 2019/6/19新增 -->
 								<th>預計成熟日</th> <!-- 2019/6/19新增 -->
 								<th>育成率</th> <!-- 2019/6/19新增 -->
 								<th>放置區</th> <!-- 2019/8/7新增 -->
@@ -1994,6 +2057,7 @@ if(!empty($op)) {
         							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
         							echo '<td>'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
         							echo '<td>'.$row['onadd_quantity'].'</td>';//品名
+        							echo '<td>'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
         							echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							if($row['onadd_growing']==1){
         								$list_setting = getSettingBySn(1.7);
