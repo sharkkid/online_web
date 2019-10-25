@@ -2142,7 +2142,7 @@ if(!empty($op)) {
 
 	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;&nbsp;
 	        								</div>';
-	        						echo '<td style="text-align:center"><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+	        						echo '<td style="text-align:center"><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_part_name='.$row['onadd_part_name'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
 	        						echo '</td>';
         							echo '</tr>';
         						}

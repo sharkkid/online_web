@@ -1066,7 +1066,7 @@ function getQuantityForseller($part_no,$part_name) {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="select * from onliine_add_data where onadd_status>=0 and onadd_part_no like '$part_no' and onadd_part_name like '$part_name' group by onadd_cur_size";
+	$sql="select *,SUM(onadd_quantity) from onliine_add_data where onadd_status>=0 and onadd_part_no like '$part_no' and onadd_part_name like '$part_name' group by onadd_cur_size";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {

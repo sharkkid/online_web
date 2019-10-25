@@ -8,7 +8,8 @@ $DEVICE_SYSTEM = array(
 	4=>"3.0",
 	5=>"3.5",
 	6=>"3.6",
-	7=>"其他"
+	7=>"其他",
+	8=>"瓶苗下重"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -18,7 +19,8 @@ $permissions_mapping = array(
 	4=>'<font color="#666666">3.0</font>',
 	5=>'<font color="#666666">3.5</font>',
 	6=>'<font color="#666666">3.6</font>',
-	7=>'<font color="#666666">其他</font>' 
+	7=>'<font color="#666666">其他</font>',
+	8=>'<font color="#666666">瓶苗下種</font>' 
 );
 
 // printr(getQuantityForseller('W2005','天使angel  (TY262)'));
@@ -199,7 +201,7 @@ if(!empty($op)) {
 	// exit;
 	$data_list = getDataDetails($onadd_part_no,$onadd_part_name);
 	$eli_list = getQuantityForseller($data_list[0]['onproduct_part_no'],$data_list[0]['onproduct_part_name']);
-	// printr($data_list);
+	// printr($eli_list);
 	// exit;
 }
 ?>
@@ -238,8 +240,8 @@ if(!empty($op)) {
 	<script type="text/javascript">
 		//汰除-----------------------------------------------------------
 			function do_emli(onadd_sn){
-				$('#upd-modal1').modal();
-				$('#upd_form1')[0].reset();
+				$('#eli-modal1').modal();
+				$('#eli_form1')[0].reset();
 
 				$.ajax({
 					url: './plant_purchase.php',
@@ -256,14 +258,14 @@ if(!empty($op)) {
 			                // console.log(ret);
 			                if(ret.code==1) {
 			                	var d = ret.data;
-			                	$('#upd_form1 input[name=onadd_sn]').val(d.onadd_sn);
-			                	$('#upd_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
-			                	$('#upd_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
+			                	$('#eli_form1 input[name=onadd_sn]').val(d.onadd_sn);
+			                	$('#eli_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
+			                	$('#eli_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
 			                	if(d.onadd_newpot_sn == "0"){
-				                	$('#upd_form1 input[name=onadd_newpot_sn]').val(d.onadd_sn);
+				                	$('#eli_form1 input[name=onadd_newpot_sn]').val(d.onadd_sn);
 				                }
 				                else{
-				                	$('#upd_form1 input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
+				                	$('#eli_form1 input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
 				                }
 			                	
 			                }
@@ -314,12 +316,18 @@ if(!empty($op)) {
 				});
 			});
 
+			$('button.upd1').on('click', function(){
+				onproduct_part_name = $(this).data('onproduct_part_name');
+				onproduct_part_no = $(this).data('onproduct_part_no');
+			    $('#upd_form1 input[name=onbuda_part_no]').val(onproduct_part_no);
+			    $('#upd_form1 input[name=onbuda_part_name]').val(onproduct_part_name);
+			    $('#upd-modal1').modal();
+			});
+
 			$('#upd_form1').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
 					e.preventDefault();
 					var param = $(this).serializeArray();
-
-
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
 
@@ -345,7 +353,8 @@ if(!empty($op)) {
 			                 }
 			             });
 					 }
-					});
+			});
+
 			$('#datetimepicker1').datetimepicker({
 				minView: 2,
 				language:  'zh-TW',
@@ -493,10 +502,10 @@ if(!empty($op)) {
 		<!--顯示月份出貨明細----------------------------------------------------------->
 
 		<!--汰除----------------------------------------------------------->
-		<div id="upd-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
+		<div id="eli-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
-					<form autocomplete="off" method="post" action="./details_table.php" id="upd_form1" class="form-horizontal" role="form" data-toggle="validator">
+					<form autocomplete="off" method="post" action="./details_table.php" id="eli_form1" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 							<h4 class="modal-title">汰除</h4>
@@ -724,11 +733,11 @@ if(!empty($op)) {
 			</div>
 		</div></br>
 
-		
+		<!-- <?php printr($data_list);?> -->
 		<div class="col-md-6" style="margin-bottom: 10px;clear:both;">
 			<ul class="nav nav-pills pull-right toolbar">
 				<li><button type="button" class="btn btn-primary btn-xs" onClick="upd_btn_click(<?php echo $data_list[0]['onproduct_sn'];?>)"><i class="glyphicon glyphicon-plus"></i>新增更多圖片</button></li>
-				<li><button type="button" class="btn btn-primary btn-xs upd1"><i class="glyphicon glyphicon-plus"></i>預計出貨資料</button></li>
+				<li><button type="button" class="btn btn-primary btn-xs upd1" <?php echo "data-onproduct_part_no=\"".$data_list[0]['onproduct_part_no']."\" data-onproduct_part_name=\"".$data_list[0]['onproduct_part_name']."\"" ;?>><i class="glyphicon glyphicon-plus" ></i>預計出貨資料</button></li>
 			</ul><hr>
 			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
 				<thead>
@@ -743,7 +752,7 @@ if(!empty($op)) {
         							echo '<tr>';
         							echo '<td style="text-align: center;">'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
 									echo '<td style="text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
-        							echo '<td style="text-align: center;">'.$eli_list[$i]['onadd_quantity'].'</td>';
+        							echo '<td style="text-align: center;">'.$eli_list[$i]['SUM(onadd_quantity)'].'</td>';
         							echo '<td style="text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');">汰除</a></td>';      
         							echo '</tr>';  							
         						}
@@ -772,7 +781,7 @@ if(!empty($op)) {
 								echo '<li class="active"><a style="color:#000000;">'.$n.'</a></li>';
 							}
 							else{
-								echo '<li class="active"><a style="color:#23b7e5;" href="'.WT_URL_ROOT.'/admin/purchase/details_table.php?onadd_part_no='.GetParam('onadd_part_no').'&onadd_growing='.GetParam('onadd_growing').'&onadd_quantity_del='.$n.'">'.$n.'</a></li>';
+								echo '<li class="active"><a style="color:#23b7e5;" href="'.WT_URL_ROOT.'/admin/purchase/details_table.php?onadd_part_no='.GetParam('onadd_part_no').'&onadd_growing='.GetParam('onadd_growing').'&onadd_quantity_del='.$n.'&onadd_part_name='.GetParam('onadd_part_name').'">'.$n.'</a></li>';
 							}
 						}
 						?>

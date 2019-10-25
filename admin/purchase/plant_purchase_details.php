@@ -672,7 +672,7 @@ if(!empty($op)) {
 		        						<div class="am-panel-bd" style="height:45vh;">
 		        						<button style="float:left clear:both;" class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
 		        							<hr><div class="col-md-10" style="max-height="25vh";max-width="30vw";"><img style="max-height=5vh;max-width=3vw;text-align:left;clear:both;" id="img_print" class="am-img-responsive thumbnail " src="'.$produce_image.'"></div>
-		        							<div class="col-md-2"><h3 style="text-align:center;"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
+		        							<div class="col-md-2"><h3 style="text-align:center;"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
 		        							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
 		        							';
 		        							// printr($AllProductData);
