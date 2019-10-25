@@ -173,9 +173,6 @@ if(!empty($op)) {
 	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
     <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
 
-    <script src="./../../lib/bootstrap-datetimepickerzh-TW.js"></script>
-    <script src="./../../lib/bootstrap-datetimepicker/moment.min.js"></script>
-    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
     <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
 
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
@@ -187,14 +184,14 @@ if(!empty($op)) {
             });
             $('#datetimepicker1').datetimepicker({
                     minView: 2,
-                    locale: moment.locale('zh-TW'), //引入中文语言   
+                    language:  'zh-TW',
                     format: 'yyyy-mm-dd',
                     useCurrent: false
                 });
                 
             $('#datetimepicker2').datetimepicker({
                     minView: 2,
-                    locale: moment.locale('zh-TW'), //引入中文语言   
+                    language:  'zh-TW',
                     format: 'yyyy-mm-dd',
                     useCurrent: false
                 });
