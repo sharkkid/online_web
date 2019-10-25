@@ -587,7 +587,8 @@ if(!empty($op)) {
 	<link href="./../../css1/style.css" rel="stylesheet">
 	<?php include('./../htmlModule/head.php');?>
 	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
-	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
 	<style>
 	* {
@@ -1207,7 +1208,7 @@ if(!empty($op)) {
 					},
 					success: function(ret) {
 						console.log(ret);
-						$('#history_cotent').html('<div class="col-md-12"><div class="col-sm-12"><table class="table table-hover"><thead><tr><th style="text-align:center;">操作日期</th><th style="text-align:center;">下種日期(數量)</th><th style="text-align:center;">換盆日期(數量)</th><th style="text-align:center;">出貨日期(數量)</th><th style="text-align:center;">汰除日期(數量)</th></tr></thead><tbody></div></div>');
+						$('#history_cotent').html('<div class="col-md-12"><div class="col-sm-12"><table class="table table-hover"><thead><tr><th style="text-align:center;">操作日期</th><th style="text-align:center;">下種日期(數量)</th><th style="text-align:center;">換盆日期(數量)</th><th style="text-align:center;">出貨日期(數量)</th><th style="text-align:center;">汰除日期(數量)</th></tr></thead>');
 						$.each(ret.data, function(key,value){	
 							if(key < ret.data.length){
 								var temp = "";
@@ -1433,7 +1434,7 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label">下種日期&nbsp;<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">換盆日期&nbsp;<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="datetimepicker2" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
 											<div class="help-block with-errors"></div>
@@ -1772,41 +1773,46 @@ if(!empty($op)) {
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 							<h4 class="modal-title" id="history_title">二維條碼</h4>
 						</div>
-						<div class="row" id="qr_container">
+						<div class="row" id="qr_container" >
 							<div class="row" id="qr_cotent">
-								<div class="col-sm-8" id="qr_sec_cotent">
+								<!-- <div class="col-sm-8" id="qr_sec_cotent"> -->
 									<!-- <input type="hidden" id="temp_onadd_sn">
 									<img id="qr_img_example" style="margin-left: 20px;padding-left: 10px;display:none;" 
 										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">
 									<img id="qr_img" style="margin-left: 20px;padding-left: 10px;" 
 										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">	 -->
-								</div>
-								<div class="col-md-8" id="qr_sec_cotent2" style="border-left-width: 20px; margin-left: 30px;">
-<!-- 									<div id="qr_sn" style="font-size: 20px;font-weight:bold;">產品編號：</div>
+								<!-- </div> -->
+								<div class="col-md-12" id="qr_sec_cotent2" style="text-align: center;">
+<!-- 								<div id="qr_sn" style="font-size: 20px;font-weight:bold;">產品編號：</div>
 									<div id="qr_part_no" style="font-size: 20px;font-weight:bold;">品號：</div>
 									<div id="qr_part_name" style="font-size: 20px;font-weight:bold;">品名：</div>
 									<div id="qr_plant_date" style="font-size: 20px;font-weight:bold;">下種日期：</div>
 									<div id="qr_location" style="font-size: 20px;font-weight:bold;">位置：</div>
 									<div id="qr_part_number" style="font-size: 20px;font-weight:bold;">數量：</div>		
-									<img id="qr_sticker_img"style="width: 400px;height: 280px;" src=""> -->
-									<img id="qr_product_img"style="max-height: 32vh;max-width: 32vw;text-align: center; margin-top: 15px;" src="">
-									<div id="qr_sn" style="margin-top: 5px;font-size: 20px;"></div>
-									<div id="qr_part_no" style="font-size: 20px;"></div>
-									<div id="qr_part_name" style="font-size: 20px;"></div>
-									<div id="qr_plant_date" style="font-size: 20px;"></div>
-									<div id="qr_location" style="font-size: 20px;"></div>								
+									<img id="qr_sticker_img"style="width: 400px;height: 280px;" src=""> -->									
+									<img id="qr_product_img" class="img-thumbnail" style="max-height: 32vh;max-width: 32vw;text-align: center;" src="">
 								</div>
-								<div class="col-sm-8" id="qr_sec_cotent">
-									<input type="hidden" id="temp_onadd_sn">
-									<img id="qr_img_example" style="margin-left: 20px;padding-left: 10px;display:none;" 
-										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">
-									<img id="qr_img" style="margin-left: 0px;padding-left: 430px;" 
-										 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">	
+								<p style="margin: 10px">
+								<div class="col-md-12" id="qr_sec_cotent2" style="text-align: center;">
+									<div class="col-md-6" style="float: left;">
+										<span id="qr_sn" style="font-size: 20px;"></span><br>
+										<span id="qr_part_no" style="font-size: 20px;"></span><br>
+										<span id="qr_part_name" style="font-size: 20px;"></span><br>
+										<span id="qr_plant_date" style="font-size: 20px;"></span><br>
+										<span id="qr_location" style="font-size: 20px;"></span><br>
+									</div>
+									<div class="col-sm-6" id="qr_sec_cotent" style="float: left;">
+										<input type="hidden" id="temp_onadd_sn">
+										<img id="qr_img"  style="margin-left: 0px;" 
+											 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">
+										<img id="qr_img_example" style="display:none;" 
+											 src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">											
+									</div>
 								</div>
 							</div>
-							<div id="qr_cotent_recover" >
+							<!-- <div id="qr_cotent_recover" >
 								
-							</div>
+							</div> -->
 						</div>
 
 						<div class="modal-footer">
@@ -2040,21 +2046,21 @@ if(!empty($op)) {
 					<!-- content -->
 					<table class="table table-striped table-hover table-condensed tablesorter">
 						<thead>
-							<tr>
-								<th>產品編號</th>
-								<th>品號</th>
-								<th>品名</th>
-								<th>下種日期</th>
-								<th>下種數量</th>
-								<th>目前尺寸</th> <!-- 2019/8/29新增 -->
-								<th>預計成長大小</th> <!-- 2019/6/19新增 -->
-								<th>預計成熟日</th> <!-- 2019/6/19新增 -->
-								<th>育成率</th> <!-- 2019/6/19新增 -->
-								<th>放置區</th> <!-- 2019/8/7新增 -->
-								<th>備註</th> <!-- 2019/6/19新增 -->
-								<th>供應商</th>
-								<th>訂單客戶</th> <!-- 2019/6/19新增 -->						
-								<th>操作</th>
+							<tr style="font-size: 1.1em">
+								<th style="text-align: center;">產品編號</th>
+								<th style="text-align: center;">品號</th>
+								<th style="text-align: center;">品名</th>
+								<th style="text-align: center;">下種日期</th>
+								<th style="text-align: center;">下種數量</th>
+								<th style="text-align: center;">目前尺寸</th> <!-- 2019/8/29新增 -->
+								<th style="text-align: center;">預計成長大小</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">預計成熟日</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">育成率</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">放置區</th> <!-- 2019/8/7新增 -->
+								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">供應商</th>
+								<th style="text-align: center;">訂單客戶</th> <!-- 2019/6/19新增 -->						
+								<th colspan="2" style="text-align: center;">操作</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -2063,61 +2069,46 @@ if(!empty($op)) {
 								echo '<tr>';
 									if($row['onadd_part_no'] == 0){
 										if($row['onadd_newpot_sn'] == 0){
-	        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 	        							}
 	        							else{
-	        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 	        							}
 									}else{
 										if($row['onadd_newpot_sn'] == 0){
-											echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 										}
 										else{
-											echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 										}
 									}
-        							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
-        							echo '<td>'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
-        							echo '<td>'.$row['onadd_quantity'].'</td>';//品名
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
         							if(!empty($permissions_mapping[$row['onadd_cur_size']])){
-	        							echo '<td>'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
+	        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
 	        						}
 	        						else{
-	        							echo '<td></td>';
+	        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
 	        						}
-        							echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							if($row['onadd_growing']==1){
-        								$list_setting = getSettingBySn('1.7');
+        								$list_setting = getSettingBySn(1.7);
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}else if($row['onadd_growing']==2){
-        								$list_setting = getSettingBySn('2.5');
-        								$onchba_cycle = $list_setting['onchba_cycle'];        							
-        							}else if($row['onadd_growing']==3){
-        								$list_setting = getSettingBySn('2.8');
-        								$onchba_cycle = $list_setting['onchba_cycle'];        							
-        							}else if($row['onadd_growing']==4){
-        								$list_setting = getSettingBySn('3.0');
+        								$list_setting = getSettingBySn(2.5);
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}else if($row['onadd_growing']==5){
-        								$list_setting = getSettingBySn('3.5');
+        								$list_setting = getSettingBySn(3.5);
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}
-        							else if($row['onadd_growing']==6){
-        								$list_setting = getSettingBySn('3.6');
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}
-        							else if($row['onadd_growing']==8){
-        								$list_setting = getSettingBySn('瓶苗下種');
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}
-        							// printr(date("Y/m/d",$row['onadd_planting_date']).$onchba_cycle);
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							echo '<td>'.$test.'</td>';//預計成熟日
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';//預計成熟日
 
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
 
@@ -2131,28 +2122,27 @@ if(!empty($op)) {
 	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
 	        						}		
 	        						// printr($first_plant_amount);
-	        						// printr(getProductAllNowQty($row['onadd_newpot_sn']));
-        							echo '<td>'.number_format(($incubation_rate*100),2).'%</td>'; 		
-        							echo '<td>'.$row['onadd_location'].'</td>'; 				
-        							$note = (!empty($row['onadd_quantity_cha'])) ? '<td>換盆</td>' : '<td></td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>'; 		
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>'; 				
+        							$note = (!empty($row['onadd_quantity_cha'])) ? '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">換盆</td>' : '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
         							echo $note;
-        							echo '<td>'.$row['onadd_supplier'].'</td>';
-        							echo '<td></td>';        							
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
 
         							// 2019/6/19新增 - 展開收回操作列表
-        							echo '<td>
+        							echo '<td style="text-align:center" style="border-right:0.1rem #BEBEBE dashed;text-align: center;">
 	        							    <div>
-	        							      <button type="button" class="btn btn-warning btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
-	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
-	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;';
+	        							      <button type="button" class="btn btn-warning btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp;&nbsp;
+	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>&nbsp;&nbsp;
+	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;&nbsp;&nbsp;';
         							if($permmsion == '系統管理員'){
-	        							echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
+	        							// echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
 	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}       						
 
-	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
+	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;&nbsp;
 	        								</div>';
-	        						echo '<td><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_part_name='.$row['onadd_part_name'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+	        						echo '<td style="text-align:center"><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
 	        						echo '</td>';
         							echo '</tr>';
         						}

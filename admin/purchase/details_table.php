@@ -438,35 +438,6 @@ if(!empty($op)) {
 			</div>
 		</div>
 
-		<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
-			<ul class="nav nav-pills pull-right toolbar">
-				<li><button type="button" class="btn btn-primary btn-xs" onClick="upd_btn_click(<?php echo $data_list[0]['onproduct_sn'];?>)"><i class="glyphicon glyphicon-plus"></i>新增更多圖片</button></li>
-				<li><button type="button" class="btn btn-primary btn-xs upd1"><i class="glyphicon glyphicon-plus"></i>預計出貨資料</button></li>
-			</ul>
-			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
-				<thead>
-        					<tr>
-        						<th>下種日期</th>
-        						<th>目前尺寸</th>
-        						<th>數量</th>
-        						<th>操作</th>        						
-        					</tr>
-        					<?php
-        						for($i=0;$i<count($eli_list);$i++){
-        							echo '<tr>';
-        							echo '<td>'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
-									echo '<td>'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
-        							echo '<td>'.$eli_list[$i]['onadd_quantity'].'</td>';
-        							echo '<td>'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');">汰除</a></td>';      
-        							echo '</tr>';  							
-        						}
-        					
-        					?>       						
-        					
-        				</thead>
-			</table>
-		</div>
-
 		<!--modal-->
 		<div class='modal fade' id='Upload_Image_Modal' role='dialog'>
 			<div class='modal-dialog modal-lg'>
@@ -658,7 +629,7 @@ if(!empty($op)) {
 		<!-- Page Content -->
 		<div  class="container-fluid">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-5">
 					<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
 						<!-- Indicators -->
 						<ol class="carousel-indicators">
@@ -672,7 +643,7 @@ if(!empty($op)) {
 							}
 							?>
 						</ol>
-						<div class="carousel-inner">
+						<div class="carousel-inner" style='text-align:center;'>
 							<?php
 								if(!empty($data_list[0]['onproduct_pic_url'])){									
 									for($i=0;$i<count($pics);$i++){
@@ -689,7 +660,7 @@ if(!empty($op)) {
 									}
 								}
 								else
-									echo "<img src='images/nopic.png' >";
+									echo "<img style='text-align:center;' src='images/nopic.png' >";
 							?>
 							
 						</div>
@@ -711,14 +682,74 @@ if(!empty($op)) {
 			foreach ($data_list as $row) {
 				echo '<div style="display:none" id="onproduct_sn">'.$row['onproduct_sn'].'</div>';
 				echo '<h3>'.$onproduct_part_no.'</h3>';
-				echo '<p>'. '品號(Part no.) : '. $row['onproduct_part_no'].'</p>';
-				echo '<p>'. '品名(Part name.) : '. $row['onproduct_part_name'].'</p>';
-				echo '<p>'. '花色 (Flower Color) : '. $row['onproduct_color'].'</p>';
-				echo '<p>'. '花徑 (Flower Size) : '. $row['onproduct_size'].'</p>';
-				echo '<p>'. '高度 (Plant Height) : '. $row['onproduct_height'].'</p>';
-				echo '<p>'. '適合開花盆徑 (Suitable flowering pot size) : '. $row['onproduct_pot_size'].'</p>';
-			}
+				
 			?> 
+				<table>
+					<thead>
+						<tr>
+							<th>品號(Part no.)：
+								<?php echo $row['onproduct_part_no']; ?> 
+							</th>
+						</tr>
+						<tr>
+							<th>品名(Part name.)：
+								<?php echo $row['onproduct_part_name']; ?>
+							</th>
+						</tr>
+						<tr>
+							<th>花色 (Flower Color)：
+								<?php echo $row['onproduct_color']; ?>
+							</th>
+						</tr>
+						<tr>
+							<th>花徑 (Flower Size)：
+								<?php echo $row['onproduct_size']; ?>
+							</th>
+						</tr>
+						<tr>
+							<th>高度 (Plant Height)：
+								<?php echo $row['onproduct_height']; ?>
+							</th>
+						</tr>
+						<tr>
+							<th>適合開花盆徑 (Suitable flowering pot size)：
+								<?php echo $row['onproduct_pot_size']; ?> 
+							</th>
+						</tr>
+					</thead>					
+				</table>				
+			<?php }
+		?> 
+		</div>  
+			</div>
+		</div></br>
+
+		
+		<div class="col-md-6" style="margin-bottom: 10px;clear:both;">
+			<ul class="nav nav-pills pull-right toolbar">
+				<li><button type="button" class="btn btn-primary btn-xs" onClick="upd_btn_click(<?php echo $data_list[0]['onproduct_sn'];?>)"><i class="glyphicon glyphicon-plus"></i>新增更多圖片</button></li>
+				<li><button type="button" class="btn btn-primary btn-xs upd1"><i class="glyphicon glyphicon-plus"></i>預計出貨資料</button></li>
+			</ul><hr>
+			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
+				<thead>
+        					<tr>
+        						<th style="text-align: center;">下種日期</th>
+        						<th style="text-align: center;">目前尺寸</th>
+        						<th style="text-align: center;">數量</th>
+        						<th style="text-align: center;">操作</th>        						
+        					</tr>
+        					<?php
+        						for($i=0;$i<count($eli_list);$i++){
+        							echo '<tr>';
+        							echo '<td style="text-align: center;">'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
+									echo '<td style="text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
+        							echo '<td style="text-align: center;">'.$eli_list[$i]['onadd_quantity'].'</td>';
+        							echo '<td style="text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');">汰除</a></td>';      
+        							echo '</tr>';  							
+        						}
+        					?>    
+        				</thead>
+			</table>
 		</div>
 
 		<!-- container -->
@@ -756,22 +787,22 @@ if(!empty($op)) {
         			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
         				<thead>
         					<tr>
-        						<th rowspan="2">出售</br>尺寸</th>
-        						<th colspan="12" class="tableheader" align="center">可供出售月份(系統計算)</th>
+        						<th style="text-align: center; vertical-align: middle;font-size: 1.1em" rowspan="2">出售</br>尺寸</th>
+        						<th style="text-align: center; font-size: 1.2em" colspan="12" class="tableheader" align="center">可供出售月份(系統計算)</th>
         					</tr>
         					<tr>
-        						<th>一月</th>
-        						<th>二月</th>
-        						<th>三月</th>
-        						<th>四月</th>
-        						<th>五月</th>
-        						<th>六月</th>
-        						<th>七月</th>
-        						<th>八月</th>
-        						<th>九月</th>
-        						<th>十月</th>
-        						<th>十一月</th>
-        						<th>十二月</th>
+        						<th style="text-align: center;">一月</th>
+        						<th style="text-align: center;">二月</th>
+        						<th style="text-align: center;">三月</th>
+        						<th style="text-align: center;">四月</th>
+        						<th style="text-align: center;">五月</th>
+        						<th style="text-align: center;">六月</th>
+        						<th style="text-align: center;">七月</th>
+        						<th style="text-align: center;">八月</th>
+        						<th style="text-align: center;">九月</th>
+        						<th style="text-align: center;">十月</th>
+        						<th style="text-align: center;">十一月</th>
+        						<th style="text-align: center;">十二月</th>
         					</tr>
         				</thead>
         				<tbody>
@@ -798,22 +829,22 @@ if(!empty($op)) {
                      <table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
         				<thead>
         					<tr>
-        						<th rowspan="2">預計</br>尺寸</th>
-        						<th colspan="12" class="tableheader" align="center">預計出貨月份</th>
+        						<th style="text-align: center; vertical-align: middle;font-size: 1.1em" rowspan="2">預計</br>尺寸</th>
+        						<th style="text-align: center;font-size: 1.2em" colspan="12" class="tableheader" align="center">預計出貨月份</th>
         					</tr>
         					<tr>
-        						<th>一月</th>
-        						<th>二月</th>
-        						<th>三月</th>
-        						<th>四月</th>
-        						<th>五月</th>
-        						<th>六月</th>
-        						<th>七月</th>
-        						<th>八月</th>
-        						<th>九月</th>
-        						<th>十月</th>
-        						<th>十一月</th>
-        						<th>十二月</th>
+        						<th style="text-align: center;">一月</th>
+        						<th style="text-align: center;">二月</th>
+        						<th style="text-align: center;">三月</th>
+        						<th style="text-align: center;">四月</th>
+        						<th style="text-align: center;">五月</th>
+        						<th style="text-align: center;">六月</th>
+        						<th style="text-align: center;">七月</th>
+        						<th style="text-align: center;">八月</th>
+        						<th style="text-align: center;">九月</th>
+        						<th style="text-align: center;">十月</th>
+        						<th style="text-align: center;">十一月</th>
+        						<th style="text-align: center;">十二月</th>
         					</tr>
         				</thead>
 

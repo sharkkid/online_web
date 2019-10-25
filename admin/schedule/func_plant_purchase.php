@@ -32,6 +32,25 @@ function getUser_re($where='', $offset=30, $rows=0) {
 	return $ret_data;
 }
 
+function getProductFirstQty($onadd_sn) {
+	$ret_data = 0;
+	$conn = getDB();	
+	$sql="select onfp_plant_amount from onliine_firstplant_data where onfp_status>=1 and onadd_sn like '$onadd_sn'";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['onfp_plant_amount'];
+		}
+		$qresult->free();
+	}
+	else{
+		$ret_data = 1;
+	}
+	$conn->close();
+	return $ret_data;
+}
+
 function getUserQty_re($where='') {
 	$ret_data = 0;
 	$conn = getDB();
@@ -128,10 +147,17 @@ function getWorkListByMonth($where='', $offset=30, $rows=0) {
         	$row['c_y'] = $c_y;
         	$row['o_m'] = $o_m;
         	$row['c_m'] = $c_m;
-        	if($o_y <= $c_y && $o_m <= $c_m){
-        		$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
-        		$row['expected_date'] = date('Y/m/d',strtotime($test));
-				$ret_data[] = $row;
+        	if($o_y <= $c_y){
+        		if($o_y == $c_y && $o_m <= $c_m){
+					$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
+        			$row['expected_date'] = date('Y/m/d',strtotime($test));
+					$ret_data[] = $row;
+        		}
+        		else if($o_y < $c_y){
+					$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
+        			$row['expected_date'] = date('Y/m/d',strtotime($test));
+					$ret_data[] = $row;
+        		}        		
         	}
         	// $ret_data[] = $row;
 		}

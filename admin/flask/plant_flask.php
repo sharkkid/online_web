@@ -207,7 +207,7 @@ if(!empty($op)) {
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
 		// $onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
 		$jsuser_sn = GetParam('supplier');//編輯人員
-		$isKept = GetParam('isKept');//是否汰除剩餘數量
+		// $isKept = GetParam('isKept');//是否汰除剩餘數量
 
 		if(empty($onadd_planting_date)||empty($onadd_quantity)){
 			$ret_msg = "*為必填！ onadd_quantity=".$onadd_quantity;
@@ -231,17 +231,18 @@ if(!empty($op)) {
 					//更新原本產品的第一筆下種數量(扣除換盆)
 					// $sql3 = "UPDATE onliine_firstplant_data SET onfp_plant_amount='{$first_n_changed}' WHERE onadd_sn='{$onadd_sn}'";
 					if($conn->query($sql1)){
-						if($isKept == true){
-							$sql3 = "UPDATE onliine_add_data SET onadd_quantity=0, onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
-							$sql4 = "INSERT INTO online_elimination_data (onelda_add_date, onelda_mod_date, onelda_quantity, onelda_reason, onadd_sn, onadd_part_no, onadd_part_name) "."VALUES ('{$now}', '{$now}', '{$onadd_quantity_cha123}', '4', '{$onadd_newpot_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
-							if($conn->query($sql3) && $conn->query($sql4))
-								$ret_msg = "下種成功！";
-							else
-								$ret_msg = "汰除失敗！";
-						}
-						else{
-							$ret_msg = "下種成功！";
-						}
+						// if($isKept == true){
+						// 	$sql3 = "UPDATE onliine_add_data SET onadd_quantity=0, onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
+						// 	$sql4 = "INSERT INTO online_elimination_data (onelda_add_date, onelda_mod_date, onelda_quantity, onelda_reason, onadd_sn, onadd_part_no, onadd_part_name) "."VALUES ('{$now}', '{$now}', '{$onadd_quantity_cha123}', '4', '{$onadd_newpot_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
+						// 	if($conn->query($sql3) && $conn->query($sql4))
+						// 		$ret_msg = "下種成功！";
+						// 	else
+						// 		$ret_msg = "汰除失敗！";
+						// }
+						// else{
+						// 	$ret_msg = "下種成功！";
+						// }
+						$ret_msg = "下種成功！";
 					}
 					else{
 						$ret_msg = "下種失敗！";
@@ -253,7 +254,7 @@ if(!empty($op)) {
 				}			
 			}
 			else if($onadd_status == -1){
-				$ret_msg = "錯誤！下種數量高於原庫存數量！".$isKept;
+				$ret_msg = "錯誤！下種數量高於原庫存數量！";
 			}
 			else {	
 				$ret_msg = "下種失敗！";
@@ -274,13 +275,18 @@ if(!empty($op)) {
 		}
 		$onadd_part_no = $list['onadd_part_no'];
 		$onadd_part_name = $list['onadd_part_name'];
+		if(empty($onadd_part_no))
+			$onadd_part_no = GetParam('onadd_part_no');
+		if(empty($onadd_part_name))
+			$onadd_part_name = GetParam('onadd_part_name');
+
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
 		$jsuser_sn = GetParam('supplier');//編輯人員
 		$onadd_quantity_del=GetParam('onadd_quantity_del');//汰除數量
 		$onelda_reason=GetParam('onelda_reason');//汰除原因
 		$jsuser_sn = GetParam('supplier');//編輯人員
 		$onadd_quantity_del123 = ($onadd_quantity - $onadd_quantity_del);
-		if($onadd_quantity_del123<=0) {
+		if($onadd_quantity_del123 < 0) {
 			$onadd_status = -1;
 		} else {
 			$onadd_status = 1;
@@ -308,6 +314,7 @@ if(!empty($op)) {
 		else if($onadd_status == -1){
 			$ret_msg = "錯誤！ 汰除數量不可大於下種數量！";
 		}
+
 		break;
 		//汰除---------------------------------------------
 
@@ -544,9 +551,10 @@ if(!empty($op)) {
 	<link href="./../../css1/style.css" rel="stylesheet">
 	<?php include('./../htmlModule/head.php');?>
 	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
-	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
-		<style>
+	<style>
 	* {
 	  box-sizing: border-box;
 	}
@@ -834,6 +842,39 @@ if(!empty($op)) {
 		            });
 			});
 
+			//出貨-----------------------------------------------------------
+			$('button.upd2').on('click', function(){
+				$('#upd-modal2').modal();
+				$('#upd_form2')[0].reset();
+
+				$.ajax({
+					url: './plant_flask.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                // console.log(ret);
+			                if(ret.code==1) {
+			                	var d = ret.data;
+			                	$('#upd_form2 input[name=onadd_sn]').val(d.onadd_sn);
+			                	$('#upd_form2 input[name=onadd_part_no]').val(d.onadd_part_no);
+			                	$('#upd_form2 input[name=onadd_quantity]').val(d.onadd_quantity);
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                    // console.log(xhr);
+		                }
+		            });
+			});
+			//出貨-----------------------------------------------------------
+
 			//汰除-----------------------------------------------------------
 			$('button.upd1').on('click', function(){
 				$('#upd-modal1').modal();
@@ -916,39 +957,6 @@ if(!empty($op)) {
 		            });
 			});			
 			//修改-----------------------------------------------------------
-
-			//出貨-----------------------------------------------------------
-			$('button.upd2').on('click', function(){
-				$('#upd-modal2').modal();
-				$('#upd_form2')[0].reset();
-
-				$.ajax({
-					url: './plant_flask.php',
-					type: 'post',
-					dataType: 'json',
-					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
-					beforeSend: function(msg) {
-						$("#ajax_loading").show();
-					},
-					complete: function(XMLHttpRequest, textStatus) {
-						$("#ajax_loading").hide();
-					},
-					success: function(ret) {
-			                // console.log(ret);
-			                if(ret.code==1) {
-			                	var d = ret.data;
-			                	$('#upd_form2 input[name=onadd_sn]').val(d.onadd_sn);
-			                	$('#upd_form2 input[name=onadd_part_no]').val(d.onadd_part_no);
-			                	$('#upd_form2 input[name=onadd_quantity]').val(d.onadd_quantity);
-			                }
-			            },
-			            error: function (xhr, ajaxOptions, thrownError) {
-		                	// console.log('ajax error');
-		                    // console.log(xhr);
-		                }
-		            });
-			});
-			//出貨-----------------------------------------------------------
 
 			bootbox.setDefaults({
 				locale: "zh_TW",
@@ -1063,7 +1071,7 @@ if(!empty($op)) {
 			});
 
 
-			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd3_form').validator().on('submit', function(e) {
+			$('#add_form, #upd_form1, #upd_form2, #upd3_form, #eli_form1').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
 					e.preventDefault();
 					var param = $(this).serializeArray();
@@ -1092,7 +1100,84 @@ if(!empty($op)) {
 			                 }
 			             });
 					 }
-					});
+				});
+
+				bootbox.setDefaults({
+					locale: "zh_TW",
+				});
+
+				$('#upd_form').validator().on('submit', function(e) {
+				if (!e.isDefaultPrevented()) {
+					e.preventDefault();
+					var param = $(this).serializeArray();
+					var onproduct_pic_url = {name:"onproduct_pic_url",value:$('#img_newName').html().substring(1,$('#img_newName').html().length)};
+					param.push(onproduct_pic_url);
+					console.log(param);
+					$(this).parents('.modal').modal('hide');
+					$(this)[0].reset();
+
+					 	$.ajax({
+					 		url: './plant_flask.php',
+					 		type: 'post',
+					 		dataType: 'json',
+					 		data: param,
+					 		beforeSend: function(msg) {
+					 			$("#ajax_loading").show();
+					 		},
+					 		complete: function(XMLHttpRequest, textStatus) {
+					 			$("#ajax_loading").hide();
+					 		},
+					 		success: function(ret) {
+					 			if(ret.msg != '下種成功！'){
+					 				alert_msg(ret.msg);
+					 			}	
+					 			else{				 			
+					 				bootbox.confirm("下種成功！庫存剩餘數量是否汰除？", function(result) {
+										if(result) {											
+											$('#eli-modal1').modal();
+											$.ajax({
+												url: './plant_flask.php',
+												type: 'post',
+												dataType: 'json',
+												data: {op:"get", onadd_sn:param[1]['value']},
+												beforeSend: function(msg) {
+													$("#ajax_loading").show();
+												},
+												complete: function(XMLHttpRequest, textStatus) {
+													$("#ajax_loading").hide();
+												},
+												success: function(ret) {
+			        							        console.log(ret);
+			        							        if(ret.code==1) {
+			        							        	var d = ret.data;			        							        	
+			        							        	$('#eli_form1 input[name=onadd_sn]').val(d.onadd_sn);
+			        							        	$('#eli_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
+			        							        	$('#eli_form1 input[name=onadd_part_name]').val(d.onadd_part_name);
+			        							        	$('#eli_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
+			        							        	// $('#eli_form1 input[name=onadd_quantity_del]').val((d.onadd_quantity-d.onadd_quantity));
+			        							        	
+			        							        }
+			        							    },
+			        							    error: function (xhr, ajaxOptions, thrownError) {
+		            							    	// console.log('ajax error');
+		            							        // console.log(xhr);
+		            							    }
+		            							});
+										}
+										else{
+											alert_msg(ret.msg);
+										}
+									});
+					 			}
+					 		},
+					 		error: function (xhr, ajaxOptions, thrownError) {
+			                	// console.log('ajax error');
+			                 //     console.log(thrownError);
+			                 }
+			             });
+					 }
+				});
+
 				$('#datetimepicker1').datetimepicker({
 		        	minView: 2,
 		            language:  'zh-TW',
@@ -1390,13 +1475,13 @@ if(!empty($op)) {
 											</select>
 										</div>
 									</div>
-									<div class="form-group">
+<!-- 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label" >剩餘數量是否汰除? (沒勾選擇保留庫存)</label>
 										<div class="col-sm-10">
 											<input type="checkbox" class="form-control" name="isKept" placeholder="">
 											<div class="help-block with-errors"></div>
 										</div>
-									</div>
+									</div> -->
 								</div>
 							</div>
 						</div>
@@ -1871,6 +1956,130 @@ if(!empty($op)) {
 			</div>
 		</div>
 
+		<!--出貨----------------------------------------------------------->
+		<div id="upd-modal2" class="modal upd-modal2" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd_form2" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">出貨</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd2">
+									<input type="hidden" name="onadd_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> 
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">出貨數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_plant_year" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">出貨對象<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onshda_client" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>         								
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">更新</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--出貨----------------------------------------------------------->
+
+		<!--汰除----------------------------------------------------------->
+		<div id="eli-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="eli_form1" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">汰除</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd1">
+									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_newpot_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">剩餘數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> 
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">汰除數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity_del" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">汰除原因<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onelda_reason">
+												<option value="4">其他</option>
+												<option value="3">黑頭</option>
+												<option value="2">褐斑</option>
+												<option selected="selected" value="1">軟腐</option>
+											</select>
+										</div>
+									</div>        								
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">保留</button>
+							<button type="submit" class="btn btn-danger">汰除</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--汰除----------------------------------------------------------->
+
 		<!-- container -->
 		<div class="container-fluid">
 			<div class="row">
@@ -1924,19 +2133,19 @@ if(!empty($op)) {
 					<!-- content -->
 					<table class="table table-striped table-hover table-condensed tablesorter">
 						<thead>
-							<tr>
-								<th>產品編號</th>
-								<th>品號</th>
-								<th>品名</th>
-								<th>下種日期</th>
-								<th>下種數量</th>
-								<th>目前尺寸</th> <!-- 2019/6/19新增 -->
-								<th>預計成熟日</th> <!-- 2019/6/19新增 -->
-								<th>育成率</th> <!-- 2019/6/19新增 -->
-								<th>備註</th> <!-- 2019/6/19新增 -->
-								<th>供應商</th>
-								<th>訂單客戶</th> <!-- 2019/6/19新增 -->						
-								<th>操作</th>
+							<tr style="font-size: 1.1em">
+								<th style="text-align: center;">產品編號</th>
+								<th style="text-align: center;">品號</th>
+								<th style="text-align: center;">品名</th>
+								<th style="text-align: center;">下種日期</th>
+								<th style="text-align: center;">下種數量</th>
+								<th style="text-align: center;">目前尺寸</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">預計成熟日</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">育成率</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">供應商</th>
+								<th style="text-align: center;">訂單客戶</th> <!-- 2019/6/19新增 -->						
+								<th colspan="2" style="text-align: center;">操作</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -1945,28 +2154,28 @@ if(!empty($op)) {
 								echo '<tr>';
 									if($row['onadd_part_no'] == 0){
 										if($row['onadd_newpot_sn'] == 0){
-	        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 	        							}
 	        							else{
-	        								echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 	        							}
 									}else{
 										if($row['onadd_newpot_sn'] == 0){
-											echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 										}
 										else{
-											echo '<td><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 										}
 									}
-        							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
-        							echo '<td>'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
-        							echo '<td>'.$row['onadd_quantity'].'</td>';//品名
-        							echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							if($row['onadd_growing']==1){
         								$list_setting = getSettingBySn(1.7);
         								$onchba_cycle = $list_setting['onchba_cycle'];
@@ -1978,25 +2187,25 @@ if(!empty($op)) {
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							echo '<td>'.$test.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							//育成率 (公式 (數量-汰除)/數量)      
         							if($row['onadd_newpot_sn'] == 0){
-	        							$first_plant_amount = getProductFirstQty($row['onadd_sn']);//第一次下種時間
+	        							$first_plant_amount = (getProductFirstQty($row['onadd_sn']) != 0 ? getProductFirstQty($row['onadd_sn']) : 1);//第一次下種時間
 	        							$incubation_rate = getProductAllNowQty($row['onadd_sn'])/$first_plant_amount;
 	        						}
 	        						else{
 	        							$first_plant_amount = getProductFirstQty($row['onadd_newpot_sn']);//第一次下種時間
 	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
-	        						}	
-        							echo '<td>'.number_format(($incubation_rate*100),2).'%</td>';        								
-        							$note = (!empty($row['onadd_quantity_cha'])) ? '<td>瓶苗下種</td>' : '<td></td>';
+	        						}		
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>';        								
+        							$note = (!empty($row['onadd_quantity_cha'])) ? '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">瓶苗下種</td>' : '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
         							echo $note;
-        							echo '<td>'.$row['onadd_supplier'].'</td>';
-        							echo '<td></td>';        							
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
 
         							// 2019/6/19新增 - 展開收回操作列表
-        							echo '<td>
+        							echo '<td style="text-align:center">
 	        							    <div>
 	        							      <button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
 	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>

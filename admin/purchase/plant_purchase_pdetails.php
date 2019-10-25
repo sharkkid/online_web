@@ -29,41 +29,6 @@ if(!empty($op)) {
 	$ret_msg = '';
 	$ret_data = array();
 	switch ($op) {
-		case 'add':
-		$onadd_add_date=GetParam('onadd_add_date');//建立日期
-		$onadd_mod_date=GetParam('onadd_mod_date');//修改日期
-		$onadd_part_no=GetParam('onadd_part_no');//品號
-		$onadd_part_name=GetParam('onadd_part_name');//品名
-		$onadd_color=GetParam('onadd_color');//花色
-		$onadd_size=GetParam('onadd_size');//花徑
-		$onadd_height=GetParam('onadd_height');//高度
-		$onadd_pot_size=GetParam('onadd_pot_size');//適合開花盆徑
-		$onadd_supplier=GetParam('onadd_supplier');//供應商
-		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
-		$onadd_quantity=GetParam('onadd_quantity');//下種數量
-		$onadd_growing=GetParam('onadd_growing');//預計成長大小
-		$onadd_change_basin=GetParam('onadd_change_basin');//換盆週期
-		$onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
-		$jsuser_sn = GetParam('supplier');//編輯人員
-
-		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)||empty($onadd_change_basin)){
-			$ret_msg = "*為必填！";
-		} else { 
-			$user = getUserByAccount($onadd_part_no);
-			$onadd_planting_date = str2time($onadd_planting_date);
-			$now = time();
-			$conn = getDB();
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_change_basin, onadd_status, jsuser_sn) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '{$onadd_change_basin}', '1', '{$jsuser_sn}');";
-				if($conn->query($sql)) {
-					$ret_msg = "新增成功！";
-				} else {
-					$ret_msg = "新增失敗！";
-				}
-			$conn->close();
-		}
-		break;
-
 		case 'get':
 		$onadd_sn=GetParam('onadd_sn');
 		$ret_data = array();

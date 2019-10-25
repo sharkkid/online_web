@@ -556,6 +556,12 @@ if(!empty($op)) {
 	  	$('#onproduct_sn').val(onproduct_sn);
 	}
 	</script>
+	<style type="text/css">
+		#img_print{
+			max-height:25vh;
+			max-width: 45vw;
+		}
+	</style>
 </head>
 
 <body>
@@ -569,7 +575,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>業績統計報表</h4>
+					<h4>可接出貨量</h4>
 				</div>
 			</div>
 		</div>
@@ -663,10 +669,10 @@ if(!empty($op)) {
         					// exit();
         					echo '<li>
 		        					<div class="am-panel am-panel-default">
-		        						<div class="am-panel-bd">
-		        						<button class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
-		        							<img class="am-img-responsive" src="'.$produce_image.'" height="170" width="150">
-		        							<h3 style="text-align:center"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
+		        						<div class="am-panel-bd" style="height:45vh;">
+		        						<button style="float:left clear:both;" class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
+		        							<hr><div class="col-md-10" style="max-height="25vh";max-width="30vw";"><img style="max-height=5vh;max-width=3vw;text-align:left;clear:both;" id="img_print" class="am-img-responsive thumbnail " src="'.$produce_image.'"></div>
+		        							<div class="col-md-2"><h3 style="text-align:center;"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
 		        							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
 		        							';
 		        							// printr($AllProductData);
@@ -686,10 +692,8 @@ if(!empty($op)) {
 		        								if($AllProductData[$i]['onproduct_height'] != '')
 		        									echo '<span style="text-align: center; display:block;">高度：'.$AllProductData[$i]['onproduct_height'].'</span>';
 		        								else
-		        									echo '<span style="text-align: center; display:block;">高度：尚未填寫</span>';	
-		        									
-		        								
-		        			echo			'       						
+		        									echo '<span style="text-align: center; display:block;">高度：尚未填寫</span>';		     
+		        			echo			' </div>      						
 		        						</div>
 		        					</div>
 		        				</li>';

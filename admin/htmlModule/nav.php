@@ -93,7 +93,7 @@
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_pdetails.php">品種資料</a></li>
                             </ul> -->
                              <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #D0D0D0">
-                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details.php">業績統計</a></li>
+                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details.php">可接出貨量</a></li>
                             </ul>
 
                         </li>

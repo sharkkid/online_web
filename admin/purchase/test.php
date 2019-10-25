@@ -130,72 +130,21 @@ if($_COOKIE['onadd_sn'] != null){
 	<page size="A4">
 		<img id="qr_img_example" style="margin-left: 20px;padding-left: 10px;display:none;" src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php?">
 		<img id="qr_img_example_flask" style="margin-left: 20px;padding-left: 10px;display:none;" src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=<?php echo WT_SERVER;?>/admin/flask/plant_flask.php?">
-		<div class="work">
-			<img style="max-width: 14vw;" src="" class="product_img">
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="onadd_sn">產品編號:1419-17</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_no">品號:P1015</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_name">品名:維維安Vivian (2號)</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="plant_date">下種日期:1419-08-01</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="location">位置:A5</div>
-			<div style="text-align:right;">
-				<img style="width: 70px;" src="" class="qr_img">
-			</div>	
+		<?php 
+			for ($i=0; $i < 5; $i++) { ?>
+				<div class="work">
+				<img style="max-width: 14vw;" src="" class="product_img">
+				<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="onadd_sn">產品編號:1419-17</div>
+				<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_no">品號:P1015</div>
+				<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_name">品名:維維安Vivian (2號)</div>
+				<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="plant_date">下種日期:1419-08-01</div>
+				<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="location">位置:A5</div>
+				<div style="text-align:right;">
+					<img style="width: 70px;" src="" class="qr_img">
+				</div>	
 		</div>
-		<div class="work">
-			<img style="max-width: 14vw;" src="" class="product_img">
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="onadd_sn">產品編號:1419-17</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_no">品號:P1015</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_name">品名:維維安Vivian (2號)</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="plant_date">下種日期:1419-08-01</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="location">位置:A5</div>
-			<div style="text-align:right;">
-				<img style="width: 70px;" src="" class="qr_img">
-			</div>	
-		</div>
-		<div class="work">
-			<img style="max-width: 14vw;" src="" class="product_img">
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="onadd_sn">產品編號:1419-17</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_no">品號:P1015</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_name">品名:維維安Vivian (2號)</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="plant_date">下種日期:1419-08-01</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="location">位置:A5</div>
-			<div style="text-align:right;">
-				<img style="width: 70px;" src="" class="qr_img">
-			</div>	
-		</div>
-		<div class="work">
-			<img style="max-width: 14vw;" src="" class="product_img">
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="onadd_sn">產品編號:1419-17</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_no">品號:P1015</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_name">品名:維維安Vivian (2號)</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="plant_date">下種日期:1419-08-01</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="location">位置:A5</div>
-			<div style="text-align:right;">
-				<img style="width: 70px;" src="" class="qr_img">
-			</div>	
-		</div>
-		<div class="work">
-			<img style="max-width: 14vw;" src="" class="product_img">
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="onadd_sn">產品編號:1419-17</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_no">品號:P1015</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_name">品名:維維安Vivian (2號)</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="plant_date">下種日期:1419-08-01</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="location">位置:A5</div>
-			<div style="text-align:right;">
-				<img style="width: 70px;" src="" class="qr_img">
-			</div>	
-		</div>
-		<div class="work">
-			<img style="max-width: 14vw;" src="" class="product_img">
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="onadd_sn">產品編號:1419-17</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_no">品號:P1015</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="part_name">品名:維維安Vivian (2號)</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="plant_date">下種日期:1419-08-01</div>
-			<div style="text-align:left;font-size: 14px;height: 14px;margin-left: 6px;" class="location">位置:A5</div>
-			<div style="text-align:right;">
-				<img style="width: 70px;" src="" class="qr_img">
-			</div>	
-		</div>
+
+		<?php 	}	?>
 
 	</page>
 

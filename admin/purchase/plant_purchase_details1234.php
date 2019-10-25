@@ -1096,11 +1096,10 @@ if(!empty($op)) {
 					</div>
 					<table class="table table-striped table-hover table-condensed tablesorter">
         				<thead>
-        					<tr>
-        						<th></th>
-        						<th>品號</th>
-        						<th>品名</th>
-        						<th>數量(只統計苗株)</th>
+        					<tr style="font-size: 1.1em">
+        						<th style="text-align: center;" colspan="2">品號</th>
+        						<th style="text-align: center;">品名</th>
+        						<th style="text-align: center;">數量(只統計苗株)</th>
         					</tr>
         				</thead>
         				<tbody>
@@ -1109,12 +1108,12 @@ if(!empty($op)) {
         						echo '<tr>';
         						// echo '<td><button type="button" class="btn btn-info btn-xs" onclick="location.href=\'			./details_table1234.php?onproduct_sn='.$row['onproduct_sn'].'&onproduct_part_no='.$row['onproduct_part_no'		].'	&onproduct_growing='.$row['onproduct_growing'].'&onadd_quantity_del='.date('Y').'\'		">查看</button></td>';
         							if($row['onproduct_pic_url'] != '')
-        								echo '<td><img src="'.$row['onproduct_pic_url'].'" style="width: 1.5em;"></td>';
+        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><img src="'.$row['onproduct_pic_url'].'" style="width: 1.5em;"></td>';
         							else
-        								echo '<td></td>';
-        							echo '<td>'.$row['onproduct_part_no'].'</td>';//品號
-        							echo '<td>'.$row['onproduct_part_name'].'</td>';//品名
-        							echo '<td>'.$row['sum'].'</td>';//數量
+        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onproduct_part_no'].'</td>';//品號
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onproduct_part_name'].'</td>';//品名
+        							echo '<td style="text-align: center;">'.$row['sum'].'</td>';//數量
         						echo '</tr>';
         					}
         					?>

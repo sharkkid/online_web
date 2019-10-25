@@ -1,5 +1,7 @@
 <?php
 include_once("./func_plant_purchase.php");
+// printr(getWorkListByMonth());
+// exit;
 	// search
 if(($onadd_part_no = GetParam('onadd_part_no'))) {
 	$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
@@ -54,7 +56,9 @@ $sum28 = getDetails('3');//計算2.8
 $sum30 = getDetails('4');//計算3.0
 $sum35 = getDetails('5');//計算3.5
 $sum36 = getDetails('6');//計算3.6
-$others = $sum28+$sum30+$sum36;
+$sum37 = getDetails('7');//計算其他
+$sum38 = getDetails('8');//計算瓶苗下種
+$others = $sum28+$sum30+$sum36+$sum37+$sum38;
 // printr($others);
 // exit();
 
@@ -150,7 +154,7 @@ $op=GetParam('op');
 				success: function(ret) {					
 					if(ret.code==1) {
 				        var data = ret.data;	
-						// console.log(ret.data.length);
+						console.log(ret.data);
 						var interval = setInterval(function write_numbers() {
 						  if (count < ret.data.length) {
 						  	$('#onadd_part_no').html(ret.data[count]['onadd_part_no']);
@@ -158,7 +162,7 @@ $op=GetParam('op');
 						  	$('#onadd_planting_date').html(ret.data[count]['onadd_planting_date']);
 						  	$('#onadd_expected_date').html(ret.data[count]['expected_date']);
 						  	$('#onadd_quantity').html(ret.data[count]['onadd_quantity']);
-						  	console.log('今日'+ret.data[count]['onadd_planting_date_unix']+'預計成長日'+ret.data[count]['expected_date_unix']);
+						  	// console.log('今日'+ret.data[count]['onadd_planting_date_unix']+'預計成長日'+ret.data[count]['expected_date_unix']);
 						  	if(ret.data[count]['onadd_planting_date_unix'] > ret.data[count]['expected_date_unix']){
 							  	$('#onadd_content').html("已經超過換盆日期");
 							}
@@ -383,21 +387,21 @@ $op=GetParam('op');
 			        console.log(d);
 			        for(var i=0;i<d.length;i++){
 			        	if(i<d.length-1){
-							str1 += "'"+d[i]['date1']+"',";
-							str2 += "'"+d[i]['date2']+"',";
-							str3 += "'"+d[i][0]+"',";
-							str4 += "'"+d[i][2]+"',";
-							str5 += "'"+d[i][1]+"',";
+							str1 += "\'"+d[i]['date1']+"\',";
+							str2 += "\'"+d[i]['date2']+"\',";
+							str3 += "\'"+d[i][0]+"\',";
+							str4 += "\'"+d[i][2]+"\',";
+							str5 += "\'"+d[i][1]+"\',";
 						}
 						else{
-							str1 += "'"+d[i]['date1']+"'";
-							str2 += "'"+d[i]['date2']+"'";
-							str3 += "'"+d[i][0]+"'";
-							str4 += "'"+d[i][2]+"'";
-							str5 += "'"+d[i][1]+"'";
+							str1 += "\'"+d[i]['date1']+"\'";
+							str2 += "\'"+d[i]['date2']+"\'";
+							str3 += "\'"+d[i][0]+"\'";
+							str4 += "\'"+d[i][2]+"\'";
+							str5 += "\'"+d[i][1]+"\'";
 						}
 			        }
-			        str2 = str2.substring(1,str2.length-1);
+			        // str2 = str2.substring(1,str2.length-1);
 			        console.log(str1);
 			        console.log(str2);
 			        console.log(str3);
@@ -412,9 +416,9 @@ $op=GetParam('op');
 				            columns: [
 				            ['x', str1],
 				            ['x', str2],
-				            ['下種', str3],
-				            ['出貨', str4],
-				            ['耗損', '50','0','0','0','0','0','0','0']
+				            ['下種',str3],
+				            ['出貨',str4],
+				            ['耗損',str5]
 				            ],
 				            colors: {
 				            	進貨: '#23b7e5',
@@ -529,9 +533,9 @@ $op=GetParam('op');
 						<div class="col-xs-8 pv-15 text-center">
 							<h2 class="mv-0">
 								<?php 
-								if(empty($sum35))
-									echo "<h2 class='mv-0'>0</h2>" ;								
-								else
+								// if(empty($sum35))
+								// 	echo "<h2 class='mv-0'>0</h2>" ;								
+								// else
 									echo "<h2 class='mv-0'>".$others."</h2>" ;
 								?>
 									

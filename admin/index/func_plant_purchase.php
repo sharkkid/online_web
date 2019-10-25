@@ -1,5 +1,6 @@
 <?php
 include_once(dirname(__FILE__).'/../config.php');
+$onchba_cycle = 0;
 //function--------------------------------------------------------------------------------------
 function consolelog($php) {
 	echo '<script>console.log('.$php.');</script>';
@@ -78,7 +79,7 @@ function getDetails($onadd_growing) {
 	$conn = getDB();
 	if(empty($where))
 		$sql="select SUM(onadd_quantity) from onliine_add_data where onadd_cur_size='$onadd_growing' GROUP BY onadd_growing";
-
+	
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -263,9 +264,14 @@ function getSettingBySn($onchba_size) {
 }
 
 function getWorkListByMonth() {
-	$list_setting1 = getSettingBySn(1.7);
-	$list_setting2 = getSettingBySn(2.5);
-	$list_setting5 = getSettingBySn(3.5);
+	$list_setting1 = getSettingBySn('1.7');
+	$list_setting2 = getSettingBySn('2.5');
+	$list_setting3 = getSettingBySn('2.8');
+	$list_setting4 = getSettingBySn('3.0');
+	$list_setting5 = getSettingBySn('3.5');
+	$list_setting6 = getSettingBySn('3.6');
+	$list_setting7 = getSettingBySn('其他');
+	$list_setting8 = getSettingBySn('瓶苗下種');
 	$ret_data = array();
 	$conn = getDB();
 	$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
@@ -274,29 +280,59 @@ function getWorkListByMonth() {
 		while($row = $qresult->fetch_assoc()) {
 			switch ($row['onadd_growing']) {
         		case 1:
-        			$onchba_cycle = $list_setting1['onchba_cycle'];
+        			$GLOBALS['onchba_cycle'] = $list_setting1['onchba_cycle'];
         			break;
         		case 2:
-        			$onchba_cycle = $list_setting2['onchba_cycle'];
+        			$GLOBALS['onchba_cycle'] = $list_setting2['onchba_cycle'];
+        			break;
+        		case 3:
+        			$GLOBALS['onchba_cycle'] = $list_setting3['onchba_cycle'];
+        			break;
+        		case 4:
+        			$GLOBALS['onchba_cycle'] = $list_setting4['onchba_cycle'];
         			break;
         		case 5:
-        			$onchba_cycle = $list_setting5['onchba_cycle'];
+        			$GLOBALS['onchba_cycle'] = $list_setting5['onchba_cycle'];
+        			break;
+        		case 6:
+        			$GLOBALS['onchba_cycle'] = $list_setting6['onchba_cycle'];
+        			break;
+        		case 7:
+        			$GLOBALS['onchba_cycle'] = $list_setting8['onchba_cycle'];
+        			break;
+        		case 8:
+        			$GLOBALS['onchba_cycle'] = $list_setting8['onchba_cycle'];
         			break;
         	}
-        	if($row['onadd_plant_st']==2){
-        		$onchba_cycle=1;
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        	}else{
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        	}
-        	if(date('M',strtotime($test)) == date('M')){
-        		$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);
-        		$row['expected_date'] = $test;
-        		$row['onadd_planting_date_unix'] = strtotime('now');
-        		$row['expected_date_unix'] = strtotime($test);
-				$ret_data[] = $row;
+        	$row['daaaaa'] = $GLOBALS['onchba_cycle'];
+       		$row['onchba_cycle'] = $GLOBALS['onchba_cycle'];
+        	$test = date("Y/m/d", strtotime("+".$GLOBALS['onchba_cycle']." days", $row['onadd_planting_date']));
+        	$o_y = intval(date('Y',strtotime($test)));        	
+        	$c_y = intval(date('Y'));
+        	$o_m = intval(date('m',strtotime($test)));
+        	$c_m = intval(date('m'));
+        	$row['o_y'] = $o_y;
+        	$row['c_y'] = $c_y;
+        	$row['o_m'] = $o_m;
+        	$row['c_m'] = $c_m;
 
+        	if($o_y <= $c_y){
+        		if($o_y == $c_y && $o_m <= $c_m){
+        			$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);
+        			$row['expected_date'] = $test;
+        			$row['onadd_planting_date_unix'] = strtotime('now');
+        			$row['expected_date_unix'] = strtotime($test);
+        			$ret_data[] = $row;
+        		}
+        		else if($o_y < $c_y){
+        			$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);
+        			$row['expected_date'] = $test;
+        			$row['onadd_planting_date_unix'] = strtotime('now');
+        			$row['expected_date_unix'] = strtotime($test);
+        			$ret_data[] = $row;
+        		}        		
         	}
+
 		}
 		$qresult->free();
 	}

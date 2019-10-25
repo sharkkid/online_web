@@ -256,31 +256,31 @@ if(!empty($op)) {
         				<!-- content -->
         				<table class="table table-striped table-hover table-condensed tablesorter">
         					<thead>
-        						<tr>
-        							<th>產品編號</th>
-        							<th>品號</th>
-        							<th>品名</th>
-        							<th>汰除日期</th>
-        							<th>汰除數量</th>     							
-        							<th>汰除原因</th>
-        						</tr>
+                                <tr style="font-size: 1.1em">
+                                    <th style="text-align: center;">產品編號</th>
+                                    <th style="text-align: center;">品號</th>
+                                    <th style="text-align: center;">品名</th>
+                                    <th style="text-align: center;">汰除日期</th>
+                                    <th style="text-align: center;">汰除數量</th>                               
+                                    <th style="text-align: center;">汰除原因</th>
+                                </tr>
         					</thead>
         					<tbody>
         						<?php
         						foreach ($user_list as $row) {
         							echo '<tr>';
         							if($row['onadd_plant_st'] == 0){//產品編號
-										echo '<td>'.date('Y',$row['onelda_add_date']).'-'.$row['onadd_sn'].'</td>';
+										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onelda_add_date']).'-'.$row['onadd_sn'].'</td>';
 									}
 									else{
-										echo '<td>'.'P'.date('Y',$row['onelda_add_date']).'-'.$row['onadd_sn'].'</td>';
+										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.'P'.date('Y',$row['onelda_add_date']).'-'.$row['onadd_sn'].'</td>';
 									} 
-        							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
-        							echo '<td>'.date('Y-m-d',$row['onelda_add_date']).'</td>';
-        							echo '<td>'.$row['onelda_quantity'].'</td>';//品名
-        							echo '<td>'.$permissions_mapping[$row['onelda_reason']].'</td>';
-        							echo '</td></tr>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
+                                    echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名                             
+                                    echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onelda_add_date']).'</td>';
+                                    echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onelda_quantity'].'</td>';//品名
+                                    echo '<td style="text-align: center;">'.$permissions_mapping[$row['onelda_reason']].'</td>';
+                                    echo '</td></tr>';
         						}
         						?>
         					</tbody>

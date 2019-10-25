@@ -830,17 +830,17 @@ if(!empty($op)) {
 					<!-- content -->
 					<table class="table table-striped table-hover table-condensed tablesorter">
 						<thead>
-							<tr>
-								<th>產品編號</th>
-								<th>品號</th>
-								<th>品名</th>
-								<th>下種日期</th>
-								<th>下種數量</th>
-								<!-- <th>預計成長大小</th> -->
-								<th>下階段換盆</th>
-								<!-- <th>總下種週期</th>       							 -->
-								<th>供應商</th>
-								<th>操作</th>
+							<tr style="font-size: 1.1em">
+								<th style="text-align: center;">產品編號</th>
+								<th style="text-align: center;">品號</th>
+								<th style="text-align: center;">品名</th>
+								<th style="text-align: center;">下種日期</th>
+								<th style="text-align: center;">下種數量</th>
+								<!-- <th style="text-align: center;">預計成長大小</th> -->
+								<th style="text-align: center;">下階段換盆</th>
+								<!-- <th style="text-align: center;">總下種週期</th>       							 -->
+								<th style="text-align: center;">供應商</th>
+								<th style="text-align: center;">操作</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -850,24 +850,24 @@ if(!empty($op)) {
 							foreach ($user_list as $row) {
 								echo '<tr>';
 									if($row['onadd_planting_st'] == 1){//產品編號
-										echo '<td>'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
+										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
 									}
 									else{
-										echo '<td>'.'P'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
+										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.'P'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
 									} 								
-        							echo '<td>'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
         							if($row['onadd_plant_st']==2){
-        							echo '<td>'.''.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.''.'</td>';
         							}else{						
-        							echo '<td>'.date('Y-m-d',str2time($row['onadd_planting_date'])).'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',str2time($row['onadd_planting_date'])).'</td>';
         							}
-        							echo '<td>'.$row['onadd_quantity'].'</td>';//品名
-        							echo '<td>'.$row['expected_date'].'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['expected_date'].'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
-        							// echo '<td>'.$onadd_cycle.'月'.'</td>';
-        							echo '<td>'.$row['onadd_supplier'].'</td>';//品名
-        							echo '<td><button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button>&nbsp;';
+        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$onadd_cycle.'月'.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';//品名
+        							echo '<td style="text-align: center;"><button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button>&nbsp;';
         							if($row['onadd_schedule']=='2'){        							
         							}else{
         								echo '<button type="button" class="btn btn-danger btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">延後</button>&nbsp;';

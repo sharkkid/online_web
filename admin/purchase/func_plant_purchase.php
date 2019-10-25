@@ -785,7 +785,12 @@ function getExpectedList($onbuda_part_no,$year,$month,$size) {
 function getWorkListByMonth() {
 	$list_setting1 = getSettingBySn(1.7);
 	$list_setting2 = getSettingBySn(2.5);
+	$list_setting3 = getSettingBySn(2.8);
+	$list_setting4 = getSettingBySn(3.0);
 	$list_setting5 = getSettingBySn(3.5);
+	$list_setting6 = getSettingBySn(3.6);
+	$list_setting7 = getSettingBySn('其他');
+	$list_setting8 = getSettingBySn('瓶苗下種');
 	$ret_data = array();
 	$conn = getDB();
 	$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
@@ -799,18 +804,46 @@ function getWorkListByMonth() {
         		case 2:
         			$onchba_cycle = $list_setting2['onchba_cycle'];
         			break;
+        		case 3:
+        			$onchba_cycle = $list_setting3['onchba_cycle'];
+        			break;
+        		case 4:
+        			$onchba_cycle = $list_setting4['onchba_cycle'];
+        			break;
         		case 5:
         			$onchba_cycle = $list_setting5['onchba_cycle'];
         			break;
+        		case 6:
+        			$onchba_cycle = $list_setting6['onchba_cycle'];
+        			break;
+        		case 7:
+        			$onchba_cycle = $list_setting8['onchba_cycle'];
+        			break;
+        		case 8:
+        			$onchba_cycle = $list_setting8['onchba_cycle'];
+        			break;
         	}
-        	if($row['onadd_plant_st']==2){
-        		$onchba_cycle=1;
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
-        	}else{
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle months", $row['onadd_planting_date']));
-        	}
-        	if(date('M',strtotime($test)) == date('M')){
-				$ret_data[] = $row;
+        	$row['onchba_cycle'] = $GLOBALS['onchba_cycle'];
+        	$test = date("Y/m/d", strtotime("+".$GLOBALS['onchba_cycle']." days", $row['onadd_planting_date']));
+        	$o_y = date('Y',strtotime($test));        	
+        	$c_y = date('Y');
+        	$o_m = date('m',strtotime($test));
+        	$c_m = date('m');
+        	$row['o_y'] = $o_y;
+        	$row['c_y'] = $c_y;
+        	$row['o_m'] = $o_m;
+        	$row['c_m'] = $c_m;
+        	if($o_y <= $c_y){
+        		if($o_y == $c_y && $o_m <= $c_m){
+        			$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
+        			$row['expected_date'] = date('Y/m/d',strtotime($test));
+					$ret_data[] = $row;
+        		}
+        		else if($o_y < $c_y){
+        			$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
+        			$row['expected_date'] = date('Y/m/d',strtotime($test));
+					$ret_data[] = $row;
+        		}        		
         	}
 		}
 		$qresult->free();
@@ -822,18 +855,14 @@ function getWorkListByMonth() {
 function getExpectedShipByMonth($year,$onadd_part_no) {
 	$year_start = strtotime($year."/1/1");
     $year_end = strtotime(($year)."/12/31");
-	// 1=>"1.7",
-	// 2=>"2.5",
-	// 3=>"2.8",
-	// 4=>"3.0",
-	// 5=>"3.5",
-	// 6=>"3.6",
 	$list_setting1 = getSettingBySn(1.7);
 	$list_setting2 = getSettingBySn(2.5);
 	$list_setting3 = getSettingBySn(2.8);
 	$list_setting4 = getSettingBySn(3.0);
 	$list_setting5 = getSettingBySn(3.5);
-	$list_setting5 = getSettingBySn(3.6);
+	$list_setting6 = getSettingBySn(3.6);
+	$list_setting7 = getSettingBySn('其他');
+	$list_setting8 = getSettingBySn('瓶苗下種');
 	$ret_data = array();
 	$conn = getDB();
 	$sql="select onadd_planting_date,onadd_quantity,onadd_growing from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_planting_date and onadd_plant_st = 1";
@@ -858,6 +887,12 @@ function getExpectedShipByMonth($year,$onadd_part_no) {
         			break;
         		case 6:
         			$onchba_cycle = $list_setting6['onchba_cycle'];
+        			break;
+        		case 7:
+        			$onchba_cycle = $list_setting8['onchba_cycle'];
+        			break;
+        		case 8:
+        			$onchba_cycle = $list_setting8['onchba_cycle'];
         			break;
         	}
 
