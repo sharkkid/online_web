@@ -645,29 +645,35 @@ $op=GetParam('op');
 			</div>
 		</div>
 
-		<div class='modal fade' id='myModal' role='dialog'>
-			<div class='modal-dialog modal-lg'>
+		<div class='modal fade ' id='myModal' role='dialog'>
+			<div class='modal-dialog modal-'>
 				<div class='modal-content'>
 					<div class='modal-body'>
-						<h4 class="modal-title">提醒事項</h4>
-							<label>品號：</label><label id="onadd_part_no"></label>
-							</br>
-							<label>品名：</label><label id="onadd_part_name"></label>
-							</br>
-							<label>下種日：</label><label id="onadd_planting_date"></label>
-							</br>
-							<label>預計成長日：</label><label id="onadd_expected_date"></label>
-							</br>
-							<label>數量：</label><label id="onadd_quantity"></label>
-							</br>
-							<label>提醒事項：</label><label id="onadd_content"></label>
-	</div>
-	<div class='modal-footer'>
-		<button type='button' class='btn btn-default' id="btn_modal">確認</button>
-	</div>
-</div>
-</div>
-</div>
+						<div class="panel panel-info">
+					    	<div class="panel-heading">
+					    		<h4 class="modal-title">提醒事項</h4>
+					    	</div>
+					    	<div class="panel-body" style="font-size: 1.4rem">					    	
+					    		<label>品號：</label><label id="onadd_part_no"></label>
+								</br>
+								<label>品名：</label><label id="onadd_part_name"></label>
+								</br>
+								<label>下種日：</label><label id="onadd_planting_date"></label>
+								</br>
+								<label>預計成長日：</label><label id="onadd_expected_date"></label>
+								</br>
+								<label>數量：</label><label id="onadd_quantity"></label>
+								</br>
+								<label>提醒事項：</label><label id="onadd_content"></label>
+					    	</div>
+					    </div>
+					</div>
+					<div class='modal-footer'>
+						<button type='button' class='btn btn-default' id="btn_modal">確認</button>
+					</div>
+				</div>
+			</div>
+		</div>
 <div class="row">
 	<div class="col-md-6">
 
