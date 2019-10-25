@@ -44,7 +44,7 @@
         <!-- top bar end-->
 
         <!--left navigation start-->
-        <aside class="float-navigation light-navigation" style="background-color: #000000;">
+        <aside class="float-navigation light-navigation"  style="background-color: #103337;">
             <div class="nano">
                 <div class="nano-content">
                     <ul class="metisMenu nav" id="menu">

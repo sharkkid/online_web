@@ -558,8 +558,8 @@ if(!empty($op)) {
 	</script>
 	<style type="text/css">
 		#img_print{
-			max-height:25vh;
-			max-width: 45vw;
+			max-height:20rem;
+			max-width: 40rem;
 		}
 	</style>
 </head>

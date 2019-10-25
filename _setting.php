@@ -4,7 +4,7 @@
 define('DB_SERVER', "localhost");
 // define('DB_SERVER', "148.72.232.169");
 define('DB_USERNAME', "onlineweb_sql");
-define('DB_PASSWORD', "2C2NhGfr1tuDNloL");
+define('DB_PASSWORD', "Qq0LObAgFCuZ9jGv");
 define('DB_DATABASE', "onlineweb_sql");
 
 define("SYS_DEBUG_MODE", false); // true: test, false: prod
