@@ -120,7 +120,15 @@ function getWorkListByMonth($where='', $offset=30, $rows=0) {
         	}else{
         		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         	}
-        	if(date('M',strtotime($test)) == date('M')){
+        	$o_y = date('Y',strtotime($test));        	
+        	$c_y = date('Y');
+        	$o_m = date('m',strtotime($test));
+        	$c_m = date('m');
+        	$row['o_y'] = $o_y;
+        	$row['c_y'] = $c_y;
+        	$row['o_m'] = $o_m;
+        	$row['c_m'] = $c_m;
+        	if($o_y <= $c_y && $o_m <= $c_m){
         		$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);
         		$row['expected_date'] = date('Y/m/d',strtotime($test));
 				$ret_data[] = $row;
@@ -198,10 +206,17 @@ function getUserQty($where='') {
         	}else{
         		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         	}
-
-        	if(date('M',strtotime($test)) == date('M'))
+        	$o_y = date('Y',strtotime($test));        	
+        	$c_y = date('Y');
+        	$o_m = date('m',strtotime($test));
+        	$c_m = date('m');
+        	$row['o_y'] = $o_y;
+        	$row['c_y'] = $c_y;
+        	$row['o_m'] = $o_m;
+        	$row['c_m'] = $c_m;
+        	if($o_y <= $c_y && $o_m <= $c_m){
         		$ret_data++;
-			// $ret_data = $row['count(*)'];
+			}
 		}
 		$qresult->free();
 	}

@@ -252,6 +252,18 @@ if(!empty($op)) {
 		$search_where[] = "onproduct_part_name like '%{$onproduct_part_name}%'";
 		$search_query_string['onproduct_part_name'] = $onadd_part_name;
 	}
+	if(($onproduct_color = GetParam('onproduct_color'))) {
+		$search_where[] = "onproduct_color like '%{$onproduct_color}%'";
+		$search_query_string['onproduct_color'] = $onadd_part_name;
+	}
+	if(($onproduct_size = GetParam('onproduct_size'))) {
+		$search_where[] = "onproduct_size like '%{$onproduct_size}%'";
+		$search_query_string['onproduct_size'] = $onproduct_size;
+	}
+	if(($onproduct_height = GetParam('onproduct_height'))) {
+		$search_where[] = "onproduct_height like '%{$onproduct_height}%'";
+		$search_query_string['onproduct_height'] = $onproduct_height;
+	}
 
 	$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
 	$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
@@ -604,7 +616,18 @@ if(!empty($op)) {
 										<label for="searchInput4">品名</label>
 										<input type="text" class="form-control" id="searchInput4" name="onproduct_part_name" value="<?php echo $onadd_part_name;?>" placeholder="">
 									</div>
-
+									<div class="form-group">
+										<label for="searchInput4">花色</label>
+										<input type="text" class="form-control" id="searchInput4" name="onproduct_color" value="<?php echo $onadd_part_name;?>" placeholder="">
+									</div>
+									<div class="form-group">
+										<label for="searchInput4">花徑</label>
+										<input type="text" class="form-control" id="searchInput4" name="onproduct_size" value="<?php echo $onadd_part_name;?>" placeholder="">
+									</div>
+									<div class="form-group">
+										<label for="searchInput4">高度</label>
+										<input type="text" class="form-control" id="searchInput4" name="onproduct_height" value="<?php echo $onadd_part_name;?>" placeholder="">
+									</div>
 									<button type="submit" class="btn btn-info" op="search">搜尋</button>
 								</div>
 							</div>
@@ -646,12 +669,26 @@ if(!empty($op)) {
 		        							<h3 style="text-align:center"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
 		        							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
 		        							';
+		        							// printr($AllProductData);
 		        								for($n=0;$n<6;$n++){
 		        									if($product_size_n[$n]['onadd_growing'] != null){
-		        										echo '<span style="text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 株</span><br>';
+		        										echo '<span style="text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 株</span>';
 		        									}		        									
 		        								}
-
+		        								if($AllProductData[$i]['onproduct_color'] != '')
+		        									echo '<span style="text-align: center; display:block;">花色：'.$AllProductData[$i]['onproduct_color'].'</span>';
+		        								else
+		        									echo '<span style="text-align: center; display:block;">花色：尚未填寫</span>';
+		        								if($AllProductData[$i]['onproduct_size'] != '')
+		        									echo '<span style="text-align: center; display:block;">花徑：'.$AllProductData[$i]['onproduct_size'].'</span>';
+		        								else
+		        									echo '<span style="text-align: center; display:block;">花徑：尚未填寫</span>';
+		        								if($AllProductData[$i]['onproduct_height'] != '')
+		        									echo '<span style="text-align: center; display:block;">高度：'.$AllProductData[$i]['onproduct_height'].'</span>';
+		        								else
+		        									echo '<span style="text-align: center; display:block;">高度：尚未填寫</span>';	
+		        									
+		        								
 		        			echo			'       						
 		        						</div>
 		        					</div>

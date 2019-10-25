@@ -58,21 +58,21 @@
                         <li class="active">
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-home"></i> 庫存管理 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">
-                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php">苗種資料管理</a></li>
+                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php">苗株庫存管理</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/flask/plant_flask.php">瓶苗資料管理</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_elimination.php">汰除統計報表</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_shipment.php">出貨統計報表</a></li>
-                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details1234.php">產品預計出貨清單</a></li>                                 
+                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details1234.php">品種資料</a></li>                                 
                             </ul>
                         </li>
-                        <!-- <li>
+                        <li>
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-grid"></i> 植床區域管理 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true">
-                                <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">A區</a></li>
-                                <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">B區</a></li>
-                                 <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">冷房</a></li>
+                                <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=0001">植物栽培區</a></li>
+<!--                                 <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">B區</a></li>
+                                 <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">冷房</a></li> -->
                             </ul>
-                        </li> -->
+                        </li>
 
                         <li><a href="<?php echo WT_SERVER;?>/admin/index/index.php">"<i class="icon-bar-chart"></i> 統計圖表 </a></li>
 
@@ -87,9 +87,9 @@
 
                         <li>
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-tag"></i> 業務專區 <span class="fa arrow"></span></a>
-                            <ul class="nav-second-level nav" aria-expanded="true">
+                            <!-- <ul class="nav-second-level nav" aria-expanded="true">
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_pdetails.php">品種資料</a></li>
-                            </ul>
+                            </ul> -->
                              <ul class="nav-second-level nav" aria-expanded="true">
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details.php">業績統計</a></li>
                             </ul>

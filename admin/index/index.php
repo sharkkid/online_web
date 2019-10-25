@@ -24,6 +24,18 @@ if(($onadd_growing = GetParam('onadd_growing', -1))>=0) {
 $search_where = isset($search_where) ? implode(' and ', $search_where) : '';
 $search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
 
+$size_mapping = array(
+	1=>'<font color="#666666">1.7寸</font>',
+	2=>'<font color="#666666">2.5寸</font>',
+	3=>'<font color="#666666">2.8寸</font>',
+	4=>'<font color="#666666">3.0寸</font>',
+	5=>'<font color="#666666">3.5寸</font>',
+	6=>'<font color="#666666">3.6寸</font>',
+	7=>'<font color="#666666">其他</font>' 
+);
+// printr(getTotalQty());
+// exit;
+
 	// page
 $pg_page = GetParam('pg_page', 1);
 $pg_rows = 20;
@@ -32,7 +44,9 @@ $pg_offset = $pg_rows * ($pg_page - 1);
 $pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 $product_list = getWorkListByMonth();
-// printr($product_list);
+$week_list = getQuantity_Day(date("Y/m/d",time()));
+$TotalQty = getTotalQty();
+// printr($TotalQty);
 // exit();
 $sum17 = getDetails('1');//計算1.7
 $sum25 = getDetails('2');//計算2.5
@@ -135,7 +149,7 @@ $op=GetParam('op');
 				success: function(ret) {					
 					if(ret.code==1) {
 				        var data = ret.data;	
-						console.log(ret.data.length);
+						// console.log(ret.data.length);
 						var interval = setInterval(function write_numbers() {
 						  if (count < ret.data.length) {
 						  	$('#onadd_part_no').html(ret.data[count]['onadd_part_no']);
@@ -238,11 +252,43 @@ $op=GetParam('op');
         		x: 'x',
                 xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
                 columns: [
-                ['x', <?php echo "'".date("Y-m-d",time())."'"; ?>],
-                ['x', <?php echo "'".date("Ymd",time())."'"; ?>],
-                ['下種', <?php echo getQuantity_Day(date("Y/m/d",time()))[0]['add_quantity']; ?>],
-                ['出貨', <?php echo getQuantity_Day(date("Y/m/d",time()))[1]['elda_quantity']; ?>],
-                ['耗損', <?php echo getQuantity_Day(date("Y/m/d",time()))[2]['ship_quantity']; ?>]
+     //            	['x','2019-10-24','2019-10-23'],
+     //            	['x','20191024','20191023'],
+     //            	['下種','0','10']
+     //            	,['出貨','0','20']
+     //            	,['耗損','50','30']                	
+ 				// ],
+
+                <?php 
+                	for($i=0;$i<count($week_list);$i++){
+                		if($i<count($week_list)-1){
+                			$str1 .= "'".$week_list[$i]['date1']."',";
+                			$str2 .= "'".$week_list[$i]['date2']."',";
+                			$str3 .= "'".$week_list[$i][0]."',";
+                			$str4 .= "'".$week_list[$i][2]."',";
+                			$str5 .= "'".$week_list[$i][1]."',";
+	                	}
+                		else{
+                			$str1 .= "'".$week_list[$i]['date1']."'";
+                			$str2 .= "'".$week_list[$i]['date2']."'";
+                			$str3 .= "'".$week_list[$i][0]."'";
+                			$str4 .= "'".$week_list[$i][2]."'";
+                			$str5 .= "'".$week_list[$i][1]."'";
+                		}
+                	}
+                	echo "['x',".$str1."],";
+	                echo "['x',".$str2."],";
+	                echo "['下種',".$str3."],";
+	                echo "['出貨',".$str4."],";
+	                echo "['耗損',".$str5."],";
+                ?>
+                
+                // ['x', <?php echo "'".date("Y-m-d",time())."'"; ?>],
+                // ['x', <?php echo "'".date("Ymd",time())."'"; ?>],
+                // ['下種', <?php echo getQuantity_Day(date("Y/m/d",time()))[0]['add_quantity']; ?>],
+                // ['出貨', <?php echo getQuantity_Day(date("Y/m/d",time()))[1]['elda_quantity']; ?>],
+                // ['耗損', <?php echo getQuantity_Day(date("Y/m/d",time()))[2]['ship_quantity']; ?>]
+                // ],
                 ],
                 colors: {
                 	進貨: '#23b7e5',
@@ -328,22 +374,46 @@ $op=GetParam('op');
 			success: function(ret) {
 				if(ret.code==1) {
 			        var d = ret.data;
-			        // console.log(day);
-			        // console.log(day.slice(0,4)+day.slice(5,7)+day.slice(8,10));
-			        // console.log(d[0].add_quantity);
-			        // console.log(d[1].elda_quantity);
-			        // console.log(d[2].ship_quantity);
+			        var str1="";
+			        var str2="";
+					var str3="";
+					var str4="";
+					var str5="";
+			        console.log(d);
+			        for(var i=0;i<d.length;i++){
+			        	if(i<d.length-1){
+							str1 += "'"+d[i]['date1']+"',";
+							str2 += "'"+d[i]['date2']+"',";
+							str3 += "'"+d[i][0]+"',";
+							str4 += "'"+d[i][2]+"',";
+							str5 += "'"+d[i][1]+"',";
+						}
+						else{
+							str1 += "'"+d[i]['date1']+"'";
+							str2 += "'"+d[i]['date2']+"'";
+							str3 += "'"+d[i][0]+"'";
+							str4 += "'"+d[i][2]+"'";
+							str5 += "'"+d[i][1]+"'";
+						}
+			        }
+			        str2 = str2.substring(1,str2.length-1);
+			        console.log(str1);
+			        console.log(str2);
+			        console.log(str3);
+			        console.log(str4);
+			        console.log(str5);
+
 			        var chart = c3.generate({
 				    	bindto: '#timeseriesChart',
 				    	data: {
 				    		x: 'x',
 				            xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
 				            columns: [
-				            ['x', day],
-				            ['x', day.slice(0,4)+day.slice(5,7)+day.slice(8,10)],
-				            ['下種', d[0].add_quantity],
-				            ['出貨', d[1].elda_quantity],
-				            ['耗損', d[2].ship_quantity]
+				            ['x', str1],
+				            ['x', str2],
+				            ['下種', str3],
+				            ['出貨', str4],
+				            ['耗損', '50','0','0','0','0','0','0','0']
 				            ],
 				            colors: {
 				            	進貨: '#23b7e5',
@@ -504,7 +574,7 @@ $op=GetParam('op');
 							</div>
 						</div>
 					<div class="panel-heading">
-						日報表
+						周報表
 					</div>
 					<div class="panel-body">
 						<div>
@@ -524,7 +594,38 @@ $op=GetParam('op');
 					<div class="panel-body">
 						<div class="scrollDiv">
 							<ul class="sidebar-list projects-list">                           
+								<table class="table">
+								  <thead>
+								    <tr>
+								      <th scope="col">位置</th>
+								      <th scope="col">尺寸</th>
+								      <th scope="col">目前數量</th>
+								    </tr>
+								  </thead>
+								  <tbody>
+								  	<?php 
+								  		for($i=0;$i<count($TotalQty);$i++){
+								  			for($j=1;$j<=6;$j++){
+								  				if($j==1){
+										  			echo "<tr>";
+										  				echo "<td>".$TotalQty[$i]['location']."</td>";
+										  				echo "<td>".$size_mapping[$j]."</td>";
+										  				echo "<td><a href=\"".WT_SERVER."/admin/purchase/plant_purchase.php?onadd_part_no=&onadd_part_name=&onadd_location=".$TotalQty[$i]['location']."\">".$TotalQty[$i][$j]."</a></td>";
+										  			echo "</tr>";
+										  		}
+										  		else{
+										  			echo "<tr>";
+										  				echo "<td></td>";
+										  				echo "<td>".$size_mapping[$j]."</td>";
+										  				echo "<td><a href=\"".WT_SERVER."/admin/purchase/plant_purchase.php?onadd_part_no=&onadd_part_name=&onadd_location=".$TotalQty[$i]['location']."\">".$TotalQty[$i][$j]."</a></td>";
+										  			echo "</tr>";
+										  		}
+									  		}
+								  		}
 
+								  	?>								    
+								  </tbody>
+								</table>
 							</ul>
 						</div>
 					</div>

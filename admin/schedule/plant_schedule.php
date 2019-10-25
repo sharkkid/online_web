@@ -218,6 +218,8 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$user_list = getWorkListByMonth($search_where, $pg_offset, $pg_rows);
+	// printr($user_list);
+	// exit;
 }
 ?>
 <!DOCTYPE html>

@@ -134,43 +134,61 @@ function getQuantity_Day($day) {
 	$conn = getDB();
 	// $firday = strtotime(date("Y/m/d",time())." 00:00:00");
 	// $endday = strtotime(date("Y/m/d",time())." 24:00:00");
-	$firday = strtotime($day." 00:00:00");
-	$endday = strtotime($day." 24:00:00");
+	$ret_data = array();
+	$firday = strtotime("-7 days",strtotime($day." 00:00:00"));
+	$endday = strtotime("-7 days",strtotime($day." 24:00:00"));
 
-	$sql="SELECT sum(onadd_quantity) as add_quantity FROM `onliine_add_data` WHERE onadd_mod_date Between {$firday} AND {$endday}}";
-	$sql2="SELECT sum(onelda_quantity) as elda_quantity FROM `online_elimination_data` WHERE onelda_mod_date Between {$firday} AND {$endday}";
-	$sql3="SELECT sum(onshda_quantity) as ship_quantity FROM `online_shipment_data` WHERE onshda_mod_date Between {$firday} AND {$endday}";
-	// echo $sql;
-
-	$qresult = $conn->query($sql);
-	if ($qresult->num_rows > 0) {
-		while($row = $qresult->fetch_assoc()) {
-			$ret_data[0] = $row;
-		}
-		$qresult->free();
-	}
-	else{
-		$ret_data[0] = array("add_quantity" => "0");
-	}
-	$qresult = $conn->query($sql2);
-	if ($qresult->num_rows > 0) {
-		while($row = $qresult->fetch_assoc()) {
-			$ret_data[1] = $row;
-		}
-		$qresult->free();
-	}
-	else{
-		$ret_data[1] = array("elda_quantity" => "0");
-	}
-	$qresult = $conn->query($sql3);
+	for($i=0;$i<=7;$i++){
+		$firday = strtotime("+".$i." days",strtotime($day." 00:00:00"));
+		$endday = strtotime("+".$i." days",strtotime($day." 24:00:00"));
+		$sql="SELECT sum(onadd_quantity) as add_quantity FROM `onliine_add_data` WHERE onadd_mod_date Between {$firday} AND {$endday}";
+		$sql2="SELECT sum(onelda_quantity) as elda_quantity FROM `online_elimination_data` WHERE onelda_mod_date Between {$firday} AND {$endday}";
+		$sql3="SELECT sum(onshda_quantity) as ship_quantity FROM `online_shipment_data` WHERE onshda_mod_date Between {$firday} AND {$endday}";
+	
+		$qresult = $conn->query($sql);
 		if ($qresult->num_rows > 0) {
-		while($row = $qresult->fetch_assoc()) {
-			$ret_data[2] = $row;
+			while($row = $qresult->fetch_assoc()) {
+				if($row['add_quantity'] != ''){
+					$ret_data[$i][0] = $row['add_quantity'];
+				}
+				else{
+					$ret_data[$i][0] = '0';
+				}				
+				$ret_data[$i]['date1'] = date("Y-m-d",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+				$ret_data[$i]['date2'] = date("Ymd",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+			}
+			$qresult->free();
 		}
-		$qresult->free();
-	}
-	else{
-		$ret_data[2] = array("ship_quantity" => "0");
+
+		$qresult = $conn->query($sql2);
+		if ($qresult->num_rows > 0) {
+			while($row = $qresult->fetch_assoc()) {
+				if($row['elda_quantity'] != ''){
+					$ret_data[$i][1] = $row['elda_quantity'];
+				}
+				else{
+					$ret_data[$i][1] = '0';
+				}
+				$ret_data[$i]['date1'] = date("Y-m-d",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+				$ret_data[$i]['date2'] = date("Ymd",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+			}
+			$qresult->free();
+		}
+
+		$qresult = $conn->query($sql3);
+		if ($qresult->num_rows > 0) {
+			while($row = $qresult->fetch_assoc()) {
+				if($row['ship_quantity'] != ''){
+					$ret_data[$i][2] = $row['ship_quantity'];
+				}
+				else{
+					$ret_data[$i][2] = '0';
+				}
+				$ret_data[$i]['date1'] = date("Y-m-d",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+				$ret_data[$i]['date2'] = date("Ymd",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+			}
+			$qresult->free();
+		}
 	}
 
 	$conn->close();
@@ -282,6 +300,32 @@ function getWorkListByMonth() {
 		}
 		$qresult->free();
 	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getTotalQty(){
+	$location = array('A1','A2','A3','A4','A5','B1','B2','B3','B4','B5');
+	$onadd_cur_size = array('1','2','3','4','5','6');
+	$ret_data = array();
+	$conn = getDB();
+
+	for($i=0;$i<count($location);$i++){
+		for($j=0;$j<count($onadd_cur_size);$j++){
+			$sql="select SUM(onadd_quantity) from onliine_add_data where onadd_location like '".$location[$i]."' and onadd_cur_size = ".$onadd_cur_size[$j];
+			$qresult = $conn->query($sql);
+			if ($qresult->num_rows > 0) {
+				if ($row = $qresult->fetch_assoc()) {
+					$ret_data[$i]['location'] = $location[$i];
+					if($row['SUM(onadd_quantity)'] != '')
+						$ret_data[$i][$onadd_cur_size[$j]] = $row['SUM(onadd_quantity)'];
+					else
+						$ret_data[$i][$onadd_cur_size[$j]] = 0;
+				}
+				$qresult->free();
+			}
+		}
+	}	
 	$conn->close();
 	return $ret_data;
 }

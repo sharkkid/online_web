@@ -1,5 +1,7 @@
 <?php
 include_once("./func_plant_elimination.php");
+$export_error = GetParam('export_error');
+
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
 		1=>"1.7",
@@ -16,6 +18,13 @@ $permissions_mapping = array(
     2=>'<font color="#666666">褐斑</font>',
     3=>'<font color="#666666">黑頭</font>',
     4=>'<font color="#666666">其他</font>'
+);
+
+$eli_reason_mapping = array(
+    1=>'軟腐',
+    2=>'褐斑',
+    3=>'黑頭',
+    4=>'其他'
 );
 
 $op=GetParam('op');
@@ -75,6 +84,60 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$user_list = getUser($search_where, $pg_offset, $pg_rows);	
+    // printr($user_list);
+    // exit();
+
+    if($export_error==1) {
+        ob_end_clean(); //  避免亂碼
+        header("Content-Type:text/html; charset=utf-8");
+        include_once(WT_PATH_ROOT.'/lib/PHPExcel_1.8.0/PHPExcel.php');
+        include_once(WT_PATH_ROOT.'/lib/PHPExcel_1.8.0/PHPExcel/Writer/Excel2007.php');
+
+        // init excel
+        $inputfilename = WT_PATH_ROOT.'/admin/purchase/elimination_temp.xls';
+
+        if(!file_exists($inputfilename)) exceptions("查無Excel巡檢表");
+        $originalexcel = PHPExcel_IOFactory::load($inputfilename);
+
+        // init data
+        $add_date = date('Y/m/d H:i:s');
+        $sheetname = 'data';
+
+        $sheet = $originalexcel->getSheetByName($sheetname);
+
+    // 塞值
+        $n = 2;
+        for($i=0;$i<count($user_list);$i++){
+            $sheet->setCellValue('A'.($n+$i), date('Y',$user_list[$i]['onelda_add_date']).'-'.$user_list[$i]['onadd_sn']);//產品編號
+            $sheet->setCellValue('B'.($n+$i), $user_list[$i]['onadd_part_no']);//品號
+            $sheet->setCellValue('C'.($n+$i), $user_list[$i]['onadd_part_name']);//品名
+            $sheet->setCellValue('D'.($n+$i), date('Y-m-d',$user_list[$i]['onelda_add_date']));//汰除日期
+            $sheet->setCellValue('E'.($n+$i), $user_list[$i]['onelda_quantity']);//汰除數量
+            $sheet->setCellValue('F'.($n+$i), $eli_reason_mapping[$user_list[$i]['onelda_reason']]);//汰除原因
+        }
+
+        $sheet->setTitle('汰除報表');
+
+
+    // 產生檔案
+        $excelextend = substr($inputfilename, strpos($inputfilename, "."));
+        $filename="汰除報表_".date("YmdHis");
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=".$filename.$excelextend);
+        header('Cache-Control: max-age=0');
+        // $objWriter = PHPExcel_IOFactory::createWriter($originalexcel, 'Excel2007');
+        // $objWriter->setIncludeCharts(TRUE);
+        // $objWriter->save('php://output');
+        if($excelextend == "xlsx")
+            $objWriter = PHPExcel_IOFactory::createWriter($originalexcel, 'Excel2007');
+        else
+            $objWriter = PHPExcel_IOFactory::createWriter($originalexcel, 'Excel5');
+        $objWriter->save('php://output');
+
+        unlink($ir_file_name);
+        unlink($dc_file_name);
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -107,11 +170,34 @@ if(!empty($op)) {
 	<link href="./../../css1/style.css" rel="stylesheet">
 	<?php include('./../htmlModule/head.php');?>
 	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
-	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
+
+    <script src="./../../lib/bootstrap-datetimepickerzh-TW.js"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/moment.min.js"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
+
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+			$('button.export_excel').on('click', function(){
+                window.open("plant_elimination.php?export_error=1");
+
+            });
+            $('#datetimepicker1').datetimepicker({
+                    minView: 2,
+                    locale: moment.locale('zh-TW'), //引入中文语言   
+                    format: 'yyyy-mm-dd',
+                    useCurrent: false
+                });
+                
+            $('#datetimepicker2').datetimepicker({
+                    minView: 2,
+                    locale: moment.locale('zh-TW'), //引入中文语言   
+                    format: 'yyyy-mm-dd',
+                    useCurrent: false
+                });
 		});
 	</script>	
 </head>
@@ -163,7 +249,11 @@ if(!empty($op)) {
         								</div>
 
         								<button type="submit" class="btn btn-info" op="search">搜尋</button>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-info export_excel">匯出汰除報表</button>
+                                        </div>
         							</div>
+
         						</div>
         					</form>
         				</div>

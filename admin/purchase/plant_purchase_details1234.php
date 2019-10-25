@@ -241,6 +241,8 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$user_list = getProducts($search_where, $pg_offset, $pg_rows);
+	// printr($user_list);
+	// exit;
 }
 ?>
 <!DOCTYPE html>
@@ -598,7 +600,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>產品預計出貨清單</h4>
+					<h4>品種資料</h4>
 				</div>
 			</div>
 		</div>
@@ -1095,18 +1097,24 @@ if(!empty($op)) {
 					<table class="table table-striped table-hover table-condensed tablesorter">
         				<thead>
         					<tr>
-        						<th>操作</th>
+        						<th></th>
         						<th>品號</th>
         						<th>品名</th>
+        						<th>數量(只統計苗株)</th>
         					</tr>
         				</thead>
         				<tbody>
-        					<?php
+        					<?php        					
         					foreach ($user_list as $row) {
         						echo '<tr>';
-        						echo '<td><button type="button" class="btn btn-info btn-xs" onclick="location.href=\'			./details_table1234.php?onproduct_sn='.$row['onproduct_sn'].'&onproduct_part_no='.$row['onproduct_part_no'		].'	&onproduct_growing='.$row['onproduct_growing'].'&onadd_quantity_del='.date('Y').'\'		">查看</button></td>';
-        						echo '<td>'.$row['onproduct_part_no'].'</td>';//品號
-        						echo '<td>'.$row['onproduct_part_name'].'</td>';//品名
+        						// echo '<td><button type="button" class="btn btn-info btn-xs" onclick="location.href=\'			./details_table1234.php?onproduct_sn='.$row['onproduct_sn'].'&onproduct_part_no='.$row['onproduct_part_no'		].'	&onproduct_growing='.$row['onproduct_growing'].'&onadd_quantity_del='.date('Y').'\'		">查看</button></td>';
+        							if($row['onproduct_pic_url'] != '')
+        								echo '<td><img src="'.$row['onproduct_pic_url'].'" style="width: 1.5em;"></td>';
+        							else
+        								echo '<td></td>';
+        							echo '<td>'.$row['onproduct_part_no'].'</td>';//品號
+        							echo '<td>'.$row['onproduct_part_name'].'</td>';//品名
+        							echo '<td>'.$row['sum'].'</td>';//數量
         						echo '</tr>';
         					}
         					?>

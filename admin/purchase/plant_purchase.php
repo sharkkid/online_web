@@ -1,6 +1,6 @@
 <?php
 include_once("./func_plant_purchase.php");
-// printr(qr_download(8));
+// printr(getHistory_List(56));
 // exit();
 $qr_sn = "";
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
@@ -848,7 +848,7 @@ if(!empty($op)) {
 						$("#ajax_loading").hide();
 					},
 					success: function(ret) {
-			                // console.log(ret);
+			                console.log(ret);
 			                if(ret.code==1) {
 			                	var d = ret.data;		
 			                	$('#upd_form input[name=onadd_sn]').val(d.onadd_sn);
@@ -1055,10 +1055,10 @@ if(!empty($op)) {
 			                	else
 			                		$('#qr_product_img').attr("src","./images/nopic.png");
 
-			                	if($('#qr_product_img').width() > 565)
-			                		$('#qr_product_img').width(550);
-								if($('#qr_product_img').height() > 392)
-			                		$('#qr_product_img').height(392);
+			     //            	if($('#qr_product_img').width() > 565)
+			     //            		$('#qr_product_img').width(550);
+								// if($('#qr_product_img').height() > 392)
+			     //            		$('#qr_product_img').height(392);
  
 			                	$('#qr_sn').html("產品編號："+qr_sn);
 			                	$('#qr_part_no').html("品號："+d.onadd_part_no);
@@ -1345,7 +1345,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>苗種庫存管理</h4>
+					<h4>苗株庫存管理</h4>
 				</div>
 			</div>
 		</div>		
@@ -1762,7 +1762,7 @@ if(!empty($op)) {
 									<div id="qr_location" style="font-size: 20px;font-weight:bold;">位置：</div>
 									<div id="qr_part_number" style="font-size: 20px;font-weight:bold;">數量：</div>		
 									<img id="qr_sticker_img"style="width: 400px;height: 280px;" src=""> -->
-									<img id="qr_product_img"style="margin-top: 15px;" src="">
+									<img id="qr_product_img"style="max-height: 32vh;max-width: 32vw;text-align: center; margin-top: 15px;" src="">
 									<div id="qr_sn" style="margin-top: 5px;font-size: 20px;"></div>
 									<div id="qr_part_no" style="font-size: 20px;"></div>
 									<div id="qr_part_name" style="font-size: 20px;"></div>
@@ -2057,7 +2057,12 @@ if(!empty($op)) {
         							echo '<td>'.$row['onadd_part_name'].'</td>';//品名  							
         							echo '<td>'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
         							echo '<td>'.$row['onadd_quantity'].'</td>';//品名
-        							echo '<td>'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
+        							if(!empty($permissions_mapping[$row['onadd_cur_size']])){
+	        							echo '<td>'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
+	        						}
+	        						else{
+	        							echo '<td></td>';
+	        						}
         							echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							if($row['onadd_growing']==1){
         								$list_setting = getSettingBySn(1.7);
@@ -2076,7 +2081,7 @@ if(!empty($op)) {
 
         							//育成率 (公式 (數量-汰除)/數量)      
         							if($row['onadd_newpot_sn'] == 0){
-	        							$first_plant_amount = getProductFirstQty($row['onadd_sn']);//第一次下種時間
+	        							$first_plant_amount = (getProductFirstQty($row['onadd_sn']) != 0 ? getProductFirstQty($row['onadd_sn']) : 1);//第一次下種時間
 	        							$incubation_rate = getProductAllNowQty($row['onadd_sn'])/$first_plant_amount;
 	        						}
 	        						else{
@@ -2089,23 +2094,23 @@ if(!empty($op)) {
         							$note = (!empty($row['onadd_quantity_cha'])) ? '<td>換盆</td>' : '<td></td>';
         							echo $note;
         							echo '<td>'.$row['onadd_supplier'].'</td>';
-        							echo '<td></td>';
-        							echo '<td><button type="button" class="btn btn-primary btn-xs upd5" data-onadd_sn="'.$row['onadd_sn'].'" data-toggle="collapse" data-target="#collapse'.$row['onadd_sn'].'">展開</button>';
+        							echo '<td></td>';        							
 
         							// 2019/6/19新增 - 展開收回操作列表
         							echo '<td>
-	        							    <div id="collapse'.$row['onadd_sn'].'" class="collapse">
+	        							    <div>
 	        							      <button type="button" class="btn btn-warning btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
 	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
 	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;';
         							if($permmsion == '系統管理員'){
-	        							echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
-	        							echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
-	        						}
+	        							// echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
+	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
+	        						}       						
 
 	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
-	        								</div>
-	        							 </td>';
+	        								</div>';
+	        						echo '<td><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+	        						echo '</td>';
         							echo '</tr>';
         						}
         						?>

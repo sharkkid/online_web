@@ -191,6 +191,16 @@ function getProducts($where='', $offset=30, $rows=0) {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
+			$sql2="select SUM(onadd_quantity) from onliine_add_data where onadd_status>=0 and onadd_part_no like '".$row['onproduct_part_no']."' and onadd_part_name like '".$row['onproduct_part_name']."' and onadd_plant_st = 1";
+			$qresult2 = $conn->query($sql2);
+			if ($qresult2->num_rows > 0) {
+				while($row2 = $qresult2->fetch_assoc()) {
+					if($row2['SUM(onadd_quantity)'] != '')
+						$row['sum'] = $row2['SUM(onadd_quantity)'];
+					else
+						$row['sum'] = 0;
+				}
+			}
 			$ret_data[] = $row;
 		}
 		$qresult->free();
@@ -260,12 +270,14 @@ function getAllProductData($where='') {
 }
 
 function getAllProductData_page($where='',$offset=30, $rows=0) {
+	if($where != '')
+		$where_query .= 'where '.$where;
 	$ret_data = array();
 	$conn = getDB();
 	if($rows == 0)
 		$sql="select * from onliine_product_data order by onproduct_part_no";
 	else
-		$sql="select * from onliine_product_data order by onproduct_part_no limit $offset, $rows";
+		$sql="select * from onliine_product_data $where_query order by onproduct_part_no limit $offset, $rows";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {

@@ -1,5 +1,6 @@
 <?php
 include_once("./func_plant_shipment.php");
+$export_error = GetParam('export_error');
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
 		1=>"1.7",
@@ -78,6 +79,59 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$user_list = getUser($search_where, $pg_offset, $pg_rows);
+
+	if($export_error==1) {
+        ob_end_clean(); //  避免亂碼
+        header("Content-Type:text/html; charset=utf-8");
+        include_once(WT_PATH_ROOT.'/lib/PHPExcel_1.8.0/PHPExcel.php');
+        include_once(WT_PATH_ROOT.'/lib/PHPExcel_1.8.0/PHPExcel/Writer/Excel2007.php');
+
+        // init excel
+        $inputfilename = WT_PATH_ROOT.'/admin/purchase/shipment_temp.xls';
+
+        if(!file_exists($inputfilename)) exceptions("查無Excel巡檢表");
+        $originalexcel = PHPExcel_IOFactory::load($inputfilename);
+
+        // init data
+        $add_date = date('Y/m/d H:i:s');
+        $sheetname = 'data';
+
+        $sheet = $originalexcel->getSheetByName($sheetname);
+        // printr($user_list);
+        // exit;
+    // 塞值
+        $n = 2;
+        for($i=0;$i<count($user_list);$i++){
+            $sheet->setCellValue('A'.($n+$i), date('Y',$user_list[$i]['onshda_add_date']).'-'.$user_list[$i]['onshda_sn']);//產品編號
+            $sheet->setCellValue('B'.($n+$i), $user_list[$i]['onadd_part_no']);//品號
+            $sheet->setCellValue('C'.($n+$i), $user_list[$i]['onadd_part_name']);//品名
+            $sheet->setCellValue('D'.($n+$i), date('Y-m-d',$user_list[$i]['onshda_add_date']));//出貨日期
+            $sheet->setCellValue('E'.($n+$i), $user_list[$i]['onshda_quantity']);//出貨數量
+            $sheet->setCellValue('F'.($n+$i), $user_list[$i]['onshda_client']);//客戶
+        }
+
+        $sheet->setTitle('出貨報表');
+
+
+    // 產生檔案
+        $excelextend = substr($inputfilename, strpos($inputfilename, "."));
+        $filename="出貨報表_".date("YmdHis");
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=".$filename.$excelextend);
+        header('Cache-Control: max-age=0');
+        // $objWriter = PHPExcel_IOFactory::createWriter($originalexcel, 'Excel2007');
+        // $objWriter->setIncludeCharts(TRUE);
+        // $objWriter->save('php://output');
+        if($excelextend == "xlsx")
+            $objWriter = PHPExcel_IOFactory::createWriter($originalexcel, 'Excel2007');
+        else
+            $objWriter = PHPExcel_IOFactory::createWriter($originalexcel, 'Excel5');
+        $objWriter->save('php://output');
+
+        unlink($ir_file_name);
+        unlink($dc_file_name);
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -305,6 +359,11 @@ if(!empty($op)) {
 		        $('button.cancel').on('click', function() {
 					location.href = "./../";
 				});
+
+				$('button.export_excel').on('click', function(){
+            	    window.open("plant_shipment.php?export_error=1");
+	
+            	});
 		});
 	</script>	
 </head>
@@ -356,6 +415,9 @@ if(!empty($op)) {
         								</div>
 
         								<button type="submit" class="btn btn-info" op="search">搜尋</button>
+        								<div class="form-group">
+                                            <button type="submit" class="btn btn-info export_excel">匯出汰除報表</button>
+                                        </div>
         							</div>
         						</div>
         					</form>

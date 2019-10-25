@@ -1,7 +1,5 @@
 <?php
 include_once("./func_plant_purchase.php");
-// printr(getProductData(1));
-// exit();
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
 	1=>"1.7",
@@ -23,7 +21,7 @@ $permissions_mapping = array(
 	7=>'<font color="#666666">其他</font>' 
 );
 
-// printr(getProductData(1));
+// printr(getQuantityForseller('W2005','天使angel  (TY262)'));
 // exit;
 
 $op=GetParam('op');
@@ -71,13 +69,14 @@ if(!empty($op)) {
 		$onbuda_size = GetParam('onbuda_size');
 		$onbuda_date = strtotime (GetParam('onbuda_date'));
 		$onbuda_client = GetParam('onbuda_client');
+		$onbuda_seller = GetParam('onbuda_seller');
 		$onbuda_year = substr(GetParam('onbuda_date'),0,4);
-		$onbuda_month = substr(GetParam('onbuda_date'),6,-3);
+		$onbuda_month = substr(GetParam('onbuda_date'),5,-3);
 		$now = time();
 		$conn = getDB();
 
-		$sql = "INSERT INTO `onliine_business_data`(`onbuda_add_date`, `onbuda_mod_date`, `onbuda_status`, `onbuda_part_no`, `onbuda_part_name`, `onbuda_date`, `onbuda_quantity`, `onbuda_size`, `onbuda_client`, `onbuda_year`, `onbuda_day`) ".
-			"VALUES('{$now}', '{$now}', '1','{$onbuda_part_no}','{$onbuda_part_name}','{$onbuda_date}','{$onbuda_quantity}','{$onbuda_size}','{$onbuda_client}','{$onbuda_year}','{$onbuda_month}');";
+		$sql = "INSERT INTO `onliine_business_data`(`onbuda_add_date`, `onbuda_mod_date`, `onbuda_status`, `onbuda_part_no`, `onbuda_part_name`, `onbuda_date`, `onbuda_quantity`, `onbuda_size`, `onbuda_client`, `onbuda_year`, `onbuda_day`, onbuda_seller) ".
+			"VALUES('{$now}', '{$now}', '1','{$onbuda_part_no}','{$onbuda_part_name}','{$onbuda_date}','{$onbuda_quantity}','{$onbuda_size}','{$onbuda_client}','{$onbuda_year}','{$onbuda_month}','{$onbuda_seller}');";
 		if($conn->query($sql)) {
 			$ret_msg = "完成！";
 		} else {
@@ -125,6 +124,56 @@ if(!empty($op)) {
 		}
 		break;
 
+		//汰除---------------------------------------------
+		case 'eli':
+		$onadd_sn=GetParam('onadd_sn');
+		$onadd_newpot_sn=GetParam('onadd_newpot_sn');
+		if($onadd_newpot_sn == "0"){
+			$list = getUserBySn($onadd_sn);
+		}
+		else{
+			$list = getUserBySn($onadd_newpot_sn);
+		}
+		$onadd_part_no = $list['onadd_part_no'];
+		$onadd_part_name = $list['onadd_part_name'];
+		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+		$jsuser_sn = GetParam('supplier');//編輯人員
+		$onadd_quantity_del=GetParam('onadd_quantity_del');//汰除數量
+		$onelda_reason=GetParam('onelda_reason');//汰除原因
+		$jsuser_sn = GetParam('supplier');//編輯人員
+		$onadd_quantity_del123 = ($onadd_quantity - $onadd_quantity_del);
+		if($onadd_quantity_del123 < 0) {
+			$onadd_status = -1;
+		} else {
+			$onadd_status = 1;
+		}
+
+		if(empty($onadd_quantity_del)){
+			$ret_msg = "*為必填！";
+		} 
+		else if($onadd_status != -1){
+			$now = time();
+			$conn = getDB();
+			$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_del123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
+			$sql = "INSERT INTO online_elimination_data (onelda_add_date, onelda_mod_date, onelda_quantity, onelda_reason, onadd_sn, onadd_part_no, onadd_part_name) " .
+				"VALUES ('{$now}', '{$now}', '{$onadd_quantity_del}', '{$onelda_reason}', '{$onadd_newpot_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
+			if($conn->query($sql1) && $conn->query($sql)) {
+				$ret_msg = "汰除完成！";
+				if($onadd_quantity_del123 == 0){
+					$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_del123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
+					$conn->query($sql);
+				}
+			} else {
+				$ret_msg = "汰除失敗！";
+			}
+		}
+		else if($onadd_status == -1){
+			$ret_msg = "錯誤！ 汰除數量不可大於下種數量！";
+		}
+
+		break;
+		//汰除---------------------------------------------
+
 		default:
 		$ret_msg = 'error!';
 		break;
@@ -148,37 +197,9 @@ if(!empty($op)) {
 	// printr($user_list);
 	// exit;
 	$data_list = getDataDetails($onadd_part_no,$onadd_growing);
-	// printr($data_list);
+	$eli_list = getQuantityForseller($data_list[0]['onproduct_part_no'],$data_list[0]['onproduct_part_name']);
+	// printr($eli_list);
 	// exit;
-	if(($onadd_part_no = GetParam('onadd_part_no'))) {
-		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
-		$search_query_string['onadd_part_no'] = $onadd_part_no;
-	}
-	if(($onadd_part_name = GetParam('onadd_part_name'))) {
-		$search_where[] = "onadd_part_name like '%{$onadd_part_name}%'";
-		$search_query_string['onadd_part_name'] = $onadd_part_name;
-	}
-	if(($onadd_supplier = GetParam('onadd_supplier'))) {
-		$search_where[] = "onadd_supplier like '%{$onadd_supplier}%'";
-		$search_query_string['onadd_supplier'] = $onadd_supplier;
-	}
-	if(($onadd_status = GetParam('onadd_status', -1))>=0) {
-		$search_where[] = "onadd_status='{$onadd_status}'";
-		$search_query_string['onadd_status'] = $onadd_status;
-	}
-	if(($onadd_growing = GetParam('onadd_growing', -1))>=0) {
-		$search_where[] = "onadd_growing='{$onadd_growing}'";
-		$search_query_string['onadd_growing'] = $onadd_growing;
-	}
-	$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
-	$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
-
-	// page
-	$pg_page = GetParam('pg_page', 1);
-	$pg_rows = 20;
-	$pg_total = GetParam('pg_total')=='' ? getUserQty($search_where) : GetParam('pg_total');
-	$pg_offset = $pg_rows * ($pg_page - 1);
-	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 }
 ?>
 <!DOCTYPE html>
@@ -214,24 +235,16 @@ if(!empty($op)) {
 	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
 	<script type="text/javascript">
-		$(document).ready(function() {
-			<?php
-					//	init search parm
-			print "$('#search [name=onadd_status] option[value={$onadd_status}]').prop('selected','selected');";
-			print "$('#search [name=onadd_growing] option[value={$onadd_growing}]').prop('selected','selected','selected','selected','selected','selected','selected');";
-			?>
-
-			//汰除-----------------------------------------------------------
-			$('button.upd1').on('click', function(){
+		//汰除-----------------------------------------------------------
+			function do_emli(onadd_sn){
 				$('#upd-modal1').modal();
 				$('#upd_form1')[0].reset();
-				var onproduct_sn = $("#hidden_onproduct_sn").html();
-				// console.log($("#hidden_onproduct_sn").html());	
+
 				$.ajax({
-					url: './details_table.php',
+					url: './plant_purchase.php',
 					type: 'post',
 					dataType: 'json',
-					data: {op:"get", onproduct_sn:onproduct_sn},
+					data: {op:"get", onadd_sn:onadd_sn},
 					beforeSend: function(msg) {
 						$("#ajax_loading").show();
 					},
@@ -242,11 +255,16 @@ if(!empty($op)) {
 			                // console.log(ret);
 			                if(ret.code==1) {
 			                	var d = ret.data;
-			                	$("input[name=onbuda_part_no]").val(d[0].onproduct_part_no);
-			                	$("input[name=onbuda_part_name]").val(d[0].onproduct_part_name);
-			                }
-			                else{
-			                	console.log("error");
+			                	$('#upd_form1 input[name=onadd_sn]').val(d.onadd_sn);
+			                	$('#upd_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
+			                	$('#upd_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
+			                	if(d.onadd_newpot_sn == "0"){
+				                	$('#upd_form1 input[name=onadd_newpot_sn]').val(d.onadd_sn);
+				                }
+				                else{
+				                	$('#upd_form1 input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
+				                }
+			                	
 			                }
 			            },
 			            error: function (xhr, ajaxOptions, thrownError) {
@@ -254,8 +272,16 @@ if(!empty($op)) {
 		                    // console.log(xhr);
 		                }
 		            });
-			});
+			};
 			//汰除-----------------------------------------------------------
+		$(document).ready(function() {
+			<?php
+					//	init search parm
+			// print "$('#search [name=onadd_status] option[value={$onadd_status}]').prop('selected','selected');";
+			// print "$('#search [name=onadd_growing] option[value={$onadd_growing}]').prop('selected','selected','selected','selected','selected','selected','selected');";
+			?>
+
+			
 
 			bootbox.setDefaults({
 				locale: "zh_TW",
@@ -416,6 +442,28 @@ if(!empty($op)) {
 				<li><button type="button" class="btn btn-primary btn-xs" onClick="upd_btn_click(<?php echo $data_list[0]['onproduct_sn'];?>)"><i class="glyphicon glyphicon-plus"></i>新增更多圖片</button></li>
 				<li><button type="button" class="btn btn-primary btn-xs upd1"><i class="glyphicon glyphicon-plus"></i>預計出貨資料</button></li>
 			</ul>
+			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
+				<thead>
+        					<tr>
+        						<th>下種日期</th>
+        						<th>目前尺寸</th>
+        						<th>數量</th>
+        						<th>操作</th>        						
+        					</tr>
+        					<?php
+        						for($i=0;$i<count($eli_list);$i++){
+        							echo '<tr>';
+        							echo '<td>'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
+									echo '<td>'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
+        							echo '<td>'.$eli_list[$i]['onadd_quantity'].'</td>';
+        							echo '<td>'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');">汰除</a></td>';      
+        							echo '</tr>';  							
+        						}
+        					
+        					?>       						
+        					
+        				</thead>
+			</table>
 		</div>
 
 		<!--modal-->
@@ -472,6 +520,67 @@ if(!empty($op)) {
 		</div>
 		<!--顯示月份出貨明細----------------------------------------------------------->
 
+		<!--汰除----------------------------------------------------------->
+		<div id="upd-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./details_table.php" id="upd_form1" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">汰除</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="eli">
+									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_newpot_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> 
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">汰除數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity_del" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">汰除原因<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onelda_reason">
+												<option value="4">其他</option>
+												<option value="3">黑頭</option>
+												<option value="2">褐斑</option>
+												<option selected="selected" value="1">軟腐</option>
+											</select>
+										</div>
+									</div>        								
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">更新</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--汰除----------------------------------------------------------->
+
 		<!--預計出貨----------------------------------------------------------->
 		<div id="upd-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
@@ -523,7 +632,14 @@ if(!empty($op)) {
 											<input type="text" class="form-control" id="addModalInput1" name="onbuda_client" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
-									</div>       								
+									</div>   
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">銷售人員<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onbuda_seller" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>  								
 								</div>
 							</div>
 						</div>
@@ -545,7 +661,7 @@ if(!empty($op)) {
 					<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
 						<!-- Indicators -->
 						<ol class="carousel-indicators">
-							<?php
+							<?php							
 							$pics = getPic($data_list[0]['onproduct_sn']);
 							for($i=0;$i<count($pics);$i++){
 								if($i==0)

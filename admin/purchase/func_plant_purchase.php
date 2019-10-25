@@ -331,7 +331,7 @@ function getUserBySn($onadd_sn) {
 		$qresult->free();
 	}
 
-	// $sql="SELECT * FROM `onliine_product_data` where onproduct_part_no='".$ret_data['onadd_part_no']."' and onproduct_part_name='".$ret_data['onadd_part_name']."' and onproduct_plant_st = 1";
+	$sql="SELECT * FROM `onliine_product_data` where onproduct_part_no='".$ret_data['onadd_part_no']."' and onproduct_part_name='".$ret_data['onadd_part_name']."' and onproduct_plant_st = 1";
 	$ret_data['sql'] = $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
@@ -956,14 +956,25 @@ function getPic($onproduct_sn) {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="SELECT * FROM `onliine_pic_data` WHERE onproduct_sn = '{$onproduct_sn}'";
+	$sql="SELECT * FROM `onliine_product_data` WHERE onproduct_sn = '{$onproduct_sn}'";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
+			$row['onpic_img_path'] = $row['onproduct_pic_url'];
 			$ret_data[] = $row;
 		}
 		$qresult->free();
+	}
+
+	$sql2="SELECT * FROM `onliine_pic_data` WHERE onproduct_sn = '{$onproduct_sn}'";
+
+	$qresult2 = $conn->query($sql2);
+	if ($qresult2->num_rows > 0) {
+		while($row2 = $qresult2->fetch_assoc()) {
+			$ret_data[] = $row2;
+		}
+		$qresult2->free();
 	}
 	$conn->close();
 	return $ret_data;
@@ -995,6 +1006,22 @@ function IsNewProduct2($onproduct_part_no,$onproduct_part_name) {
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
 			$ret_data = $sql;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+function getQuantityForseller($part_no,$part_name) {
+	$ret_data = array();
+	$conn = getDB();
+
+	$sql="select * from onliine_add_data where onadd_status>=0 and onadd_part_no like '$part_no' and onadd_part_name like '$part_name' group by onadd_cur_size";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
 		}
 		$qresult->free();
 	}
