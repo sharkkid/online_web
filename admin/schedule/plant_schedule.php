@@ -8,7 +8,8 @@ $DEVICE_SYSTEM = array(
 	4=>"3.0",
 	5=>"3.5",
 	6=>"3.6",
-	7=>"其他"
+	7=>"其他",
+	8=>"瓶苗下種"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -18,7 +19,8 @@ $permissions_mapping = array(
 	4=>'<font color="#666666">3.0</font>',
 	5=>'<font color="#666666">3.5</font>',
 	6=>'<font color="#666666">3.6</font>',
-	7=>'<font color="#666666">其他</font>' 
+	7=>'<font color="#666666">其他</font>',
+	8=>'<font color="#666666">瓶苗下種</font>'
 );
 
 $op=GetParam('op');
@@ -843,6 +845,8 @@ if(!empty($op)) {
 						</thead>
 						<tbody>
 							<?php
+							// printr(getSettingBySn('3.0'));
+							// printr($user_list);
 							foreach ($user_list as $row) {
 								echo '<tr>';
 									if($row['onadd_planting_st'] == 1){//產品編號

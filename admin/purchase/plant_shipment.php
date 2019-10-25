@@ -163,8 +163,9 @@ if(!empty($op)) {
 	<!--template css-->
 	<link href="./../../css1/style.css" rel="stylesheet">
 	<?php include('./../htmlModule/head.php');?>
-	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
-	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+		<script src="./../../lib/jquery.twbsPagination.min.js"></script>
+	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
 	<script type="text/javascript">
 		$(document).ready(function() {

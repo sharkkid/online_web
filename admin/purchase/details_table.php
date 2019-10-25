@@ -190,15 +190,16 @@ if(!empty($op)) {
 	}
 
 	$onadd_part_no = GetParam('onadd_part_no');
+	$onadd_part_name = GetParam('onadd_part_name');
 	$onadd_growing = GetParam('onadd_growing');
 	$onadd_quantity_del = GetParam('onadd_quantity_del');
 	$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no);
 	$business_data = getBusinessData($onadd_part_no,$onadd_quantity_del);
 	// printr($user_list);
 	// exit;
-	$data_list = getDataDetails($onadd_part_no,$onadd_growing);
+	$data_list = getDataDetails($onadd_part_no,$onadd_part_name);
 	$eli_list = getQuantityForseller($data_list[0]['onproduct_part_no'],$data_list[0]['onproduct_part_name']);
-	// printr($eli_list);
+	// printr($data_list);
 	// exit;
 }
 ?>

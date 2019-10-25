@@ -283,6 +283,7 @@ function getProductAllNowQty($onadd_sn) {
 	$ret_data = 0;
 	$conn = getDB();	
 	$sql="select SUM(onadd_quantity) as now_total from onliine_add_data where onadd_status>=1 and onadd_sn like '$onadd_sn' or onadd_newpot_sn like '$onadd_sn'";
+	$sql2="select SUM(onshda_quantity) as ship_total from online_shipment_data where onshda_status>=1 and onadd_sn like '$onadd_sn'";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
@@ -290,10 +291,24 @@ function getProductAllNowQty($onadd_sn) {
 			$ret_data = $row['now_total'];
 		}
 		$qresult->free();
+
+		$sql2="select SUM(onshda_quantity) as ship_total from online_shipment_data where onshda_status>=1 and onadd_sn like '$onadd_sn'";
+		// echo $sql;
+		$temp_n = 0;
+		$qresult2 = $conn->query($sql2);
+		if ($qresult2->num_rows > 0) {
+			while($row2 = $qresult2->fetch_assoc()) {
+				$temp_n = $temp_n + intval($row2['ship_total']);
+			}
+			$qresult2->free();			
+		}
+		$ret_data = $ret_data + $temp_n;
 	}
 	else{
 		$ret_data = 1;
 	}
+
+
 	$conn->close();
 	return $ret_data;
 }
@@ -426,8 +441,8 @@ function IsProductExit($onproduct_part_no,$onproduct_part_name) {
 function getSettingBySn($onchba_size) {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from online_change_basin where onchba_size='{$onchba_size}'";
-
+	$sql="select * from online_change_basin where onchba_size like '{$onchba_size}'";
+	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		if ($row = $qresult->fetch_assoc()) {
@@ -550,13 +565,13 @@ function getProductData($onproduct_sn) {
 	return $ret_data;
 }
 
-function getDataDetails($onproduct_part_no,$onproduct_growing) {
+function getDataDetails($onproduct_part_no,$onproduct_part_name) {
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
-		$sql="select * from onliine_product_data where onproduct_part_no='$onproduct_part_no' AND onproduct_growing='$onproduct_growing'";
+		$sql="select * from onliine_product_data where onproduct_part_no='$onproduct_part_no' AND onproduct_part_name='$onproduct_part_name'";
 	else
-		$sql="select * from onliine_product_data where onproduct_part_no='$onproduct_part_no' AND onproduct_growing='$onproduct_growing'";
+		$sql="select * from onliine_product_data where onproduct_part_no='$onproduct_part_no' AND onproduct_part_name='$onproduct_part_name'";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {

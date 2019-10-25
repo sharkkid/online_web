@@ -10,7 +10,8 @@ $DEVICE_SYSTEM = array(
 		4=>"3.0",
 		5=>"3.5",
 		6=>"3.6",
-		7=>"其他"
+		7=>"其他",
+		8=>"瓶苗下種"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -20,7 +21,8 @@ $permissions_mapping = array(
     4=>'<font color="#666666">3.0</font>',
     5=>'<font color="#666666">3.5</font>',
     6=>'<font color="#666666">3.6</font>',
-    7=>'<font color="#666666">其他</font>' 
+    7=>'<font color="#666666">其他</font>',
+    8=>'<font color="#666666">瓶苗下種</font>' 
 );
 $permmsion = '系統管理員';
 
@@ -195,6 +197,7 @@ if(!empty($op)) {
 		$onadd_supplier=GetParam('onadd_supplier');//供應商
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
 		$onadd_replant_number=GetParam('onadd_plant_day');//換盆數量
 		$onadd_quantity_cha123 =($onadd_quantity - $onadd_replant_number);
 
@@ -215,8 +218,8 @@ if(!empty($op)) {
 			$now = time();
 			$conn = getDB();
 			if($onadd_status != -1) {
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_plant_st, onadd_newpot_sn) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', 1, '{$sn}');";
+				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_plant_st, onadd_newpot_sn, onadd_cur_size) " .
+				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', 1, '{$sn}', {$onadd_cur_size});";
 
 				if($conn->query($sql)){
 					$onadd_id = mysqli_insert_id($conn);
@@ -1368,6 +1371,14 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">
+											<select class="form-control" name="onadd_cur_size" >
+												<option selected="selected" value="8">瓶苗下種</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
 											<select class="form-control" name="onadd_growing">
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
@@ -1392,7 +1403,7 @@ if(!empty($op)) {
 
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-							<button type="submit" class="btn btn-primary">更新</button>
+							<button type="submit" class="btn btn-primary">下種</button>
 						</div>
 					</form>
 				</div>
@@ -1452,7 +1463,7 @@ if(!empty($op)) {
 
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-							<button type="submit" class="btn btn-primary">更新</button>
+							<button type="submit" class="btn btn-danger">汰除</button>
 						</div>
 					</form>
 				</div>

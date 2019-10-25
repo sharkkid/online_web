@@ -666,7 +666,7 @@ if(!empty($op)) {
 		        						<div class="am-panel-bd">
 		        						<button class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
 		        							<img class="am-img-responsive" src="'.$produce_image.'" height="170" width="150">
-		        							<h3 style="text-align:center"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
+		        							<h3 style="text-align:center"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'&onadd_quantity_del=2019">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
 		        							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
 		        							';
 		        							// printr($AllProductData);

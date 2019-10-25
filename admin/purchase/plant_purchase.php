@@ -11,7 +11,8 @@ $DEVICE_SYSTEM = array(
 		4=>"3.0",
 		5=>"3.5",
 		6=>"3.6",
-		7=>"其他"
+		7=>"其他",
+		8=>"瓶苗下種"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -21,7 +22,8 @@ $permissions_mapping = array(
     4=>'<font color="#666666">3.0</font>',
     5=>'<font color="#666666">3.5</font>',
     6=>'<font color="#666666">3.6</font>',
-    7=>'<font color="#666666">其他</font>' 
+    7=>'<font color="#666666">其他</font>',
+    8=>'<font color="#666666">瓶苗下種</font>'
 );
 $permmsion = '系統管理員';
 
@@ -287,6 +289,7 @@ if(!empty($op)) {
 		$onadd_color=GetParam('onadd_color');//花色
 		$onadd_size=GetParam('onadd_size');//花徑
 		$onadd_height=GetParam('onadd_height');//高度
+		$onadd_location=GetParam('onadd_location');//放置區
 		$onadd_pot_size=GetParam('onadd_pot_size');//適合開花盆徑
 		$onadd_supplier=GetParam('onadd_supplier');//供應商
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
@@ -298,6 +301,7 @@ if(!empty($op)) {
 		$first_n_changed = getProductFirstQty($onadd_sn) - $onadd_replant_number;
 
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
+		$onadd_cur_size=GetParam('onadd_cur_size');//換盆尺寸
 		// $onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
@@ -333,8 +337,8 @@ if(!empty($op)) {
 				// 	$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
 				// 	$conn->query($sql);
 				// }	
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_newpot_sn) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$sn}');";
+				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_newpot_sn, onadd_cur_size, onadd_location) " .
+				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$sn}', '{$onadd_cur_size}', '{$onadd_location}');";
 
 				if($conn->query($sql)){
 					$onadd_id = mysqli_insert_id($conn);
@@ -864,10 +868,11 @@ if(!empty($op)) {
 			                	$('#upd_form input[name=onadd_size]').val(d.onadd_size);
 			                	$('#upd_form input[name=onadd_height]').val(d.onadd_height);
 			                	$('#upd_form input[name=onadd_pot_size]').val(d.onadd_pot_size);
-			                	$('#upd_form input[name=onadd_supplier]').val(d.onadd_supplier);			                	
+			                	$('#upd_form input[name=onadd_supplier]').val(d.onadd_supplier);			  
+			                	$('#upd_form input[name=onadd_location]').val(d.onadd_location);	              	
 			                	// $('#upd_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
 			                	$('#upd_form input[name=onadd_quantity]').val(d.onadd_quantity);
-			                	// $('#upd_form input[name=onadd_growing]').val(d.onadd_growing);
+			                	$('#upd_form [name=onadd_cur_size] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');
 			                	$('#upd_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
 			                	$('#upd_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
 			                }
@@ -1202,7 +1207,7 @@ if(!empty($op)) {
 					},
 					success: function(ret) {
 						console.log(ret);
-						$('#history_cotent').html('<div class="col-md-12"><div class="col-sm-12"><label for="addModalInput1" class="col-sm-2 control-label">操作日期</label><label for="addModalInput1" class="col-sm-2 control-label">下種日期(數量)</label><label for="addModalInput1" class="col-sm-2 control-label">換盆日期(數量)</label><label for="addModalInput1" class="col-sm-2 control-label">出貨日期(數量)</label></label><label for="addModalInput1" class="col-sm-2 control-label">汰除日期(數量)</label></div></div>');
+						$('#history_cotent').html('<div class="col-md-12"><div class="col-sm-12"><table class="table table-hover"><thead><tr><th style="text-align:center;">操作日期</th><th style="text-align:center;">下種日期(數量)</th><th style="text-align:center;">換盆日期(數量)</th><th style="text-align:center;">出貨日期(數量)</th><th style="text-align:center;">汰除日期(數量)</th></tr></thead><tbody></div></div>');
 						$.each(ret.data, function(key,value){	
 							if(key < ret.data.length){
 								var temp = "";
@@ -1400,6 +1405,13 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" readonly="readonly">
@@ -1421,7 +1433,7 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label">換盆日期&nbsp;<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">下種日期&nbsp;<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="datetimepicker2" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
 											<div class="help-block with-errors"></div>
@@ -1432,6 +1444,21 @@ if(!empty($op)) {
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_replant_number" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
+										</div>
+									</div>	
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label" >換盆尺寸<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onadd_cur_size">
+												<option value="8">瓶苗下種</option>
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
 										</div>
 									</div>	
 									<div class="form-group">
@@ -1639,7 +1666,7 @@ if(!empty($op)) {
 
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-							<button type="submit" class="btn btn-primary">更新</button>
+							<button type="submit" class="btn btn-danger">汰除</button>
 						</div>
 					</form>
 				</div>
@@ -2065,15 +2092,30 @@ if(!empty($op)) {
 	        						}
         							echo '<td>'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							if($row['onadd_growing']==1){
-        								$list_setting = getSettingBySn(1.7);
+        								$list_setting = getSettingBySn('1.7');
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}else if($row['onadd_growing']==2){
-        								$list_setting = getSettingBySn(2.5);
+        								$list_setting = getSettingBySn('2.5');
+        								$onchba_cycle = $list_setting['onchba_cycle'];        							
+        							}else if($row['onadd_growing']==3){
+        								$list_setting = getSettingBySn('2.8');
+        								$onchba_cycle = $list_setting['onchba_cycle'];        							
+        							}else if($row['onadd_growing']==4){
+        								$list_setting = getSettingBySn('3.0');
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}else if($row['onadd_growing']==5){
-        								$list_setting = getSettingBySn(3.5);
+        								$list_setting = getSettingBySn('3.5');
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}
+        							else if($row['onadd_growing']==6){
+        								$list_setting = getSettingBySn('3.6');
+        								$onchba_cycle = $list_setting['onchba_cycle'];
+        							}
+        							else if($row['onadd_growing']==8){
+        								$list_setting = getSettingBySn('瓶苗下種');
+        								$onchba_cycle = $list_setting['onchba_cycle'];
+        							}
+        							// printr(date("Y/m/d",$row['onadd_planting_date']).$onchba_cycle);
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         							echo '<td>'.$test.'</td>';//預計成熟日
 
@@ -2089,6 +2131,7 @@ if(!empty($op)) {
 	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
 	        						}		
 	        						// printr($first_plant_amount);
+	        						// printr(getProductAllNowQty($row['onadd_newpot_sn']));
         							echo '<td>'.number_format(($incubation_rate*100),2).'%</td>'; 		
         							echo '<td>'.$row['onadd_location'].'</td>'; 				
         							$note = (!empty($row['onadd_quantity_cha'])) ? '<td>換盆</td>' : '<td></td>';
@@ -2103,13 +2146,13 @@ if(!empty($op)) {
 	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
 	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;';
         							if($permmsion == '系統管理員'){
-	        							// echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
+	        							echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
 	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}       						
 
 	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
 	        								</div>';
-	        						echo '<td><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+	        						echo '<td><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_part_name='.$row['onadd_part_name'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
 	        						echo '</td>';
         							echo '</tr>';
         						}
