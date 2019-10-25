@@ -1,6 +1,6 @@
 <?php
 include_once("./func_plant_purchase.php");
-// printr(getWorkListByMonth());
+// printr(getHistogram('2019-10-25'));
 // exit;
 	// search
 if(($onadd_part_no = GetParam('onadd_part_no'))) {
@@ -46,10 +46,40 @@ $pg_offset = $pg_rows * ($pg_page - 1);
 $pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 $product_list = getWorkListByMonth();
-$week_list = getQuantity_Day(date("Y/m/d",time()));
+$week_list = getQuantity_Day(GetParam('day'));
 $TotalQty = getTotalQty();
-// printr($TotalQty);
-// exit();
+
+for($i=0;$i<count($week_list);$i++){
+	if($i<count($week_list)-1){
+		$str1 .= "'".$week_list[$i]['date1']."',";
+		$str2 .= "'".$week_list[$i]['date2']."',";
+		$str3 .= "'".$week_list[$i][0]."',";
+		$str4 .= "'".$week_list[$i][2]."',";
+		$str5 .= "'".$week_list[$i][1]."',";
+	}
+	else{
+		$str1 .= "'".$week_list[$i]['date1']."'";
+		$str2 .= "'".$week_list[$i]['date2']."'";
+		$str3 .= "'".$week_list[$i][0]."'";
+		$str4 .= "'".$week_list[$i][2]."'";
+		$str5 .= "'".$week_list[$i][1]."'";
+	}
+}
+
+$SellQuantity = getSellQuantity(GetParam('year'));
+$EliminationQuantity = getEliminationQuantity(GetParam('year'));
+$sell_data = "";
+$elim_data = "";
+$months = "";
+for($i=1;$i<=12;$i++){
+	$sell_data .= "'".$SellQuantity[$i]['quantity']."',";
+	$elim_data .= "'".$EliminationQuantity[$i]['quantity']."',";
+	$months .= "'".$i."月',";
+}	   
+$sell_data = substr($sell_data, 0, -1);
+$elim_data = substr($elim_data, 0, -1);
+$months = substr($months, 0, -1);
+
 $sum17 = getDetails('1');//計算1.7
 $sum25 = getDetails('2');//計算2.5
 $sum28 = getDetails('3');//計算2.8
@@ -137,8 +167,15 @@ $op=GetParam('op');
 
 	<script>		
 		$(document).ready(function () {
+			var chart,chart2;
 			var count = 0;
 			var flag = 1;
+			<?php 
+			if(!empty(GetParam('year')))
+				echo '$("#datetimepicker2").val(\''.GetParam('year').'\');';
+			if(!empty(GetParam('day')))
+				echo '$("#datetimepicker1").val(\''.GetParam('day').'\');';
+			?>
 			$(function () {
 				$.ajax({
 				url: './index.php',
@@ -202,37 +239,17 @@ $op=GetParam('op');
         <?php 
         //出貨統計表資料
         echo "$('#quantity_title').html(\"".date('Y')."年出貨報表\");";
-	    $SellQuantity = getSellQuantity(date('Y'));
-	    $EliminationQuantity = getEliminationQuantity(date('Y'));
-	    $DFC_SellQuantity = "";
-	    $DFC_EliminationQuantity = "";
-	    $Label_Months = "";
-		for($i = 0;$i < count($EliminationQuantity) ;$i++){
-			if($i != count($EliminationQuantity)-1){
-				//如果月份包含0 去除0
-				(strpos($EliminationQuantity[$i]['months'], '0') !== false ) ? $Label_Months .= '\''.substr($EliminationQuantity[$i]['months'], 1)."月'," : '\''.$Label_Months .= $SellQuantity[$i]['months'].'月\',';
-				($EliminationQuantity[$i]['quantity'] != null) ? $DFC_SellQuantity .= $EliminationQuantity[$i]['quantity']."," : $DFC_SellQuantity .= '0,';
-				$DFC_EliminationQuantity .= $EliminationQuantity[$i]['quantity'].",";
-			}
-			else{
-				(strpos($EliminationQuantity[$i]['months'], '0') !== false) ? $Label_Months .= '\''.substr($EliminationQuantity[$i]['months'], 1)."月'" : '\''.$Label_Months .= $EliminationQuantity[$i]['months'].'月\'';
-				($EliminationQuantity[$i]['quantity'] != null) ? $DFC_SellQuantity .= $EliminationQuantity[$i]['quantity'] : $DFC_SellQuantity .= '0';
-				$DFC_EliminationQuantity .= $EliminationQuantity[$i]['quantity'];
-			}
-
-		}
-
 		//廠區使用空間計算
 		$UsedQuantity = getUsedQuantity()[0]['add_quantity'] - (getUsedQuantity()[1]['elda_quantity']+getUsedQuantity()[2]['ship_quantity']);
 		
         ?>
         //直方圖
-        c3.generate({
+        chart2 = c3.generate({
         	bindto: '#stocked',
         	data: {
         		columns: [
-        		['損耗數量', <?php echo $DFC_EliminationQuantity;?>],
-        		['出貨數量', <?php echo $DFC_SellQuantity;?>]
+        		['損耗數量', <?php echo $sell_data;?>],
+        		['出貨數量', <?php echo $elim_data;?>]
         		],
         		colors: {
         			出貨數量: '#23b7e5',
@@ -246,41 +263,23 @@ $op=GetParam('op');
         	axis: {
 		    x: {
 		        type: 'category',
-		        categories: [<?php echo $Label_Months;?>]
+		        categories: [<?php echo $months;?>]
 		    }
 		}
         });
         //日報表
-        var chart = c3.generate({
+        chart = c3.generate({
         	bindto: '#timeseriesChart',
         	data: {
         		x: 'x',
                 xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
                 columns: [
-     //            	['x','2019-10-24','2019-10-23'],
-     //            	['x','20191024','20191023'],
-     //            	['下種','0','10']
-     //            	,['出貨','0','20']
-     //            	,['耗損','50','30']                	
- 				// ],
-
+                	// ['x','2019-10-24','2019-10-23'],
+                	// ['x','20191024','20191023'],
+                	// ['下種','0','10']
+                	// ,['出貨','0','20']
+                	// ,['耗損','50','30']    
                 <?php 
-                	for($i=0;$i<count($week_list);$i++){
-                		if($i<count($week_list)-1){
-                			$str1 .= "'".$week_list[$i]['date1']."',";
-                			$str2 .= "'".$week_list[$i]['date2']."',";
-                			$str3 .= "'".$week_list[$i][0]."',";
-                			$str4 .= "'".$week_list[$i][2]."',";
-                			$str5 .= "'".$week_list[$i][1]."',";
-	                	}
-                		else{
-                			$str1 .= "'".$week_list[$i]['date1']."'";
-                			$str2 .= "'".$week_list[$i]['date2']."'";
-                			$str3 .= "'".$week_list[$i][0]."'";
-                			$str4 .= "'".$week_list[$i][2]."'";
-                			$str5 .= "'".$week_list[$i][1]."'";
-                		}
-                	}
                 	echo "['x',".$str1."],";
 	                echo "['x',".$str2."],";
 	                echo "['下種',".$str3."],";
@@ -305,7 +304,7 @@ $op=GetParam('op');
             	x: {
             		type: 'timeseries',
             		tick: {
-            			format: '%Y-%m-%d'
+            			format: '%Y/%m/%d'
             		}
             	}
             }
@@ -350,99 +349,31 @@ $op=GetParam('op');
 	});
 
 	$('#datetimepicker1').datetimepicker({
-		        	minView: 2,
-		            language:  'zh-TW',
-		            format: 'yyyy-mm-dd',
-		            useCurrent: false
+		minView: 2,
+		language:  'zh-TW',
+		format: 'yyyy-mm-dd',
+		useCurrent: false
 	});
 
 	$('#datetimepicker2').datetimepicker({
-		        	minView: 2,
-		            language:  'zh-TW',
-		            format: 'yyyy-mm-dd',
-		            useCurrent: false
+		minView: 2,
+		language:  'zh-TW',
+		format: 'yyyy',
+		useCurrent: false
+	});
+
+	$('#search_yearreport').click(function() {
+		var year = $('#datetimepicker2').val();
+		var day = $('#datetimepicker1').val();
+		var time = "?year="+year+"&day="+day;
+		window.location.href = <?php echo "'".WT_SERVER.'/admin/index/index.php'."'+"?>time;
 	});
 
 	$('#search_dayreport').click(function() {
+		var year = $('#datetimepicker2').val();
 		var day = $('#datetimepicker1').val();
-		$.ajax({
-			url: './index.php',
-			type: 'post',
-			dataType: 'json',
-			data: {op:"search_dayreport", day:day},
-			beforeSend: function(msg) {
-				$("#ajax_loading").show();
-			},
-			complete: function(XMLHttpRequest, textStatus) {
-				$("#ajax_loading").hide();
-			},
-			success: function(ret) {
-				if(ret.code==1) {
-			        var d = ret.data;
-			        var str1="";
-			        var str2="";
-					var str3="";
-					var str4="";
-					var str5="";
-			        console.log(d);
-			        for(var i=0;i<d.length;i++){
-			        	if(i<d.length-1){
-							str1 += "\'"+d[i]['date1']+"\',";
-							str2 += "\'"+d[i]['date2']+"\',";
-							str3 += "\'"+d[i][0]+"\',";
-							str4 += "\'"+d[i][2]+"\',";
-							str5 += "\'"+d[i][1]+"\',";
-						}
-						else{
-							str1 += "\'"+d[i]['date1']+"\'";
-							str2 += "\'"+d[i]['date2']+"\'";
-							str3 += "\'"+d[i][0]+"\'";
-							str4 += "\'"+d[i][2]+"\'";
-							str5 += "\'"+d[i][1]+"\'";
-						}
-			        }
-			        // str2 = str2.substring(1,str2.length-1);
-			        console.log(str1);
-			        console.log(str2);
-			        console.log(str3);
-			        console.log(str4);
-			        console.log(str5);
-
-			        var chart = c3.generate({
-				    	bindto: '#timeseriesChart',
-				    	data: {
-				    		x: 'x',
-				            xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
-				            columns: [
-				            ['x', str1],
-				            ['x', str2],
-				            ['下種',str3],
-				            ['出貨',str4],
-				            ['耗損',str5]
-				            ],
-				            colors: {
-				            	進貨: '#23b7e5',
-				            	出貨: '#BABABA',
-				            	耗損: '#26A69A'
-				            }
-				        },
-				        axis: {
-				        	x: {
-				        		type: 'timeseries',
-				        		tick: {
-				        			format: '%Y-%m-%d'
-				        		}
-				        	}
-				        }
-				    });
-				}
-			    
-
-			},
-			error: function (xhr, ajaxOptions, thrownError) {
-			    	// console.log('ajax error');
-			    }
-			});
+		var time = "?year="+year+"&day="+day;
+		window.location.href = <?php echo "'".WT_SERVER.'/admin/index/index.php'."'+"?>time;
 	});
 
 
@@ -551,10 +482,10 @@ $op=GetParam('op');
 				<div class="panel panel-default">
 					<div class="row">							
 							<div class="col-lg-3 col-md-6 col-sm-12" style="width: 140px; padding-right: 10px;">
-								<input type="text" name="fname" placeholder="在此輸入年份" />
+								<input type="text" name="fname" id="datetimepicker2" placeholder="在此輸入年份" />
 							</div>
 							<div class="col-lg-3 col-md-6 col-sm-12" style="    padding-left: 0px;    padding-right: 0px;    width: 50px;">
-								<button type="submit" class="btn btn-info" op="search">搜尋</button>
+								<button id="search_yearreport" class="btn btn-info">搜尋</button>
 							</div>
 						</div>
 					<div class="panel-heading">

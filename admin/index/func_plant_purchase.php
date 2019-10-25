@@ -103,12 +103,24 @@ function getSellQuantity($year) {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
+			$row['months'] = intval($row['months']);
 			$ret_data[] = $row;
 		}
 		$qresult->free();
 	}
+	$all_months = array();
+
+	for($i=1;$i<=12;$i++){		
+		$all_months[$i]['months'] = $i;
+		$all_months[$i]['quantity'] = 0;				
+	}
+	for($i=0;$i<count($ret_data);$i++){	
+		$n = $ret_data[$i]['months'];
+		$all_months[$n]['quantity'] = $ret_data[$i]['quantity'];	
+	}
+
 	$conn->close();
-	return $ret_data;
+	return $all_months;
 }
 
 function getEliminationQuantity($year) {
@@ -123,15 +135,93 @@ function getEliminationQuantity($year) {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
+			$row['months'] = intval($row['months']);
 			$ret_data[] = $row;
 		}
 		$qresult->free();
 	}
+
+	$all_months = array();
+
+	for($i=1;$i<=12;$i++){		
+		$all_months[$i]['months'] = $i;
+		$all_months[$i]['quantity'] = 0;				
+	}
+	for($i=0;$i<count($ret_data);$i++){	
+		$n = $ret_data[$i]['months'];
+		$all_months[$n]['quantity'] = $ret_data[$i]['quantity'];	
+	}
+
 	$conn->close();
+	return $all_months;
+}
+
+function getQuantity_Day($day='') {
+	if($day != ''){
+		$conn = getDB();
+		$ret_data = array();
+		$firday = strtotime("-7 days",strtotime($day." 00:00:00"));
+		$endday = strtotime("-7 days",strtotime($day." 24:00:00"));
+	
+		for($i=0;$i<=7;$i++){
+			$firday = strtotime("+".$i." days",strtotime($day." 00:00:00"));
+			$endday = strtotime("+".$i." days",strtotime($day." 24:00:00"));
+			$sql="SELECT sum(onadd_quantity) as add_quantity FROM `onliine_add_data` WHERE onadd_mod_date Between {$firday} AND {$endday}";
+			$sql2="SELECT sum(onelda_quantity) as elda_quantity FROM `online_elimination_data` WHERE onelda_mod_date Between {$firday} AND {$endday}";
+			$sql3="SELECT sum(onshda_quantity) as ship_quantity FROM `online_shipment_data` WHERE onshda_mod_date Between {$firday} AND {$endday}";
+		
+			$qresult = $conn->query($sql);
+			if ($qresult->num_rows > 0) {
+				while($row = $qresult->fetch_assoc()) {
+					if($row['add_quantity'] != ''){
+						$ret_data[$i][0] = $row['add_quantity'];
+					}
+					else{
+						$ret_data[$i][0] = '0';
+					}				
+					$ret_data[$i]['date1'] = date("Y-m-d",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+					$ret_data[$i]['date2'] = date("Ymd",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+				}
+				$qresult->free();
+			}
+	
+			$qresult = $conn->query($sql2);
+			if ($qresult->num_rows > 0) {
+				while($row = $qresult->fetch_assoc()) {
+					if($row['elda_quantity'] != ''){
+						$ret_data[$i][1] = $row['elda_quantity'];
+					}
+					else{
+						$ret_data[$i][1] = '0';
+					}
+					$ret_data[$i]['date1'] = date("Y-m-d",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+					$ret_data[$i]['date2'] = date("Ymd",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+				}
+				$qresult->free();
+			}
+	
+			$qresult = $conn->query($sql3);
+			if ($qresult->num_rows > 0) {
+				while($row = $qresult->fetch_assoc()) {
+					if($row['ship_quantity'] != ''){
+						$ret_data[$i][2] = $row['ship_quantity'];
+					}
+					else{
+						$ret_data[$i][2] = '0';
+					}
+					$ret_data[$i]['date1'] = date("Y-m-d",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+					$ret_data[$i]['date2'] = date("Ymd",strtotime("-".$i." days",strtotime($day." 00:00:00")));
+				}
+				$qresult->free();
+			}
+		}
+	
+		$conn->close();
+	}
 	return $ret_data;
 }
 
-function getQuantity_Day($day) {
+function getHistogram($day) {
 	$conn = getDB();
 	// $firday = strtotime(date("Y/m/d",time())." 00:00:00");
 	// $endday = strtotime(date("Y/m/d",time())." 24:00:00");
@@ -192,8 +282,32 @@ function getQuantity_Day($day) {
 		}
 	}
 
+ 
+    for($i=0;$i<count($ret_data);$i++){
+    	if($i<count($ret_data)-1){
+    		$str1 .= "'".$ret_data[$i]['date1']."',";
+    		$str2 .= "'".$ret_data[$i]['date2']."',";
+    		$str3 .= "'".$ret_data[$i][0]."',";
+    		$str4 .= "'".$ret_data[$i][2]."',";
+    		$str5 .= "'".$ret_data[$i][1]."',";
+	   	}
+    	else{
+    		$str1 .= "'".$ret_data[$i]['date1']."'";
+    		$str2 .= "'".$ret_data[$i]['date2']."'";
+    		$str3 .= "'".$ret_data[$i][0]."'";
+    		$str4 .= "'".$ret_data[$i][2]."'";
+    		$str5 .= "'".$ret_data[$i][1]."'";
+    	}
+    }
+ //    echo "['x',".$str1."],";
+	// echo "['x',".$str2."],";
+	// echo "['下種',".$str3."],";
+	// echo "['出貨',".$str4."],";
+	// echo "['耗損',".$str5."],";
+	$chart = "['x', $str1],['x', $str2],['下種',$str3],['出貨',$str4],['耗損',$str5]";
+
 	$conn->close();
-	return $ret_data;
+	return $chart;
 }
 
 function getUsedQuantity() {

@@ -1053,7 +1053,7 @@ if(!empty($op)) {
 			                console.log(ret);
 			                if(ret.code==1) {
 			                	var d = ret.data;
-			                	// console.log(d.img_url);
+			                	console.log(d);
 			                	$('#temp_onadd_sn').val(d.onadd_sn);
 
 			                	if(d.img_url != "")
@@ -2136,7 +2136,7 @@ if(!empty($op)) {
 	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>&nbsp;&nbsp;
 	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;&nbsp;&nbsp;';
         							if($permmsion == '系統管理員'){
-	        							// echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
+	        							echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
 	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}       						
 
@@ -2168,7 +2168,7 @@ if(!empty($op)) {
         <!--Common plugins-->
         <!-- <script src="./../../js1/jquery.min.js"></script> -->
         <!-- <script src="./../../js1/bootstrap.min.js"></script> -->
-        <script src="./../../js1/bootstrap-datepicker.js"></script>
+        <!-- <script src="./../../js1/bootstrap-datepicker.js"></script> -->
         <script src="./../../js1/pace.min.js"></script>
         <script src="./../../js1/jasny-bootstrap.min.js"></script>
         <script src="./../../js1/jquery.slimscroll.min.js"></script>

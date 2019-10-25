@@ -254,7 +254,8 @@ if(!empty($op)) {
 	<link href="./../../css1/style.css" rel="stylesheet">
 	<?php include('./../htmlModule/head.php');?>
 	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
-	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -868,10 +869,10 @@ if(!empty($op)) {
         							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$onadd_cycle.'月'.'</td>';
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';//品名
         							echo '<td style="text-align: center;"><button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button>&nbsp;';
-        							if($row['onadd_schedule']=='2'){        							
-        							}else{
-        								echo '<button type="button" class="btn btn-danger btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">延後</button>&nbsp;';
-        							}
+        							// if($row['onadd_schedule']=='2'){        							
+        							// }else{
+        							// 	echo '<button type="button" class="btn btn-danger btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">延後</button>&nbsp;';
+        							// }
         							echo '</td></tr>';
         						}
         						?>
