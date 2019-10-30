@@ -638,6 +638,7 @@ if(!empty($op)) {
 		<!-- Page Content -->
 		<div  class="container-fluid">
 			<div class="row">
+				<!-- <div class="col-md-5"></div> -->
 				<div class="col-md-5">
 					<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
 						<!-- Indicators -->
@@ -658,18 +659,18 @@ if(!empty($op)) {
 									for($i=0;$i<count($pics);$i++){
 										if($i==0){
 											echo '<div class="item active">';
-												echo "<img src='".$pics[$i]['onpic_img_path']."'>";
+												echo "<img class='img-rounded' src='".$pics[$i]['onpic_img_path']."'>";
 											echo '</div>';
 										}
 										else{
 											echo '<div class="item">';
-												echo "<img src='".$pics[$i]['onpic_img_path']."'>";
+												echo "<img class='img-rounded' src='".$pics[$i]['onpic_img_path']."'>";
 											echo '</div>';
 										}
 									}
 								}
 								else
-									echo "<img style='text-align:center;' src='images/nopic.png' >";
+									echo "<img class='img-rounded' style='text-align:center;' src='images/nopic.png' >";
 							?>
 							
 						</div>
@@ -680,56 +681,59 @@ if(!empty($op)) {
 					<a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
 						<span class="glyphicon glyphicon-chevron-right"></span>
 					</a>
-				</div>        
+				</div> 
+				<div class="col-md-4">
+					<?php
+					foreach ($data_list as $row) {
+						echo '<div style="display:none" id="onproduct_sn">'.$row['onproduct_sn'].'</div>';
+						echo '<h3>'.$onproduct_part_no.'</h3>';
+					?> 
+						<table style="font-size: 1.5rem" class="table table-hover">
+							<thead>
+								<tr>
+									<th style="text-align: center;font-size: 1.2em">詳細資料</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>品號(Part no.)：
+										<?php echo $row['onproduct_part_no']; ?> 
+									</td>
+								</tr>
+								<tr>
+									<td>品名(Part name.)：
+										<?php echo $row['onproduct_part_name']; ?>
+									</td>
+								</tr>
+								<tr>
+									<td>花色 (Flower Color)：
+										<?php echo $row['onproduct_color']; ?>
+									</td>
+								</tr>
+								<tr>
+									<td>花徑 (Flower Size)：
+										<?php echo $row['onproduct_size']; ?>
+									</td>
+								</tr>
+								<tr>
+									<td>高度 (Plant Height)：
+										<?php echo $row['onproduct_height']; ?>
+									</td>
+								</tr>
+								<tr>
+									<td>適合開花盆徑 (Suitable flowering pot size)：
+										<?php echo $row['onproduct_pot_size']; ?> 
+									</td>
+								</tr>
+							</tbody>								
+						</table>				
+					<?php }
+				?> 
+				</div>         
 			</div>
-		</div></br>
-
-		<div class="col-md-10">
-
-
-			<?php
-			foreach ($data_list as $row) {
-				echo '<div style="display:none" id="onproduct_sn">'.$row['onproduct_sn'].'</div>';
-				echo '<h3>'.$onproduct_part_no.'</h3>';
-				
-			?> 
-				<table>
-					<thead>
-						<tr>
-							<th>品號(Part no.)：
-								<?php echo $row['onproduct_part_no']; ?> 
-							</th>
-						</tr>
-						<tr>
-							<th>品名(Part name.)：
-								<?php echo $row['onproduct_part_name']; ?>
-							</th>
-						</tr>
-						<tr>
-							<th>花色 (Flower Color)：
-								<?php echo $row['onproduct_color']; ?>
-							</th>
-						</tr>
-						<tr>
-							<th>花徑 (Flower Size)：
-								<?php echo $row['onproduct_size']; ?>
-							</th>
-						</tr>
-						<tr>
-							<th>高度 (Plant Height)：
-								<?php echo $row['onproduct_height']; ?>
-							</th>
-						</tr>
-						<tr>
-							<th>適合開花盆徑 (Suitable flowering pot size)：
-								<?php echo $row['onproduct_pot_size']; ?> 
-							</th>
-						</tr>
-					</thead>					
-				</table>				
-			<?php }
-		?> 
-		</div>  
+		</div>
+		<hr>
+		
 			</div>
 		</div></br>
 
@@ -738,40 +742,43 @@ if(!empty($op)) {
 			<ul class="nav nav-pills pull-right toolbar">
 				<li><button type="button" class="btn btn-primary btn-xs" onClick="upd_btn_click(<?php echo $data_list[0]['onproduct_sn'];?>)"><i class="glyphicon glyphicon-plus"></i>新增更多圖片</button></li>
 				<li><button type="button" class="btn btn-primary btn-xs upd1" <?php echo "data-onproduct_part_no=\"".$data_list[0]['onproduct_part_no']."\" data-onproduct_part_name=\"".$data_list[0]['onproduct_part_name']."\"" ;?>><i class="glyphicon glyphicon-plus" ></i>預計出貨資料</button></li>
-			</ul><hr>
-			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
-				<thead>
-        					<tr>
-        						<th style="text-align: center;">下種日期</th>
-        						<th style="text-align: center;">目前尺寸</th>
-        						<th style="text-align: center;">數量</th>
-        						<th style="text-align: center;">操作</th>        						
-        					</tr>
-        					<?php
-        						for($i=0;$i<count($eli_list);$i++){
-        							echo '<tr>';
-        							echo '<td style="text-align: center;">'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
-									echo '<td style="text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
-        							echo '<td style="text-align: center;">'.$eli_list[$i]['SUM(onadd_quantity)'].'</td>';
-        							echo '<td style="text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');">汰除</a></td>';      
-        							echo '</tr>';  							
-        						}
-        					?>    
-        				</thead>
+			</ul>
+			<hr>
+			<table id="table_summary" class="table table-hover">
+				<thead style="font-size: 1.3em">
+					<tr>
+						<th style="text-align: center;">下種日期</th>
+						<th style="text-align: center;">目前尺寸</th>
+						<th style="text-align: center;">數量</th>
+						<th style="text-align: center;">操作</th>        						
+					</tr>
+				</thead>
+				<tbody></tbody>
+					<?php
+						for($i=0;$i<count($eli_list);$i++){
+							echo '<tr>';
+							echo '<td style="vertical-align: middle;text-align: center;">'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
+							echo '<td style="vertical-align: middle;text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
+							echo '<td style="vertical-align: middle;text-align: center;">'.$eli_list[$i]['SUM(onadd_quantity)'].'</td>';
+							echo '<td style="vertical-align: middle;text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');"><button type="button" class="btn btn-xs btn-warning">汰除</button></a></td>';      
+							echo '</tr>';  							
+						}
+					?>    
+				</tbody>
 			</table>
 		</div>
 
 		<!-- container -->
 		<div  class="container-fluid">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-8">
 					<?php
 					$href = './details_table.php?onadd_part_no='.$onadd_part_no.'&onadd_growing='.$onadd_growing.'&onadd_quantity_del='.'2020'.'&end='.$end;
 					?>
 					<!-- echo '<td><button type="button" class="btn btn-info btn-xs" onclick="location.href=\'./details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.$row['onadd_quantity_del'].'&start='.$start.'&end='.$end.'\'">查看</button></td>'; -->
 
 					<!-- details_table.php?onadd_part_no=PP-0052&onadd_growing=1&onadd_quantity_del=2019 -->
-					<ul class="nav nav-tabs">
+					<ul class="nav nav-tabs" style="font-size: 1.2em">
 						<?php
 						$font_size = '';
 						// echo GetParam('onadd_quantity_del');
@@ -789,11 +796,10 @@ if(!empty($op)) {
                 </div>
             </div>
         </div>
-
         <div class="container-fluid">
         	<div class="row">
         		<div class="col-md-8">
-        			<table id="table_summary" class="table table-striped table-hover table-condensed table-bordered">
+        			<table id="table_summary" class="table table-hover table-condensed table-bordered">
         				<thead>
         					<tr>
         						<th style="text-align: center; vertical-align: middle;font-size: 1.1em" rowspan="2">出售</br>尺寸</th>
@@ -823,9 +829,9 @@ if(!empty($op)) {
         						}
         						if($n != 0){
         							echo '<tbody>';
-        							echo '<td>'.$permissions_mapping[$i].'寸'.'</td>';
+        							echo '<td style="text-align: center;">'.$permissions_mapping[$i].'寸'.'</td>';
 		        					for($j = 1 ;$j <= 12;$j++){
-		        						echo '<td>'.$user_list[$i][$j].'</td>';//預計成熟月份數量
+		        						echo '<td style="text-align: center;">'.$user_list[$i][$j].'</td>';//預計成熟月份數量
 		                            }
 		                            echo '</tbody>';
         						}
@@ -861,12 +867,12 @@ if(!empty($op)) {
         					for($size_n=1;$size_n <= 6;$size_n++){
         						echo '<tbody>'; 
         						if(!empty($business_data[$size_n]['size'])){
-	            	             	echo '<td>'.$permissions_mapping[$business_data[$size_n]['size']].'寸'.'</td>';
+	            	             	echo '<td style="vertical-align: middle; text-align: center;">'.$permissions_mapping[$business_data[$size_n]['size']].'寸'.'</td>';
 	        						for($i = 1 ;$i <= 12;$i++){
 	        							if(!empty($business_data[$size_n][$i]))
-	            	                        echo '<td><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i).','.$business_data[$size_n]['size'].')">'.$business_data[$size_n][$i].'</a></td>';//品號
+	            	                        echo '<td style="vertical-align: middle;text-align: center;"><a href="javascript: void(0)" onclick="customer_list(\''.$onadd_part_no.'\','.$onadd_quantity_del.','.($i).','.$business_data[$size_n]['size'].')">'.$business_data[$size_n][$i].'</a></td>';//品號
 	            	                   	else
-	            	                   		echo '<td>0</td>';
+	            	                   		echo '<td style="vertical-align: middle; text-align: center;">0</td>';
 	            	             	}
 	            	             }
             	             	echo '</tbody>';        					

@@ -1506,35 +1506,35 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
+											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
+											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
+											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
+											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -1548,35 +1548,35 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" >
+											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" >
+											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="col-sm-2 control-label">換盆日期&nbsp;</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="datetimepicker3" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
+											<input disabled="disabled" type="text" class="form-control" id="datetimepicker3" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>   
 									<div class="form-group">
 										<label class="col-sm-2 control-label">目前尺寸<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<select class="form-control" id="dropdown_onadd_cur_size" name="onadd_cur_size">
+											<select disabled="disabled" class="form-control" id="dropdown_onadd_cur_size" name="onadd_cur_size">
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
@@ -1590,7 +1590,7 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<select class="form-control" name="onadd_growing">
+											<select disabled="disabled" class="form-control" name="onadd_growing">
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
@@ -2060,43 +2060,48 @@ if(!empty($op)) {
 								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">供應商</th>
 								<th style="text-align: center;">訂單客戶</th> <!-- 2019/6/19新增 -->						
-								<th colspan="2" style="text-align: center;">操作</th>
+								<th style="text-align: center;">操作</th>
+								<th colspan="1" style="text-align: center;">操作</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody >
 							<?php
 							foreach ($product_list as $row) {								
 								echo '<tr>';
 									if($row['onadd_part_no'] == 0){
 										if($row['onadd_newpot_sn'] == 0){
-	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+	        								// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+	        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 	        							}
 	        							else{
-	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+	        								// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+	        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 	        							}
 									}else{
 										if($row['onadd_newpot_sn'] == 0){
-											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+											// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+											echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 										}
 										else{
-											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+											// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+											echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 										}
 									}
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
         							if(!empty($permissions_mapping[$row['onadd_cur_size']])){
-	        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
+	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
 	        						}
 	        						else{
-	        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
+	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
 	        						}
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							if($row['onadd_growing']==1){
         								$list_setting = getSettingBySn(1.7);
         								$onchba_cycle = $list_setting['onchba_cycle'];
@@ -2108,7 +2113,7 @@ if(!empty($op)) {
         								$onchba_cycle = $list_setting['onchba_cycle'];
         							}
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';//預計成熟日
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';//預計成熟日
 
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
 
@@ -2122,27 +2127,31 @@ if(!empty($op)) {
 	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
 	        						}		
 	        						// printr($first_plant_amount);
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>'; 		
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>'; 				
-        							$note = (!empty($row['onadd_quantity_cha'])) ? '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">換盆</td>' : '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>'; 		
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>'; 				
+        							$note = (!empty($row['onadd_quantity_cha'])) ? '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">換盆</td>' : '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
         							echo $note;
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
 
         							// 2019/6/19新增 - 展開收回操作列表
-        							echo '<td style="text-align:center" style="border-right:0.1rem #BEBEBE dashed;text-align: center;">
-	        							    <div>
-	        							      <button type="button" class="btn btn-warning btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp;&nbsp;
-	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>&nbsp;&nbsp;
-	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>&nbsp;&nbsp;&nbsp;';
+        							echo '<td style="vertical-align: middle;text-align:center" style="border-right:0.1rem #BEBEBE dashed;text-align: center;">   	
+	        							    <span >
+	        							      	<button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>
+	        							      </span>
+	        							      <span >
+	        							      	<button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
+	        							      </span>
+	        							      <span >
+	        							      	<button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>
+	        							      </span>';
         							if($permmsion == '系統管理員'){
-	        							echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
+	        							echo '<span ><button type="button" class="btn btn-warning btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button></span>';
 	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}       						
 
-	        						echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;&nbsp;
-	        								</div>';
-	        						echo '<td style="text-align:center"><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_part_name='.$row['onadd_part_name'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+	        						echo '<span > </span><span ><button type="button" class="btn btn-default btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'"><span style="font-size:2em;color:#000000" class="glyphicon glyphicon-qrcode"></span></button>';
+	        						echo '<td style="vertical-align: middle;text-align:center"><button type="button" class="btn btn-info btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_part_name='.$row['onadd_part_name'].'&onadd_quantity_del='.date("Y").'\'" ><span class="glyphicon glyphicon-list-alt" style="font-size:1.3em"></span> 展開</button>';
 	        						echo '</td>';
         							echo '</tr>';
         						}

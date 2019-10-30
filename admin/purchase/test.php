@@ -121,11 +121,12 @@ if($_COOKIE['onadd_sn'] != null){
 			// $('.qr_img').attr("src","<?php echo GetParam('qr_src');?>")
 		});
 
-			    //圖片長寬取得
-			    var img = new Image();
-				img.onload = function() {
-				  alert(this.width + 'x' + this.height);
-				}
+			   //圖片長寬取得
+			    var img     = document.getElementById('img_print');
+			    var width   = img.clientWidth;
+			    var height  = img.clientHeight;
+			    alert(width);
+			    alert(height);
 		
 	</script>
 	<style type="text/css">

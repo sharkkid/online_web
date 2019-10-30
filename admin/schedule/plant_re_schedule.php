@@ -684,24 +684,23 @@ if(!empty($op)) {
         						// 	$onchba_size = $v['onchba_size'];
         						// 	$onchba_cycle = $v['onchba_cycle'];
         						// }
-							foreach ($user_list as $row) {
 								foreach ($user_list as $row) {
 								echo '<tr>';
         							if($row['onadd_plant_st'] == 1){//產品編號
-										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';
+										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';
 									}
 									else{
-										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.'P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';
+										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.'P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';
 									} 	
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  	
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_part_no'].'</td>';//品號
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_part_name'].'</td>';//品名  	
         							if($row['onadd_plant_st']==2){
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.''.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.''.'</td>';
         							}else{						
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
         							}
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
-        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_quantity'].'</td>';//品名
+        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							if($row['onadd_growing']==1){
         								$list_setting = getSettingBySn(1.7);
         								$onchba_cycle = $list_setting['onchba_cycle'];
@@ -718,14 +717,16 @@ if(!empty($op)) {
         							}else{
         								$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         							}
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$test.'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
-        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$onadd_cycle.'月'.'</td>';
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';//品名
-        							echo '<td style="text-align: center;"><button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">執行</button><button type="button" class="btn btn-danger btn-xs delay" data-onadd_sn="'.$row['onadd_sn'].'">延後</button>';
+        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$onadd_cycle.'月'.'</td>';
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_supplier'].'</td>';//品名
+        							echo '<td style="text-align: center;">
+        							<span><button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">執行</button></span>
+        							<span><button type="button" class="btn btn-danger btn-xs delay" data-onadd_sn="'.$row['onadd_sn'].'">延後</button></span>';
         							echo '</td></tr>';
-        						}
-        					}
+	        						}
+
         						?>
         					</tbody>
         				</table>
@@ -765,4 +766,4 @@ if(!empty($op)) {
         <script src="./../../js1/jquery.toast.min.js"></script>
         <script src="./../../js1/dashboard-alpha.js"></script>
     </body>
-    </html>?>
+    </html>

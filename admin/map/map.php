@@ -72,9 +72,8 @@ if(!empty($op)) {
 <!DOCTYPE html>
 <html lang="en">
     <head>
-    	<meta charset="utf-8">
-	<meta http-equiv="Content-Type" content="text/html">
-
+    <meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html">s
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><?php echo CN_NAME;?></title>
@@ -94,13 +93,13 @@ if(!empty($op)) {
 	<!-- <link href="./../css1/jquery.toast.min.css" rel="stylesheet"> -->
 	<!--template css-->
 	<link href="./../../css1/style.css" rel="stylesheet">
-    	<?php include('./../htmlModule2/head.php');?>
-		<script src="./../../lib/jquery.twbsPagination.min.js"></script>
-		
-		<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-		<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
-		
-		<style>
+	<?php include('./../htmlModule2/head.php');?>
+	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
+	
+	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
+	
+	<style>
 			.container {
 			  position: relative;
 			  width: 100%;
@@ -293,10 +292,7 @@ if(!empty($op)) {
 			            </div>
 			    </div>
 			</div>
-		</div>
-
-    	<?php include('./../htmlModule/nav.php');?>
-    	
+		</div>   	
     	<!-- modal -->
 		<div id="setting-modal" class="modal setting-modal" tabindex="-1" role="dialog">
 		    <div class="modal-dialog modal-lg">

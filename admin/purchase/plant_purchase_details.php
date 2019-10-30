@@ -293,7 +293,12 @@ if(!empty($op)) {
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 	<title><?php echo CN_NAME;?></title>
 	<!-- Common plugins -->
-	<!-- <link href="./../img/apple-touch-icon.png" rel="apple-touch-icon"> -->
+	<!-- dataTables -->
+	<!--template css-->
+	<link rel="stylesheet" href="amazeui/css/amazeui.min.css">
+	<link rel="stylesheet" href="default/style.css">
+	<script src="amazeui/js/jquery.min.js"></script>
+	<script src="amazeui/js/amazeui.min.js"></script>
 	<link href="./../../images/favicon.png" rel="icon">
 	<link href="./../../css1/bootstrap.min.css" rel="stylesheet">
 	<link href="./../../css1/simple-line-icons.css" rel="stylesheet">
@@ -313,48 +318,10 @@ if(!empty($op)) {
 	<?php include('./../htmlModule/head.php');?>
 	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
 	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
-	<link rel="stylesheet" href="amazeui/css/amazeui.min.css">
-	<link rel="stylesheet" href="default/style.css">
-	<script src="amazeui/js/jquery.min.js"></script>
-	<script src="amazeui/js/amazeui.min.js"></script>
-		<link href="./../../images/favicon.png" rel="icon">
-	<link href="./../../css1/bootstrap.min.css" rel="stylesheet">
-	<link href="./../../css1/simple-line-icons.css" rel="stylesheet">
-	<link href="./../../css1/font-awesome.min.css" rel="stylesheet">
-	<link href="./../../css1/pace.css" rel="stylesheet">
-	<link href="./../../css1/jasny-bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="./../../css1/nanoscroller.css">
-	<link rel="stylesheet" href="./../../css1/metismenu.min.css">
-	<link href="./../../css1/c3.min.css" rel="stylesheet">
-	<link href="./../../css1/blue.css" rel="stylesheet">
-	<!-- dataTables -->
-	<link href="./../../css1/jquery.datatables.min.css" rel="stylesheet" type="text/css">
-	<link href="./../../css1/responsive.bootstrap.min.css" rel="stylesheet" type="text/css">
-	<!-- <link href="./../css1/jquery.toast.min.css" rel="stylesheet"> -->
-	<!--template css-->
-	<link href="./../../css1/style.css" rel="stylesheet">
-	<?php include('./../htmlModule/head.php');?>
-	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
-	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
+	s
 	<script src="./../../js1/pace.min.js"></script>
 	<script src="./../../js1/jasny-bootstrap.min.js"></script>
-	<script src="./../../js1/jquery.slimscroll.min.js"></script>
-	<script src="./../../js1/jquery.nanoscroller.min.js"></script>
-	<script src="./../../js1/metismenu.min.js"></script>
-	<script src="./../../js1/float-custom.js"></script>
 	<!--page script-->
-	<script src="./../../js1/d3.min.js"></script>
-	<script src="./../../js1/c3.min.js"></script>
-	<!-- iCheck for radio and checkboxes -->
-	<script src="./../../js1/icheck.min.js"></script>
-	<!-- Datatables-->
-	<script src="./../../js1/jquery.datatables.min.js"></script>
-	<script src="./../../js1/datatables.responsive.min.js"></script>
-	<script src="./../../js1/jquery.toast.min.js"></script>
-	<script src="./../../js1/dashboard-alpha.js"></script>
-
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#Upload_Image_Modal-modal').modal();
@@ -556,11 +523,111 @@ if(!empty($op)) {
 	  	$('#onproduct_sn').val(onproduct_sn);
 	}
 	</script>
-	<style type="text/css">
-		#img_print{
-			max-height:20rem;
-			max-width: 40rem;
-		}
+	<style type="text/css">	
+		@media screen and (max-width: 375px){
+			#img_print{
+				max-height:10vh;
+				max-width: 10vw;
+				min-height:10vh;
+				min-width: 10vw;
+				margin-bottom: 3em;			
+			}
+			#img_div{
+				height:70vh;
+			}
+			#imgbox{;
+				width: 100%;
+				max-height: 20vh;
+				text-align: center;					
+				top:1em;
+			}
+			#img_data{
+				clear: left;
+				width: 100%;
+				max-height: 20%;
+				text-align: center;	
+				margin: 2em auto;
+				vertical-align: middle;		
+			}
+		}	
+		@media screen and (max-width: 500px){
+			#img_print{
+				max-height:20vh;
+				max-width: 20vw;
+				min-height:10vh;
+				min-width: 10vw;
+				margin-bottom: 3em;			
+			}
+			#img_div{
+				height:50vh;
+			}
+			#imgbox{;
+				width: 100%;
+				max-height: 20vh;
+				text-align: center;					
+				top:1em;
+			}
+			#img_data{
+				clear: left;
+				width: 100%;
+				max-height: 20%;
+				text-align: center;	
+				margin: 2em auto;
+				vertical-align: middle;		
+			}
+		}		
+		@media screen and (max-width: 768px){
+			#img_print{
+				max-height:15vh;
+				max-width: 15vw;
+				min-height:10vh;
+				min-width: 10vw;
+				margin-bottom: 3em;			
+			}
+			#img_div{
+				height:45vh;
+			}
+			#imgbox{;
+				width: 100%;
+				max-height: 20vh;
+				text-align: center;					
+				top:1em;
+			}
+			#img_data{
+				clear: left;
+				width: 100%;
+				max-height: 20%;
+				text-align: center;	
+				margin: 2em auto;
+				vertical-align: middle;		
+			}
+		}	
+		@media screen and (max-width: 1600px){
+			#img_print{
+				max-height:20vh;
+				max-width: 20vw;
+				min-height:10vh;
+				min-width: 10vw;
+				margin-bottom: 3em;			
+			}
+			#img_div{
+				min-height:35vh;
+			}
+			#imgbox{;
+				width: 100%;
+				max-height: 20vh;
+				text-align: center;					
+				top:1em;
+			}
+			#img_data{
+				clear: left;
+				width: 100%;
+				max-height: 20%;
+				text-align: center;	
+				margin: 2em auto;
+				vertical-align: middle;		
+			}
+		}				
 	</style>
 </head>
 
@@ -668,31 +735,38 @@ if(!empty($op)) {
         					// printr($product_size_n);
         					// exit();
         					echo '<li>
-		        					<div class="am-panel am-panel-default">
-		        						<div class="am-panel-bd" style="height:45vh;">
+		        					<div class="am-panel am-panel-default col-sm-12" id="img_div">
+		        						<div class="am-panel-bd"">
 		        						<button style="float:left clear:both;" class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
-		        							<hr><div class="col-md-10" style="max-height="25vh";max-width="30vw";"><img style="max-height=5vh;max-width=3vw;text-align:left;clear:both;" id="img_print" class="am-img-responsive thumbnail " src="'.$produce_image.'"></div>
-		        							<div class="col-md-2"><h3 style="text-align:center;"><a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'">'.$AllProductData[$i]['onproduct_part_name'].'</a></h3>
-		        							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
+		        							<hr>
+		        							<div class="col-sm-6" id="imgbox" style="">
+		        								<img style="clear:both;" id="img_print" class="am-img-responsive thumbnail " src="'.$produce_image.'">
+		        							</div>
+		        							<div class="col-sm-6" id="img_data" style="text-align: center;">
+			        							<span style="font-size:1.5em;">
+				        							<a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'">'.$AllProductData[$i]['onproduct_part_name'].
+				        							'</a>
+			        							</span>
+			        							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
 		        							';
 		        							// printr($AllProductData);
 		        								for($n=0;$n<6;$n++){
 		        									if($product_size_n[$n]['onadd_growing'] != null){
-		        										echo '<span style="text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 株</span>';
-		        									}		        									
+		        										echo '<span style="font-size:1em;text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 株';
+		        									}	        									
 		        								}
 		        								if($AllProductData[$i]['onproduct_color'] != '')
-		        									echo '<span style="text-align: center; display:block;">花色：'.$AllProductData[$i]['onproduct_color'].'</span>';
+		        									echo '<span style="font-size:1em;text-align: center; display:block;">花色：'.$AllProductData[$i]['onproduct_color'].'</span>';
 		        								else
-		        									echo '<span style="text-align: center; display:block;">花色：尚未填寫</span>';
+		        									echo '<span style="font-size:1em;text-align: center; display:block;">花色：尚未填寫</span>';
 		        								if($AllProductData[$i]['onproduct_size'] != '')
-		        									echo '<span style="text-align: center; display:block;">花徑：'.$AllProductData[$i]['onproduct_size'].'</span>';
+		        									echo '<span style="font-size:1em;text-align: center; display:block;">花徑：'.$AllProductData[$i]['onproduct_size'];
 		        								else
-		        									echo '<span style="text-align: center; display:block;">花徑：尚未填寫</span>';
+		        									echo '<span style="font-size:1em;text-align: center; display:block;">花徑：尚未填寫';
 		        								if($AllProductData[$i]['onproduct_height'] != '')
-		        									echo '<span style="text-align: center; display:block;">高度：'.$AllProductData[$i]['onproduct_height'].'</span>';
+		        									echo '<span style="font-size:1em;text-align: center; display:block;">高度：'.$AllProductData[$i]['onproduct_height'].'</span>';
 		        								else
-		        									echo '<span style="text-align: center; display:block;">高度：尚未填寫</span>';		     
+		        									echo '<span style="font-size:1em;text-align: center; display:block;">高度：尚未填寫</span>';		     
 		        			echo			' </div>      						
 		        						</div>
 		        					</div>
@@ -714,23 +788,21 @@ if(!empty($op)) {
         	<!--end main content-->
 
         	<!--Common plugins-->
-        	<!-- <script src="./../../js1/jquery.min.js"></script> -->
-        	<!-- <script src="./../../js1/bootstrap.min.js"></script> -->
-        	<script src="./../../js1/pace.min.js"></script>
-        	<script src="./../../js1/jasny-bootstrap.min.js"></script>
-        	<script src="./../../js1/jquery.slimscroll.min.js"></script>
-        	<script src="./../../js1/jquery.nanoscroller.min.js"></script>
-        	<script src="./../../js1/metismenu.min.js"></script>
-        	<script src="./../../js1/float-custom.js"></script>
-        	<!--page script-->
-        	<script src="./../../js1/d3.min.js"></script>
-        	<script src="./../../js1/c3.min.js"></script>
-        	<!-- iCheck for radio and checkboxes -->
-        	<script src="./../../js1/icheck.min.js"></script>
-        	<!-- Datatables-->
-        	<script src="./../../js1/jquery.datatables.min.js"></script>
-        	<script src="./../../js1/datatables.responsive.min.js"></script>
-        	<script src="./../../js1/jquery.toast.min.js"></script>
-        	<script src="./../../js1/dashboard-alpha.js"></script>
+	        <script src="./../../js1/jquery.slimscroll.min.js"></script>
+	        <script src="./../../js1/jquery.nanoscroller.min.js"></script>
+	        <script src="./../../js1/metismenu.min.js"></script>
+	        <script src="./../../js1/float-custom.js"></script>
+	        <!--page script-->
+	        <script src="./../../js1/d3.min.js"></script>
+	        <script src="./../../js1/c3.min.js"></script>
+	        <!-- iCheck for radio and checkboxes -->
+	        <script src="./../../js1/icheck.min.js"></script>
+	        <!-- Datatables-->
+	        <script src="./../../js1/jquery.datatables.min.js"></script>
+	        <script src="./../../js1/datatables.responsive.min.js"></script>
+	        <script src="./../../js1/jquery.toast.min.js"></script>
+	        <script src="./../../js1/dashboard-alpha.js"></script>
+	        <script src="./../../lib/dom-to-image.js"></script>
+	        <script src="./../../lib/FileSaver.js"></script>
         </body>
 </html>?>

@@ -851,24 +851,24 @@ if(!empty($op)) {
 							foreach ($user_list as $row) {
 								echo '<tr>';
 									if($row['onadd_planting_st'] == 1){//產品編號
-										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
+										echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
 									}
 									else{
-										echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.'P'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
+										echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.'P'.date('Y',str2time($row['onadd_planting_date'])).'-'.$row['onadd_sn'].'</td>';
 									} 								
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
         							if($row['onadd_plant_st']==2){
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.''.'</td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.''.'</td>';
         							}else{						
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',str2time($row['onadd_planting_date'])).'</td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',str2time($row['onadd_planting_date'])).'</td>';
         							}
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['expected_date'].'</td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['expected_date'].'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
-        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$onadd_cycle.'月'.'</td>';
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';//品名
-        							echo '<td style="text-align: center;"><button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button>&nbsp;';
+        							// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$onadd_cycle.'月'.'</td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';//品名
+        							echo '<td style="vertical-align: middle;text-align: center;"><button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button>&nbsp;';
         							// if($row['onadd_schedule']=='2'){        							
         							// }else{
         							// 	echo '<button type="button" class="btn btn-danger btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">延後</button>&nbsp;';
@@ -914,4 +914,4 @@ if(!empty($op)) {
         <script src="./../../js1/jquery.toast.min.js"></script>
         <script src="./../../js1/dashboard-alpha.js"></script>
     </body>
-    </html>?>
+    </html>
