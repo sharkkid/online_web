@@ -255,7 +255,7 @@ if(!empty($op)) {
 		$sql2 = "UPDATE onliine_firstplant_data	SET onfp_plant_amount = '{$onadd_quantity}' WHERE onadd_sn='{$onadd_sn}' and onfp_status >= 1;";
 
 		if($conn->query($sql)) {
-			$ret_msg = "更新成功！".$sql;
+			$ret_msg = "更新成功！";
 			if(IsfirtPlant($onadd_sn) == "1"){
 				if($conn->query($sql2)) {
 					$ret_msg = "更新成功！";
