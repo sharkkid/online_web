@@ -524,35 +524,48 @@ if(!empty($op)) {
 	if(($onadd_sn = GetParam('onadd_sn'))) {
 		// 檢查搜尋條件是否有包含大小寫的 P、p
 		$ex_P = explode("P", $onadd_sn);
-		$ex_p = explode("p", $onadd_sn);
-		if (count($ex_P) == 2) {
+		$ex_p = explode("p", $onadd_sn);	
+		if (count($ex_P) == 2  and $ex_P[0] == "") {
 			if (isset($ex_P[1])) {
-				$search_where[] = "onadd_isbought = 1 and FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_P[1]%'";
+				$ex_P[1] = explode("-", $ex_P[1]);	
+				$search_where[] = "onadd_isbought = 1 and FROM_UNIXTIME(onadd_planting_date,'%Y') like '%{$ex_P[1][0]}%'";
 			}else{
 				$search_where[] = "onadd_isbought = 1";
 			}			
 		}elseif(count($ex_p) == 2 and $ex_p[0] == ""){
 			if (isset($ex_p[1])) {
-				$search_where[] = "onadd_isbought = 1 and FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_p[1]%'";
+				$ex_p[1] = explode("-", $ex_p[1]);	
+				$search_where[] = "onadd_isbought = 1 and FROM_UNIXTIME(onadd_planting_date,'%Y') like '%{$ex_p[1][0]}%'";
 			}else{
 				$search_where[] = "onadd_isbought = 1";
 			}	
-		}elseif(count($ex_P) == 1 and $ex_P[0] !=""){ //如果只打P
+		}elseif(count($ex_P) == 1 and $ex_P[0] !=""){
 			if (strpos($ex_P[0],'P')) {
 				$search_where[] = "onadd_isbought = 1";
+			}elseif (strpos($ex_P[0],'-')) {
+				$ex_ = explode("-", $ex_P[0]);
+				printr();
+				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_[0]%'";
+			}elseif($ex_P[0] == '-'){
+				$search_where[] = "";
 			}else{
 				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_P[0]%'";
 			}
-		}
-		elseif(count($ex_p) == 1 and $ex_p[0] !=""){
+		}elseif(count($ex_p) == 1 and $ex_p[0] !=""){
 			if (strpos($ex_p[0],'p')) {
 				$search_where[] = "onadd_isbought = 1";
-			}else{
+			}elseif (strpos($ex_p[0],'-')) {
+				$ex_ = explode("-", $ex_p[0]);
+				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_[0]%'";
+			}elseif($ex_P[0] == '-'){
+				$search_where[] = "";
+			}
+			else{
 				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_p[0]%'";
-			}				
+			}
 		}
 		$search_query_string['onadd_sn'] = $onadd_sn;
-	}
+	}	
 	if(($onadd_part_no = GetParam('onadd_part_no'))) {
 		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
 		$search_query_string['onadd_part_no'] = $onadd_part_no;
@@ -580,7 +593,7 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$product_list = getUser($search_where, $pg_offset, $pg_rows,$onadd_sn);
-	// echo "<hr><hr><hr><hr><hr>";echo "\t\t\t\t";printr($ex_P);printr($ex_p);printr($search_where);
+	// echo "<hr><hr><hr><hr><hr>";printr($ex_P);printr($ex_p);printr($ex_);printr($search_where);
 	// exit();
 }
 ?>
@@ -2167,21 +2180,22 @@ if(!empty($op)) {
         							// 2019/6/19新增 - 展開收回操作列表
         							echo '<td style="vertical-align: middle;text-align:center" style="border-right:0.1rem #BEBEBE dashed;text-align: center;">   	
 	        							    <span >
-	        							      	<button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>
+	        							      	<button type="button" style="background-color:#E94653;" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>
 	        							      </span>
 	        							      <span >
-	        							      	<button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
+	        							      	<button type="button" style="background-color:#6CBF87;border:#6CBF87" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
 	        							      </span>
 	        							      <span >
-	        							      	<button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>
+	        							      	<button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>
 	        							      </span>';
         							if($permmsion == '系統管理員'){
-	        							echo '<span ><button type="button" class="btn btn-warning btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button></span>';
+	        							echo '<span ><button type="button" style="background-color:#FCD78B;border:#FCD78B;color:#642100" class="btn btn-warning btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button></span>';
 	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}       						
 
 	        						echo '<span > </span><span ><button type="button" class="btn btn-default btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'"><span style="font-size:2em;color:#000000" class="glyphicon glyphicon-qrcode"></span></button>';
-	        						echo '<td style="vertical-align: middle;text-align:center"><button type="button" class="btn btn-info btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_part_name='.$row['onadd_part_name'].'&onadd_quantity_del='.date("Y").'\'" ><span class="glyphicon glyphicon-list-alt" style="font-size:1.3em"></span> 展開</button>';
+	        						echo '<td style="vertical-align: middle;text-align:center">
+	        								<button type="button" class="btn btn-info btn-xs" onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_part_name='.$row['onadd_part_name'].'&onadd_quantity_del='.date("Y").'\'" ><span class="glyphicon glyphicon-list-alt" style="font-size:1.3em"></span> 展開</button>';
 	        						echo '</td>';
         							echo '</tr>';
         						}

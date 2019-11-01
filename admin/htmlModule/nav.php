@@ -40,7 +40,7 @@
     <!-- top bar end-->
 
         <!--left navigation start-->
-        <aside class="float-navigation light-navigation"  style="background-color: #8eb8c1;">
+        <aside class="float-navigation light-navigation"  style="background-color: #bce7f1;">
             <div class="nano">
                 <div class="nano-content">
                     <ul class="metisMenu nav" id="menu">
@@ -55,7 +55,7 @@
                         </li> -->
                         <li class="active">
                             <a href="javascript: void(0);" aria-expanded="true" ><i class="icon-home" ></i> 庫存管理 <span class="fa arrow"></span></a>
-                            <ul class="nav-second-level nav" aria-expanded="true"  style="background-color: #ead3a3;">
+                            <ul class="nav-second-level nav" aria-expanded="true"  style="background-color: #f7efd8;">
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase.php">苗株庫存管理</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/flask/plant_flask.php">瓶苗資料管理</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_elimination.php">汰除統計報表</a></li>
@@ -65,7 +65,7 @@
                         </li>
                         <li>
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-grid"></i> 植床區域管理 <span class="fa arrow"></span></a>
-                            <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #ead2a3">
+                            <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
                                 <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=0001">植物栽培區</a></li>
 <!--                                 <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">B區</a></li>
                                  <li><a href="<?php echo WT_SERVER;?>/admin/map/map.php?area=6a3f">冷房</a></li> -->
@@ -76,7 +76,7 @@
 
                         <li>
                             <a href="javascript: void(0);" aria-expanded="true" ><i class="icon-list"></i> 工作排程管理 <span class="fa arrow"></span></a>
-                            <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #ead2a3">
+                            <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
                                 <li><a href="<?php echo WT_SERVER;?>/admin/schedule/plant_schedule.php?area=6a3f">每月待辦事項</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/schedule/plant_re_schedule.php?area=6a3f">每週工作事項</a></li>
 
@@ -88,7 +88,7 @@
                             <!-- <ul class="nav-second-level nav" aria-expanded="true">
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_pdetails.php">品種資料</a></li>
                             </ul> -->
-                             <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #ead2a3">
+                             <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details.php">可接出貨量</a></li>
                             </ul>
 
@@ -98,7 +98,7 @@
                         <!-- <li><a href="<?php echo WT_SERVER;?>/admin/sys/sys_user.php"><i class="icon-user"></i> 帳號管理</a></li> -->
                         <li>
                             <a href="javascript: void(0);" aria-expanded="true"><i class="icon-settings"></i> 進階設定 <span class="fa arrow"></span></a>
-                            <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #ead2a3">
+                            <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
                                 <li><a href="layout-sidebar-colored.html">語言設定</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/setting/plant_setting.php">成長週期設定</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/setting/space_setting.php">園區空間設定</a></li>

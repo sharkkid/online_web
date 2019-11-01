@@ -492,7 +492,47 @@ if(!empty($op)) {
 } else {
 	// search
 	if(($onadd_sn = GetParam('onadd_sn'))) {
-		$search_where[] = "onadd_sn like '%{$onadd_sn}%'";
+		// 檢查搜尋條件是否有包含大小寫的 P、p
+		$ex_P = explode("P", $onadd_sn);
+		$ex_p = explode("p", $onadd_sn);	
+		if (count($ex_P) == 2  and $ex_P[0] == "") {
+			if (isset($ex_P[1])) {
+				$ex_P[1] = explode("-", $ex_P[1]);	
+				$search_where[] = "onadd_isbought = 1 and FROM_UNIXTIME(onadd_planting_date,'%Y') like '%{$ex_P[1][0]}%'";
+			}else{
+				$search_where[] = "onadd_isbought = 1";
+			}			
+		}elseif(count($ex_p) == 2 and $ex_p[0] == ""){
+			if (isset($ex_p[1])) {
+				$ex_p[1] = explode("-", $ex_p[1]);	
+				$search_where[] = "onadd_isbought = 1 and FROM_UNIXTIME(onadd_planting_date,'%Y') like '%{$ex_p[1][0]}%'";
+			}else{
+				$search_where[] = "onadd_isbought = 1";
+			}	
+		}elseif(count($ex_P) == 1 and $ex_P[0] !=""){
+			if (strpos($ex_P[0],'P')) {
+				$search_where[] = "onadd_isbought = 1";
+			}elseif (strpos($ex_P[0],'-')) {
+				$ex_ = explode("-", $ex_P[0]);
+				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_[0]%'";
+			}elseif($ex_P[0] == '-'){
+				$search_where[] = "";
+			}else{
+				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_P[0]%'";
+			}
+		}elseif(count($ex_p) == 1 and $ex_p[0] !=""){
+			if (strpos($ex_p[0],'p')) {
+				$search_where[] = "onadd_isbought = 1";
+			}elseif (strpos($ex_p[0],'-')) {
+				$ex_ = explode("-", $ex_p[0]);
+				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_[0]%'";
+			}elseif($ex_P[0] == '-'){
+				$search_where[] = "";
+			}
+			else{
+				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_p[0]%'";
+			}
+		}
 		$search_query_string['onadd_sn'] = $onadd_sn;
 	}
 	if(($onadd_part_no = GetParam('onadd_part_no'))) {
@@ -519,6 +559,8 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$product_list = getUser($search_where, $pg_offset, $pg_rows);
+	// echo "<hr><hr><hr><hr><hr>";printr($ex_P);printr($ex_p);printr($ex_);printr($search_where);
+
 }
 ?>
 <!DOCTYPE html>
@@ -2092,13 +2134,16 @@ if(!empty($op)) {
 							<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_addflask.php'"><i class="glyphicon glyphicon-plus"></i>新品項建立</button></li> -->
 							<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_addflask.php'"></i> 返回瓶苗資料建立</button></li> -->
 						</ul>
-					</div>返回
-
+					</div>
 					<!-- search -->
 					<div id="search" style="clear:both;">
 						<form autocomplete="off" method="get" action="./plant_flask.php" id="search_form" class="form-inline alert alert-info" role="form">
 							<div class="row">
 								<div class="col-md-12">
+									<div class="form-group">
+										<label for="searchInput0">產品編號</label>
+										<input type="text" class="form-control" id="searchInput0" name="onadd_sn" value="<?php echo $onadd_sn;?>" placeholder="">
+									</div>
 									<div class="form-group">
 										<label for="searchInput1">品號</label>
 										<input type="text" class="form-control" id="searchInput1" name="onadd_part_no" value="<?php echo $onadd_part_no;?>" placeholder="">
@@ -2152,22 +2197,26 @@ if(!empty($op)) {
 							<?php
         					foreach ($product_list as $row) {
 								echo '<tr>';
-									if($row['onadd_part_no'] == 0){
+									if($row['onadd_isbought'] == 0){
 										if($row['onadd_newpot_sn'] == 0){
-	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+	        								// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 	        							}
 	        							else{
-	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+	        								// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 	        							}
 									}else{
 										if($row['onadd_newpot_sn'] == 0){
-											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+											// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
+											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 										}
 										else{
-											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+											// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
+											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 										}
 									}
