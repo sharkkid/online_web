@@ -2256,14 +2256,14 @@ if(!empty($op)) {
         							// 2019/6/19新增 - 展開收回操作列表
         							echo '<td style="text-align:center">
 	        							    <div>
-	        							      <button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
-	        							      <button type="button" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
-	        							      <button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">下種</button>&nbsp;';
+	        							      <button type="button" style="background-color:#E94653;" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
+	        							      <button type="button" style="background-color:#6CBF87;border:#6CBF87" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
+	        							      <button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">下種</button>&nbsp;';
         							if($permmsion == '系統管理員'){
 	        							// echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
 	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}
-	        						echo '<td><button type="button" class="btn btn-primary btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+	        						echo '<td><button type="button" class="btn btn-info btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
 
 	        						// echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
 	        						echo '
