@@ -255,7 +255,7 @@ if(!empty($op)) {
 		$sql2 = "UPDATE onliine_firstplant_data	SET onfp_plant_amount = '{$onadd_quantity}' WHERE onadd_sn='{$onadd_sn}' and onfp_status >= 1;";
 
 		if($conn->query($sql)) {
-			$ret_msg = "更新成功！";
+			$ret_msg = "更新成功！".$sql;
 			if(IsfirtPlant($onadd_sn) == "1"){
 				if($conn->query($sql2)) {
 					$ret_msg = "更新成功！";
@@ -265,7 +265,7 @@ if(!empty($op)) {
 				}
 			}
 		} else {
-			$ret_msg = "更新失敗！".$sql;
+			$ret_msg = "更新失敗！";
 		}
 		$conn->close();
 		
@@ -989,7 +989,6 @@ if(!empty($op)) {
 			$('button.upd3').on('click', function(){
 				$('#upd-modal3').modal();
 				$('#upd3_form')[0].reset();
-
 								$.ajax({
 					url: './plant_purchase.php',
 					type: 'post',
@@ -1171,7 +1170,7 @@ if(!empty($op)) {
 					var param = $(this).serializeArray();
 					var onproduct_pic_url = {name:"onproduct_pic_url",value:$('#img_newName').html().substring(1,$('#img_newName').html().length)};
 					param.push(onproduct_pic_url);
-					// console.log(param);
+					console.log(param);
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
 					 	$.ajax({
@@ -1533,35 +1532,35 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<input readonly="readonly" type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
+											<input readonly="readonly" type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
+											<input readonly="readonly" type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
+											<input readonly="readonly" type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
+											<input readonly="readonly" type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -1575,35 +1574,35 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" >
+											<input readonly="readonly" type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" >
+											<input readonly="readonly" type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
+											<input readonly="readonly" type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="col-sm-2 control-label">換盆日期&nbsp;</label>
 										<div class="col-sm-10">
-											<input disabled="disabled" type="text" class="form-control" id="datetimepicker3" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
+											<input readonly="readonly" type="text" class="form-control" id="datetimepicker3" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>   
 									<div class="form-group">
 										<label class="col-sm-2 control-label">目前尺寸<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<select disabled="disabled" class="form-control" id="dropdown_onadd_cur_size" name="onadd_cur_size">
+											<select readonly="readonly" class="form-control" id="dropdown_onadd_cur_size" name="onadd_cur_size">
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
@@ -1617,7 +1616,7 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<select disabled="disabled" class="form-control" name="onadd_growing">
+											<select readonly="readonly" class="form-control" name="onadd_growing">
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
