@@ -522,7 +522,35 @@ if(!empty($op)) {
 } else {
 	// search
 	if(($onadd_sn = GetParam('onadd_sn'))) {
-		$search_where[] = "onadd_sn like '%{$onadd_sn}%'";
+		// 檢查搜尋條件是否有包含大小寫的 P、p
+		$ex_P = explode("P", $onadd_sn);
+		$ex_p = explode("p", $onadd_sn);
+		if (count($ex_P) == 2) {
+			if (isset($ex_P[1])) {
+				$search_where[] = "onadd_isbought = 1 and FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_P[1]%'";
+			}else{
+				$search_where[] = "onadd_isbought = 1";
+			}			
+		}elseif(count($ex_p) == 2 and $ex_p[0] == ""){
+			if (isset($ex_p[1])) {
+				$search_where[] = "onadd_isbought = 1 and FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_p[1]%'";
+			}else{
+				$search_where[] = "onadd_isbought = 1";
+			}	
+		}elseif(count($ex_P) == 1 and $ex_P[0] !=""){ //如果只打P
+			if (strpos($ex_P[0],'P')) {
+				$search_where[] = "onadd_isbought = 1";
+			}else{
+				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_P[0]%'";
+			}
+		}
+		elseif(count($ex_p) == 1 and $ex_p[0] !=""){
+			if (strpos($ex_p[0],'p')) {
+				$search_where[] = "onadd_isbought = 1";
+			}else{
+				$search_where[] = "onadd_sn IN (select onadd_sn from onliine_add_data where onadd_newpot_sn like '%{$onadd_sn}%' or onadd_sn like '%{$onadd_sn}%') or FROM_UNIXTIME(onadd_planting_date,'%Y') like '%$ex_p[0]%'";
+			}				
+		}
 		$search_query_string['onadd_sn'] = $onadd_sn;
 	}
 	if(($onadd_part_no = GetParam('onadd_part_no'))) {
@@ -541,7 +569,6 @@ if(!empty($op)) {
 		$search_where[] = "onadd_cur_size = {$onadd_cur_size}";
 		$search_query_string['onadd_growing'] = $onadd_cur_size;
 	}
-	
 
 	$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
 	$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
@@ -552,8 +579,8 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$product_list = getUser($search_where, $pg_offset, $pg_rows);
-	// printr($product_list);
+	$product_list = getUser($search_where, $pg_offset, $pg_rows,$onadd_sn);
+	// echo "<hr><hr><hr><hr><hr>";echo "\t\t\t\t";printr($ex_P);printr($ex_p);printr($search_where);
 	// exit();
 }
 ?>
@@ -2013,6 +2040,10 @@ if(!empty($op)) {
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
+										<label for="searchInput0">產品編號</label>
+										<input type="text" class="form-control" id="searchInput0" name="onadd_sn" value="<?php echo $onadd_sn;?>" placeholder="">
+									</div>
+									<div class="form-group">
 										<label for="searchInput1">品號</label>
 										<input type="text" class="form-control" id="searchInput1" name="onadd_part_no" value="<?php echo $onadd_part_no;?>" placeholder="">
 									</div>
@@ -2068,7 +2099,7 @@ if(!empty($op)) {
 							<?php
 							foreach ($product_list as $row) {								
 								echo '<tr>';
-									if($row['onadd_part_no'] == 0){
+									if($row['onadd_isbought'] == 0){
 										if($row['onadd_newpot_sn'] == 0){
 	        								// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
 	        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
