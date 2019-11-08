@@ -239,33 +239,70 @@ if(!empty($op)) {
 		$onadd_height=GetParam('onadd_height');//高度
 		$onadd_pot_size=GetParam('onadd_pot_size');//適合開花盆徑
 		$onadd_location=GetParam('onadd_location');//放置區
+		$onadd_newpot_sn = GetParam('onadd_newpot_sn');//換盆原始編號
+		if($onadd_newpot_sn == '0'){
+			if(GetParam('onadd_ml') == '0')
+				$onadd_ml=GetParam('onadd_sn');//移倉原始編號
+			else
+				$onadd_ml=GetParam('onadd_ml');//移倉原始編號
+		}else{
+			if(GetParam('onadd_ml') == '0')
+				$onadd_ml=$onadd_newpot_sn;//移倉原始編號
+			else
+				$onadd_ml=GetParam('onadd_ml');//移倉原始編號
+		}
+
+		$onadd_ml_amount=GetParam('onadd_ml_amount');//移倉數量
 		$onadd_supplier=GetParam('onadd_supplier');//供應商
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
 		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
 		$jsuser_sn = GetParam('supplier');//編輯人員
-
+		$left_amount = $onadd_quantity - $onadd_ml_amount;//移倉後剩餘數量
 
 		$user = getUserByAccount($onadd_part_no);
 		$onadd_planting_date = str2time($onadd_planting_date);
 		$now = time();
 		$conn = getDB();
-		$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}',onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}' WHERE onadd_sn='{$onadd_sn}';";
-		$sql2 = "UPDATE onliine_firstplant_data	SET onfp_plant_amount = '{$onadd_quantity}' WHERE onadd_sn='{$onadd_sn}' and onfp_status >= 1;";
+		if(empty($onadd_location) || empty($onadd_ml_amount)){
+			$ret_msg = "*為必填！";
+		}
+		else if($left_amount < 0){
+			$ret_msg = "移倉數量大於庫存數量！";
+		} 
+		else {
 
-		if($conn->query($sql)) {
-			$ret_msg = "更新成功！";
-			if(IsfirtPlant($onadd_sn) == "1"){
+			$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}'	,onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$left_amount}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}' WHERE onadd_sn='{$onadd_sn}';";
+			
+			$sql2 = "INSERT INTO onliine_add_data(onadd_part_no,onadd_part_name,onadd_color,onadd_size,onadd_height,onadd_pot_size,onadd_supplier,onadd_planting_date,onadd_quantity,onadd_growing,jsuser_sn,onadd_location,onadd_cur_size,onadd_ml,onadd_add_date,onadd_mod_date,onadd_cycle, onadd_newpot_sn)	
+					VALUES('{$onadd_part_no}','{$onadd_part_name}','{$onadd_color}','{$onadd_size}','{$onadd_height}','{$onadd_pot_size}','{$onadd_supplier}','{$onadd_planting_date}','{$onadd_ml_amount}','{$onadd_growing}','{$supplier}','{$onadd_location}','{$onadd_cur_size}','{$onadd_ml}', '{$now}', '{$now}', '{$now}' ,'{$onadd_newpot_sn}')";
+
+			$sql3 = "UPDATE onliine_add_data SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}'	,onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$left_amount}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}' WHERE onadd_sn='{$onadd_sn}', onadd_status = '0';";		
+			// $sql2 = "UPDATE onliine_firstplant_data	SET onfp_plant_amount = '{$onadd_quantity}' WHERE onadd_sn='{$onadd_sn}' and onfp_status >= 1;";			
+	
+			if($conn->query($sql)) {
+				$ret_msg = "更新成功！";
+				if($left_amount == 0){
+					$conn->query($sql3);
+				} 
 				if($conn->query($sql2)) {
 					$ret_msg = "更新成功！";
 				}
 				else{
-					$ret_msg = "更新失敗！";
+					$ret_msg = "更新失敗！".$sql2;
 				}
+				// if(IsfirtPlant($onadd_sn) == "1"){
+				// 	if($conn->query($sql2)) {
+				// 		$ret_msg = "更新成功！";
+				// 	}
+				// 	else{
+				// 		$ret_msg = "更新失敗！";
+				// 	}
+				// }
+			} else {
+				$ret_msg = "更新失敗！";
 			}
-		} else {
-			$ret_msg = "更新失敗！";
 		}
 		$conn->close();
 		
@@ -897,8 +934,11 @@ if(!empty($op)) {
 			                if(ret.code==1) {
 			                	var d = ret.data;		
 			                	$('#upd_form input[name=onadd_sn]').val(d.onadd_sn);
-			                	if(d.onadd_newpot_sn == 0){	                	
-				                	$('#upd_form input[name=onadd_newpot_sn]').val(d.onadd_sn);
+			                	if(d.onadd_newpot_sn == 0){	
+			                		if(d.onadd_ml == 0)                	
+				                		$('#upd_form input[name=onadd_newpot_sn]').val(d.onadd_sn);
+				                	else
+				                		$('#upd_form input[name=onadd_newpot_sn]').val(d.onadd_ml);
 				                }
 				                else{
 				                	$('#upd_form input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
@@ -1018,6 +1058,8 @@ if(!empty($op)) {
 			                if(ret.code==1) {
 			                	var d = ret.data;
 			                	$('#upd3_form input[name=onadd_sn]').val(d.onadd_sn);
+			                	$('#upd3_form input[name=onadd_ml]').val(d.onadd_ml);
+			                	$('#upd3_form input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
 			                	$('#upd3_form input[name=onadd_part_no]').val(d.onadd_part_no);
 			                	$('#upd3_form input[name=onadd_part_name]').val(d.onadd_part_name);
 			                	$('#upd3_form input[name=onadd_color]').val(d.onadd_color);
@@ -1409,6 +1451,7 @@ if(!empty($op)) {
 									<input type="hidden" name="op" value="upd">
 									<input type="hidden" name="onadd_sn">
 									<input type="hidden" name="onadd_newpot_sn">
+									<input type="hidden" name="onadd_ml">
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -1535,13 +1578,15 @@ if(!empty($op)) {
 					<form autocomplete="off" method="post" action="./" id="upd3_form" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 class="modal-title">修改</h4>
+							<h4 class="modal-title">移倉</h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="upd5">
 									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_ml">
+									<input type="hidden" name="onadd_newpot_sn">
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -1578,9 +1623,16 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" >
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">移倉數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_ml_amount" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -2110,26 +2162,32 @@ if(!empty($op)) {
 						<tbody >
 							<?php
 							foreach ($product_list as $row) {								
-								echo '<tr>';
+								echo '<tr>';//產品編號
 									if($row['onadd_isbought'] == 0){
 										if($row['onadd_newpot_sn'] == 0){
-	        								// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
-	        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
-	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+											if($row['onadd_ml'] == 0){
+												echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date(	'Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
+	        									$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+											}else{											
+	        									echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date(	'Y',$row['onadd_planting_date']).'-'.$row['onadd_ml'].'</td>';//產品編號
+	        									$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_ml'];
+	        								}
 	        							}
 	        							else{
-	        								// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
 	        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 	        							}
 									}else{
 										if($row['onadd_newpot_sn'] == 0){
-											// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
-											echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
-											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+											if($row['onadd_ml'] == 0){
+												echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date(	'Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
+	        									$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+											}else{											
+	        									echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date(	'Y',$row['onadd_planting_date']).'-'.$row['onadd_ml'].'</td>';//產品編號
+	        									$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_ml'];
+	        								}
 										}
 										else{
-											// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
 											echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 										}
@@ -2162,8 +2220,14 @@ if(!empty($op)) {
 
         							//育成率 (公式 (數量-汰除)/數量)      
         							if($row['onadd_newpot_sn'] == 0){
-	        							$first_plant_amount = (getProductFirstQty($row['onadd_sn']) != 0 ? getProductFirstQty($row['onadd_sn']) : 1);//第一次下種時間
-	        							$incubation_rate = getProductAllNowQty($row['onadd_sn'])/$first_plant_amount;
+        								if($row['onadd_ml'] == 0){
+	        								$first_plant_amount = (getProductFirstQty($row['onadd_sn']) != 0 ? getProductFirstQty($row['onadd_sn']) : 1);//第一次下種時間
+	        								$incubation_rate = getProductAllNowQty($row['onadd_sn'])/$first_plant_amount;
+	        							}
+	        							else{
+	        								$first_plant_amount = (getProductFirstQty($row['onadd_ml']) != 0 ? getProductFirstQty($row['onadd_ml']) : 1);//第一次下種時間
+	        								$incubation_rate = getProductAllNowQty($row['onadd_ml'])/$first_plant_amount;
+	        							}
 	        						}
 	        						else{
 	        							$first_plant_amount = getProductFirstQty($row['onadd_newpot_sn']);//第一次下種時間
@@ -2171,8 +2235,16 @@ if(!empty($op)) {
 	        						}		
 	        						// printr($first_plant_amount);
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>'; 		
-        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>'; 				
-        							$note = (!empty($row['onadd_quantity_cha'])) ? '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">換盆</td>' : '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
+        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>'; 			
+        							if(!empty($row['onadd_quantity_cha'])){
+        								$note = '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">換盆</td>';
+        							}	
+        							else if($row['onadd_ml'] != '0'){
+        								$note = '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">移倉</td>';
+        							}
+        							else{
+        								$note = '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
+        							}
         							echo $note;
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
@@ -2189,7 +2261,7 @@ if(!empty($op)) {
 	        							      	<button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>
 	        							      </span>';
         							if($permmsion == '系統管理員'){
-	        							echo '<span ><button type="button" style="background-color:#FCD78B;border:#FCD78B;color:#642100" class="btn btn-warning btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button></span>';
+	        							echo '<span ><button type="button" style="background-color:#FCD78B;border:#FCD78B;color:#642100" class="btn btn-warning btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">移倉</button></span>';
 	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        						}       						
 

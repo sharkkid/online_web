@@ -282,7 +282,7 @@ function getProductFirstQty($onadd_sn) {
 function getProductAllNowQty($onadd_sn) {
 	$ret_data = 0;
 	$conn = getDB();	
-	$sql="select SUM(onadd_quantity) as now_total from onliine_add_data where onadd_status>=1 and onadd_sn like '$onadd_sn' or onadd_newpot_sn like '$onadd_sn'";
+	$sql="select SUM(onadd_quantity) as now_total from onliine_add_data where onadd_status>=1 and onadd_sn like '$onadd_sn' or onadd_newpot_sn like '$onadd_sn'  or onadd_ml like '$onadd_sn'";
 	$sql2="select SUM(onshda_quantity) as ship_total from online_shipment_data where onshda_status>=1 and onadd_sn like '$onadd_sn'";
 	// echo $sql;
 	$qresult = $conn->query($sql);
