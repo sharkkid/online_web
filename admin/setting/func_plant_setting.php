@@ -13,14 +13,13 @@ function dateFormat($ctime, $format='Y-m-d H:i:s') {
 //================================
 // online_change_basin.php
 //================================
-function getUser($where='', $offset=30, $rows=0) {
+function getUser($size) {
 	$ret_data = array();
 	$conn = getDB();
-	if(empty($where))
-		$sql="select * from online_change_basin where onchba_status>=0 order by onchba_add_date desc, onchba_sn desc limit $offset, $rows";
-	else
-		$sql="select * from online_change_basin where onchba_status>=0 and ( $where ) order by onchba_add_date desc, onchba_sn desc limit $offset, $rows";
 
+	$sql="select onchba_sn,onchba_cycle,CAST(onchba_size AS DOUBLE) as onchba_size,CAST(onchba_tsize AS DOUBLE) as onchba_tsize from online_change_basin where onchba_status > 0 and onchba_size like '{$size}' order by onchba_size, onchba_tsize";
+
+	// echo $sql."<br>";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {

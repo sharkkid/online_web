@@ -28,27 +28,29 @@ if(!empty($op)) {
 	$ret_data = array();
 	switch ($op) {
 		case 'add':
-		$onchba_add_date=GetParam('onchba_add_date');//建立日期
-		$onchba_mod_date=GetParam('onchba_mod_date');//修改日期
-		$onchba_size=GetParam('onchba_size');//品號
-		$onchba_cycle=GetParam('onchba_cycle');//品名
-		$onchba_status=GetParam('onchba_status');//狀態 1 啟用 0 刪除
-		$jsuser_sn = GetParam('supplier');//編輯人員
+		$onchba_size=$DEVICE_SYSTEM[GetParam('onchba_size')];//尺寸
+		$onchba_tsize=$DEVICE_SYSTEM[GetParam('onchba_tsize')];//預計尺寸
+		$onchba_cycle=GetParam('onchba_cycle');//週期
 
 		if(empty($onchba_cycle)){
 			$ret_msg = "*為必填！";
 		} else { 
-			$user = getUserByAccount($onchba_size);
-			$onadd_planting_date = str2time($onadd_planting_date);
-			$now = time();
-			$conn = getDB();
-				$sql = "INSERT INTO online_change_basin (onchba_add_date, onchba_mod_date, onchba_size, onchba_cycle, onchba_status, jsuser_sn) " .
-				"VALUES ('{$now}', '{$now}', '{$onchba_size}', '{$onchba_cycle}', '1', '{$jsuser_sn}');";
-				if($conn->query($sql)) {
-					$ret_msg = "新增成功！";
-				} else {
-					$ret_msg = "新增失敗！";
+				$now = time();
+				$conn = getDB();
+				$sql = "SELECT onchba_sn FROM online_change_basin WHERE onchba_size like '{$onchba_size}' and onchba_tsize like '{$onchba_tsize}';";
+				$r = $conn->query($sql);
+				if($r->num_rows == 0) {
+					$sql2 = "INSERT INTO online_change_basin (onchba_add_date, onchba_mod_date, onchba_size,onchba_tsize, onchba_cycle, onchba_status)VALUES ('{$now}', '{$now}', '{$onchba_size}','{$onchba_tsize}', '{$onchba_cycle}', '1');";
+					if($conn->query($sql2)) {
+						$ret_msg = "新增成功！";
+					} else {
+						$ret_msg = "新增失敗！";
+					}
 				}
+				else{
+					$ret_msg = "此週期已存在！";
+				}
+
 			$conn->close();
 		}
 		break;
@@ -139,7 +141,7 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$user_list = getUser($search_where, $pg_offset, $pg_rows);
+	// $user_list = getUser($search_where, $pg_offset, $pg_rows);
 }
 ?>
 <!DOCTYPE html>
@@ -222,7 +224,7 @@ if(!empty($op)) {
 				bootbox.confirm("確認刪除？", function(result) {
 					if(result) {
 						$.ajax({
-							url: './plant_purchase.php',
+							url: './plant_setting.php',
 							type: 'post',
 							dataType: 'json',
 							data: {op:"del", onchba_sn:onchba_sn},
@@ -344,6 +346,71 @@ if(!empty($op)) {
         		</div>
         	</div>
 
+        	<div id="add-modal" class="modal add-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="add_form" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">新週期建立</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="add">								
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">目前尺寸<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="dropdown_onadd_cur_size" name="onchba_size">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="dropdown_onadd_growing" name="onchba_tsize">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">週期(日)<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="dropdown_onadd_part_no" name="onchba_cycle" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+
+				
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="reset" class="btn btn-default">清空</button>
+							<button type="submit" class="btn btn-primary">新增</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
         	<!-- container -->
         	<div class="container-fluid">
         		<div class="row">
@@ -351,27 +418,48 @@ if(!empty($op)) {
 
         				<!-- content -->
         				<table class="table table-striped table-hover table-condensed tablesorter">
+        					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
+								<ul class="nav nav-pills pull-right toolbar">
+									<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新週期建立</button></li>
+									<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" 		onclick="javascript:location.href='./plant_purchase_add.php'"><i class="glyphicon glyphicon-plus"></i> 		新品項建立</button></li> -->
+									<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" 		onclick="javascript:location.href='./plant_purchase_add.php'"></i> 返回苗種資料建立</button></li> -->
+								</ul>
+							</div>
         					<thead>
         						<tr>
-        							<th>尺寸</th>
-        							<th>週期(日)</th>
-        							<th>操作</th>
+        							<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">原始尺寸</th>
+        							<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">預計成長尺寸</th>
+        							<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">週期(日)</th>
+        							<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">操作</th>
         						</tr>
         					</thead>
         					<tbody>
         						<?php
-        						foreach ($user_list as $row) {
-        							echo '<tr>';
-        							echo '<td>'.$row['onchba_size'].'</td>';//品號
-        							echo '<td>'.$row['onchba_cycle'].'</td>';//品名
-        							echo '<td><button type="button" class="btn btn-primary btn-xs upd" data-onchba_sn="'.$row['onchba_sn'].'">修改</button>&nbsp;';
-        							echo '</td></tr>';
-        						}
+        						for($i=1;$i<count($DEVICE_SYSTEM)+1;$i++){
+        							$user_list = getUser($DEVICE_SYSTEM[$i]);
+        							// printr($user_list);
+        							if(!empty($user_list[0]['onchba_size'])){        									
+        									foreach ($user_list as $key => $row) {
+        										if ($key==0) {
+        											echo '<tr style="border-bottom-style:double;"><td style="text-align: center;vertical-align: middle;font-size: 2.3rem;" rowspan='.(count($user_list)+1).'>'.$user_list[0]['onchba_size'].' 寸</td></tr>';
+        										}
+        										if(count($user_list)-1 == $key){
+        											echo "<tr style='border-bottom-style:double;'>";
+        										}
+        										echo '<td style="text-align: center;vertical-align: middle;font-size: 1.8rem;">'.$row['onchba_tsize'].' 寸</td>';//預計成長尺寸
+        										echo '<td style="text-align: center;vertical-align: middle;font-size: 1.8rem;">'.$row['onchba_cycle'].' 日</td>';//預計成長日
+        										echo '<td style="text-align: center;vertical-align: middle;">
+        												<button style="background-color:#FCD78B;border:#FCD78B;color:#642100" type="button" class="btn btn-primary btn-xs upd" data-onchba_sn="'.$row['onchba_sn'].'">修改</button>&nbsp;
+        												<button  style="background-color:#E94653;" type="button" class="btn btn-danger btn-xs del" data-onchba_sn="'.$row['onchba_sn'].'">移除</button>&nbsp;</td></tr>';
+        									}
+
+        								}
+        							}
         						?>
         					</tbody>
         				</table>
 
-        				<?php include('./../htmlModule/page.php');?>
+        				<!-- <?php include('./../htmlModule/page.php');?> -->
 
         			</div>
         		</div>

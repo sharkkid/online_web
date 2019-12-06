@@ -48,7 +48,7 @@ if(!empty($op)) {
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
 		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
-		$onadd_growing=GetParam('onadd_growing');//預計成長大小
+		$onadd_growing=getTargetSize($DEVICE_SYSTEM[GetParam('onadd_cur_size')],$DEVICE_SYSTEM[GetParam('onadd_growing')]);//預計成長大小
 		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//換盆年
 		$onadd_quantity_cha=$test;//換盆月
 		$onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
@@ -59,7 +59,10 @@ if(!empty($op)) {
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
 		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)){
-			$ret_msg = "*為必填！";
+			if(empty($onadd_growing))
+				$ret_msg = "尚未設定該原始尺寸至預計成長尺寸！".$onadd_growing;
+			else
+				$ret_msg = "*為必填！";
 		} else { 
 			if($IsUploadImg == "0"){
 				$user = getUserByAccount($onadd_part_no);
@@ -337,13 +340,16 @@ if(!empty($op)) {
 		$onadd_status = ($onadd_quantity_cha123 < 0) ? -1 : 1;
 		$first_n_changed = getProductFirstQty($onadd_sn) - $onadd_replant_number;
 
-		$onadd_growing=GetParam('onadd_growing');//預計成長大小
+		$onadd_growing=getTargetSize($DEVICE_SYSTEM[GetParam('onadd_cur_size')],$DEVICE_SYSTEM[GetParam('onadd_growing')]);//預計成長大小
 		$onadd_cur_size=GetParam('onadd_cur_size');//換盆尺寸
 		// $onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
-		if(empty($onadd_planting_date)||empty($onadd_quantity)){
-			$ret_msg = "*為必填！ onadd_quantity=".$onadd_quantity;
+		if(empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)){
+			if(empty($onadd_growing))
+				$ret_msg = "尚未設定該原始尺寸至預計成長尺寸！".$onadd_growing;
+			else
+				$ret_msg = "*為必填！";
 		} 
 		else { 
 			$user = getUserByAccount($onadd_part_no);
@@ -1490,7 +1496,7 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" readonly="readonly">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -1668,6 +1674,7 @@ if(!empty($op)) {
 										<label class="col-sm-2 control-label">目前尺寸<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select readonly="readonly" class="form-control" id="dropdown_onadd_cur_size" name="onadd_cur_size">
+												<option value="8">瓶苗下種</option>
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
@@ -2203,16 +2210,18 @@ if(!empty($op)) {
 	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
 	        						}
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
-        							if($row['onadd_growing']==1){
-        								$list_setting = getSettingBySn(1.7);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}else if($row['onadd_growing']==2){
-        								$list_setting = getSettingBySn(2.5);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}else if($row['onadd_growing']==5){
-        								$list_setting = getSettingBySn(3.5);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}
+        							// if($row['onadd_growing']==1){
+        							// 	$list_setting = getSettingBySn(1.7);
+        							// 	$onchba_cycle = $list_setting['onchba_cycle'];
+        							// }else if($row['onadd_growing']==2){
+        							// 	$list_setting = getSettingBySn(2.5);
+        							// 	$onchba_cycle = $list_setting['onchba_cycle'];
+        							// }else if($row['onadd_growing']==5){
+        							// 	$list_setting = getSettingBySn(3.5);
+        							// 	$onchba_cycle = $list_setting['onchba_cycle'];
+        							// }
+        							$list_setting = getSettingBySn($row['onadd_growing']);
+        							$onchba_cycle = $list_setting['onchba_cycle'];
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';//預計成熟日
 

@@ -438,15 +438,30 @@ function IsProductExit($onproduct_part_no,$onproduct_part_name) {
 	return $ret_data;
 }
 
-function getSettingBySn($onchba_size) {
+function getSettingBySn($onchba_sn) {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from online_change_basin where onchba_size like '{$onchba_size}'";
+	$sql="select * from online_change_basin where onchba_sn = '{$onchba_sn}'";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		if ($row = $qresult->fetch_assoc()) {
 			$ret_data = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+function getTargetSize($onchba_size,$onchba_tsize) {
+	$ret_data = "";
+	$conn = getDB();
+	$sql="SELECT onchba_sn FROM `online_change_basin` WHERE onchba_size like {$onchba_size} and onchba_tsize like {$onchba_tsize}";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		if ($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['onchba_sn'];
 		}
 		$qresult->free();
 	}
