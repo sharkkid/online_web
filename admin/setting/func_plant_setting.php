@@ -17,7 +17,7 @@ function getUser($size) {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="select onchba_sn,onchba_cycle,CAST(onchba_size AS DOUBLE) as onchba_size,CAST(onchba_tsize AS DOUBLE) as onchba_tsize from online_change_basin where onchba_status > 0 and onchba_size like '{$size}' order by onchba_size, onchba_tsize";
+	$sql="select onchba_sn,onchba_cycle,CAST(onchba_size as DECIMAL(9,1)) as onchba_size,CAST(onchba_tsize AS DECIMAL(9,1)) as onchba_tsize from online_change_basin where onchba_status > 0 and onchba_size like '{$size}' order by onchba_size, onchba_tsize";
 
 	// echo $sql."<br>";
 	$qresult = $conn->query($sql);

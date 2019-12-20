@@ -93,7 +93,7 @@
                             </ul>
 
                         </li>
-                         <!-- <li><a href="<?php echo WT_SERVER;?>/admin/business/plant_business.php">"<i class="icon-map"></i> 成本管理 </a></li> -->
+                         <li><a href="<?php echo WT_SERVER;?>/admin/business/plant_business.php">"<i class="icon-map"></i> 成本管理 </a></li>
                         <li class="nav-heading"><span style="color: #2e2e2e">管理員項目</span></li>
                         <!-- <li><a href="<?php echo WT_SERVER;?>/admin/sys/sys_user.php"><i class="icon-user"></i> 帳號管理</a></li> -->
                         <li>

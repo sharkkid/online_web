@@ -199,54 +199,7 @@ if(!empty($op)) {
 	echo enclode_ret_data($ret_code, $ret_msg, $ret_data);
 	exit;
 } else {
-	// search
-	if(($oncoda_grass = GetParam('oncoda_grass'))) {
-		$search_where[] = "oncoda_grass like '%{$oncoda_grass}%'";
-		$search_query_string['oncoda_grass'] = $oncoda_grass;
-	}
-	if(($oncoda_soft = GetParam('oncoda_soft'))) {
-		$search_where[] = "oncoda_soft like '%{$oncoda_soft}%'";
-		$search_query_string['oncoda_soft'] = $oncoda_soft;
-	}
-	if(($oncoda_labor = GetParam('oncoda_labor'))) {
-		$search_where[] = "oncoda_labor like '%{$oncoda_labor}%'";
-		$search_query_string['oncoda_labor'] = $oncoda_labor;
-	}
-	if(($oncoda_water = GetParam('oncoda_water'))) {
-		$search_where[] = "oncoda_water like '%{$oncoda_water}%'";
-		$search_query_string['oncoda_water'] = $oncoda_water;
-	}
-	if(($oncoda_electricity = GetParam('oncoda_electricity'))) {
-		$search_where[] = "oncoda_electricity like '%{$oncoda_electricity}%'";
-		$search_query_string['oncoda_electricity'] = $oncoda_electricity;
-	}
-	if(($oncoda_labor = GetParam('oncoda_labor'))) {
-		$search_where[] = "oncoda_labor like '%{$oncoda_labor}%'";
-		$search_query_string['oncoda_labor'] = $oncoda_labor;
-	}
-	if(($onadd_supplier = GetParam('onadd_supplier'))) {
-		$search_where[] = "onadd_supplier like '%{$onadd_supplier}%'";
-		$search_query_string['onadd_supplier'] = $onadd_supplier;
-	}
-	if(($oncoda_status = GetParam('oncoda_status', -1))>=0) {
-		$search_where[] = "oncoda_status='{$oncoda_status}'";
-		$search_query_string['oncoda_status'] = $oncoda_status;
-	}
-	if(($onadd_growing = GetParam('onadd_growing', -1))>=0) {
-		$search_where[] = "onadd_growing='{$onadd_growing}'";
-		$search_query_string['onadd_growing'] = $onadd_growing;
-	}
-	$search_where = isset($search_where) ? implode(' and ', $search_where) : '';
-	$search_query_string = isset($search_query_string) ? http_build_query($search_query_string) : '';
-
-	// page
-	$pg_page = GetParam('pg_page', 1);
-	$pg_rows = 20;
-	$pg_total = GetParam('pg_total')=='' ? getUserQty($search_where) : GetParam('pg_total');
-	$pg_offset = $pg_rows * ($pg_page - 1);
-	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
-
-	$user_list = getUser($search_where, $pg_offset, $pg_rows);
+	$cost_table = get_CostTable();
 }
 ?>
 <!DOCTYPE html>
@@ -507,7 +460,7 @@ if(!empty($op)) {
 					<form autocomplete="off" method="post" action="./" id="add_form" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 class="modal-title">新增資料</h4>
+							<h4 class="modal-title">新品項資料建立</h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
@@ -814,135 +767,61 @@ if(!empty($op)) {
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-12">
-
+					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
+						<ul class="nav nav-pills pull-right toolbar">
+							<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 成本種類建立</button></li>
+						</ul>
+					</div>
 					<!-- content -->
-					<table class="table table-striped table-hover table-condensed tablesorter" style="border:3px #cccccc solid;" cellpadding="10" border='1'>
-						<thead>
-							<tr>
-								<th>項目</th>
-								<th>1.7</th>
-								<th>2.5</th>
-								<th>3.5</th>
-								<th>其他</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-        						// $setting_list = getsetting();
-        						// foreach ($setting_list as $i=>$v) {
-        						// 	$onchba_size = $v['onchba_size'];
-        						// 	$onchba_cycle = $v['onchba_cycle'];
-        						// }
-							foreach ($user_list as $row) {
-								echo '<tr>';
-									echo '<td>'.'<font size="3">'.'軟杯成本'.'</td>';//品號
-        							echo '<td>'.$row['oncoda_soft'].'</td>';//品號
-        							echo '<td>'.$row['oncoda_grass'].'</td>';//品名  							
-        							echo '<td>'.$row['oncoda_labor'].'</td>';
-        							echo '<td>'.$row['oncoda_water'].'</td>';//品名       							
-        							echo '<td><button type="button" class="btn btn-danger btn-xs upd1" data-oncoda_sn="'.$row['oncoda_sn'].'">修改</button>&nbsp;';
-        							echo '</td></tr>';
-        						}
-        						?>
-        					</tbody>
-        				</table></br></br>
-        				<!-- content -->
-					<table class="table table-striped table-hover table-condensed tablesorter" style="border:3px #cccccc solid;" cellpadding="10" border='1'>
-						<thead>
-							<tr>
-								<th>項目</th>
-								<th>1.7</th>
-								<th>2.5</th>
-								<th>3.5</th>
-								<th>其他</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-        						// $setting_list = getsetting();
-        						// foreach ($setting_list as $i=>$v) {
-        						// 	$onchba_size = $v['onchba_size'];
-        						// 	$onchba_cycle = $v['onchba_cycle'];
-        						// }
-							foreach ($user_list as $row) {
-								echo '<tr>';
-									echo '<td>'.'<font size="3">'.'水草成本'.'</td>';//品號
-        							echo '<td>'.$row['oncoda_soft'].'</td>';//品號
-        							echo '<td>'.$row['oncoda_grass'].'</td>';//品名  							
-        							echo '<td>'.$row['oncoda_labor'].'</td>';
-        							echo '<td>'.$row['oncoda_water'].'</td>';//品名       							
-        							echo '<td><button type="button" class="btn btn-danger btn-xs upd1" data-oncoda_sn="'.$row['oncoda_sn'].'">修改</button>&nbsp;';
-        							echo '</td></tr>';
-        						}
-        						?>
-        					</tbody>
-        				</table></br></br>
-        				<!-- content -->
-					<table class="table table-striped table-hover table-condensed tablesorter" style="border:3px #cccccc solid;" cellpadding="10" border='1'>
-						<thead>
-							<tr>
-								<th>項目</th>
-								<th>1.7</th>
-								<th>2.5</th>
-								<th>3.5</th>
-								<th>其他</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-        						// $setting_list = getsetting();
-        						// foreach ($setting_list as $i=>$v) {
-        						// 	$onchba_size = $v['onchba_size'];
-        						// 	$onchba_cycle = $v['onchba_cycle'];
-        						// }
-							foreach ($user_list as $row) {
-								echo '<tr>';
-									echo '<td>'.'<font size="3">'.'種植成本'.'</td>';//品號
-        							echo '<td>'.$row['oncoda_soft'].'</td>';//品號
-        							echo '<td>'.$row['oncoda_grass'].'</td>';//品名  							
-        							echo '<td>'.$row['oncoda_labor'].'</td>';
-        							echo '<td>'.$row['oncoda_water'].'</td>';//品名       							
-        							echo '<td><button type="button" class="btn btn-danger btn-xs upd1" data-oncoda_sn="'.$row['oncoda_sn'].'">修改</button>&nbsp;';
-        							echo '</td></tr>';
-        						}
-        						?>
-        					</tbody>
-        				</table></br></br>
-        				<!-- content -->
-					<table class="table table-striped table-hover table-condensed tablesorter" style="border:3px #cccccc solid;" cellpadding="10" border='1'>
-						<thead>
-							<tr>
-								<th>項目</th>
-								<th>水費</th>
-								<th>電費</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-        						// $setting_list = getsetting();
-        						// foreach ($setting_list as $i=>$v) {
-        						// 	$onchba_size = $v['onchba_size'];
-        						// 	$onchba_cycle = $v['onchba_cycle'];
-        						// }
-							foreach ($user_list as $row) {
-								echo '<tr>';
-									echo '<td>'.'<font size="3">'.'其他成本'.'</td>';//品號
-        							echo '<td>'.$row['oncoda_water'].'</td>';//品名
-        							echo '<td>'.$row['oncoda_electricity'].'</td>';//品名  
-        							// oncoda_electricity      							
-        							echo '<td><button type="button" class="btn btn-danger btn-xs upd2" data-oncoda_sn="'.$row['oncoda_sn'].'">修改</button>&nbsp;';
-        							echo '</td></tr>';
-        						}
-        						?>
-        					</tbody>
-        				</table>
-        			</div>
+					<?php 
+						foreach ($cost_table as $key => $value) {
+					?>
+						<div id="search" style="clear:both;">
+							<div class="row">
+								<div class="col-md-10">
+									<div class="h4 page-header text-center offset-bottom" style="background-color:#D1E9E9;"><?php echo $value['oncost_name']?></div>
+								</div>
+								<div class="col-md-2">
+									<button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="">新增</button>
+								</div>
+	
+							</div>
+							<!-- content -->
+							<table class="table table-striped table-hover table-condensed tablesorter">
+								<thead>
+									<tr style="font-size: 1.1em">
+										<th style="text-align: center;">項目</th>
+										<th style="text-align: center;">單位</th>
+										<th style="text-align: center;">成本金額</th>
+										<th style="text-align: center;">操作</th>
+									</tr>
+								</thead>
+								<tbody >
+									<?php 
+										$cost_detail = get_CostDetail($value['oncost_sn']);
+										foreach ($cost_detail as $key2 => $value2) {
+									?>
+									<tr style="font-size: 1.1em">
+										<td  style="text-align: center;"><?php echo $value2['oncoda_name']; ?></td>
+										<td  style="text-align: center;"><?php echo $value2['oncoda_num'].$value2['oncoda_unit']; ?></td>
+										<td  style="text-align: center;"><?php echo $value2['oncoda_cost']." NT"; ?></td>
+										<td  style="text-align: center;">
+											<button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="">修改</button>
+											<button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="">刪除</button>
+										</td>
+									</tr>
+									<?php 
+										}
+									?>
+								</tbody>
+							</table>
+						</div> 
+					<?php 
+						}
+					?>
         		</div>
         	</div>
+        </div>
 
         	<!--Start footer-->
         	<footer class="footer">

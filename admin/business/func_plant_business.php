@@ -357,4 +357,34 @@ function getHistoryEditQty($where='') {
 	$conn->close();
 	return $ret_data;
 }
+function get_CostTable() {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select * from onliine_cost_table where oncost_status = 1";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+function get_CostDetail($oncost_sn) {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select * from online_cost_data where oncoda_status = 1 and oncost_sn = {$oncost_sn}";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
 ?>
