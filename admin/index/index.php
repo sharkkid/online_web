@@ -89,7 +89,7 @@ $sum36 = getDetails('6');//計算3.6
 $sum37 = getDetails('7');//計算其他
 $sum38 = getDetails('8');//計算瓶苗下種
 $others = $sum28+$sum30+$sum36+$sum37+$sum38;
-// printr($others);
+// printr(getWorkListByMonth());
 // exit();
 
 $op=GetParam('op');
@@ -190,50 +190,30 @@ $op=GetParam('op');
 				},
 				success: function(ret) {					
 					if(ret.code==1) {
-				        var data = ret.data;	
-						console.log(ret.data);
-						var interval = setInterval(function write_numbers() {
-						  if (count < ret.data.length) {
-						  	$('#onadd_part_no').html(ret.data[count]['onadd_part_no']);
-						  	$('#onadd_part_name').html(ret.data[count]['onadd_part_name']);
-						  	$('#onadd_planting_date').html(ret.data[count]['onadd_planting_date']);
-						  	$('#onadd_expected_date').html(ret.data[count]['expected_date']);
-						  	$('#onadd_quantity').html(ret.data[count]['onadd_quantity']);
-						  	// console.log('今日'+ret.data[count]['onadd_planting_date_unix']+'預計成長日'+ret.data[count]['expected_date_unix']);
-						  	if(ret.data[count]['onadd_planting_date_unix'] > ret.data[count]['expected_date_unix']){
-							  	$('#onadd_content').html("已經超過換盆日期");
+				        var data = ret.data;							
+						var main_content = document.getElementById("main_content");
+						var event = "";
+						for (var i = 0; i < data.length; i++) {
+							var dy_modal = document.createElement("div");
+							dy_modal.setAttribute('class', 'modal fade');
+							dy_modal.setAttribute('id', 'myModal'+i);
+							dy_modal.setAttribute('role', 'dialog');
+							if(data[i]['onadd_planting_date_unix'] > data[i]['expected_date_unix']){
+							  	event = "已經超過換盆日期";
 							}
 							else{
-								$('#onadd_content').html("即將到達換盆日期");
+								event = "即將到達換盆日期";
 							}
-							if(flag == 1){
-								if(!$('#myModal').hasClass('in')){
-									$('#myModal').modal('show');
-									flag = 0;
-								}						    	
-						    	
+							dy_modal.innerHTML = "<div class='modal-dialog modal-'><div class='modal-content'><div class='modal-body'><div class=\"panel panel-info\"><div class=\"panel-heading\"><h4 class=\"modal-title\">提醒事項</h4></div><div class=\"panel-body\" style=\"font-size: 1.4rem\"><label>品號："+data[i]['onadd_part_no']+"</label></br><label>品名："+data[i]['onadd_part_name']+"</label></br><label>下種日："+data[i]['onadd_planting_date']+"</label></br><label>預計成長日："+data[i]['expected_date']+"</br><label>數量："+data[i]['onadd_quantity']+"</label></br><label>提醒事項："+event+"</label></div></div></div><div class='modal-footer'><button type='button' class='btn btn-default' data-dismiss=\"modal\" id=\"btn_modal\">確認</button></div></div></div>";		
+							main_content.appendChild(dy_modal);	
+							$('#myModal'+i).modal('show');
 							}
-						 //    console.log(ret.data);
-							console.log(count);	
-						  } else {
-						  	$('#myModal').modal('toogle');
-						    clearInterval(interval);							
-						  }
-						}, 2500)
 					}
 				},
 				error: function (xhr, ajaxOptions, thrownError) {	
 				    	// console.log('ajax error');
 				    }
 				});
-
-		$("#btn_modal").click(function() {
-			if($('#myModal').hasClass('in')){
-				$('#myModal').modal('hide');
-			}				
-			count++;
-			flag = 1;
-		});
 
         //page view chart
         <?php 
@@ -385,7 +365,7 @@ $op=GetParam('op');
 	
 	<?php include('./../htmlModule/nav.php');?>
 	<!--main content start-->
-	<section class="main-content">
+	<section class="main-content" id="main_content">
 
 
 

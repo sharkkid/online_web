@@ -28,22 +28,15 @@ if(!empty($op)) {
 	$ret_data = array();
 	switch ($op) {
 		case 'add':
-		$oncoda_add_date=GetParam('oncoda_add_date');//建立日期
-		$oncoda_mod_date=GetParam('oncoda_mod_date');//修改日期
-		$oncoda_grass=GetParam('oncoda_grass');//品號
-		$oncoda_labor=GetParam('oncoda_labor');//品名
-		$oncoda_water=GetParam('oncoda_water');//花色
-		$oncoda_status=GetParam('oncoda_status');//狀態 1 啟用 0 刪除
-		$oncoda_soft = GetParam('supplier');//編輯人員
+		$oncost_name=GetParam('oncost_name');//成本名稱
+		$oncost_note=GetParam('oncost_note');//成本說明
 
-		if(empty($oncoda_grass)||empty($oncoda_labor)){
+		if(empty($oncost_name)||empty($oncost_note)){
 			$ret_msg = "*為必填！";
 		} else { 
-			$user = getUserByAccount($oncoda_grass);
-			$now = time();
 			$conn = getDB();
-			$sql = "INSERT INTO online_cost_data (oncoda_add_date, oncoda_mod_date, oncoda_grass, oncoda_labor, oncoda_water, oncoda_electricity, oncoda_status, oncoda_soft) " .
-			"VALUES ('{$now}', '{$now}', '{$oncoda_grass}', '{$oncoda_labor}', '{$oncoda_water}', '{$oncoda_electricity}', '1', '{$oncoda_soft}');";
+			$sql = "INSERT INTO onliine_cost_table (oncost_status, oncost_name, oncost_note) " .
+			"VALUES ('1', '{$oncost_name}', '{$oncost_note}');";
 			if($conn->query($sql)) {
 				$ret_msg = "新增成功！";
 			} else {
@@ -65,25 +58,17 @@ if(!empty($op)) {
 
 		break;
 
-		case 'upd':
-		$oncoda_sn=GetParam('oncoda_sn');
-		$oncoda_add_date=GetParam('oncoda_add_date');//建立日期
-		$oncoda_mod_date=GetParam('oncoda_mod_date');//修改日期
-		$oncoda_grass=GetParam('oncoda_grass');//品號
-		$oncoda_labor=GetParam('oncoda_labor');//品名
-		$oncoda_water=GetParam('oncoda_water');//花色
-		$oncoda_electricity=GetParam('oncoda_electricity');//花徑
-		// $oncoda_status=GetParam('oncoda_status');//狀態 1 啟用 0 刪除
-		$oncoda_soft = GetParam('supplier');//編輯人員
-		$user = getUserByAccount($oncoda_grass);
-		$onadd_planting_date = str2time($onadd_planting_date);
-		$now = time();
-		$conn = getDB();
-		$sql = "INSERT INTO online_cost_data (oncoda_add_date, oncoda_mod_date, oncoda_grass, oncoda_labor, oncoda_water, oncoda_electricity, oncoda_status, oncoda_soft) " .
-		"VALUES ('{$now}', '{$now}', '{$oncoda_grass}', '{$oncoda_labor}', '{$oncoda_water}', '{$oncoda_electricity}', '1', '{$oncoda_soft}');";
+		case 'add_detail':
+		$oncost_sn=GetParam('oncost_sn');//成本種類
+		$oncoda_name=GetParam('oncoda_name');//成本名稱
+		$oncoda_unit=GetParam('oncoda_unit');//單位
+		$oncoda_num=GetParam('oncoda_num');//成本說明
+		$oncoda_cost=GetParam('oncoda_cost');//成本金額
 
-		$sql1 = "UPDATE online_cost_data SET oncoda_status='{$oncoda_status}' WHERE oncoda_sn='{$oncoda_sn}'";
-		if($conn->query($sql) && $conn->query($sql1)) {
+		$conn = getDB();
+		$sql = "INSERT INTO `online_cost_data`(`oncost_sn`,`oncoda_status`, `oncoda_name`, `oncoda_unit`, `oncoda_cost`, `oncoda_num`) VALUES ('{$oncost_sn}','1','{$oncoda_name}','{$oncoda_unit}','{$oncoda_cost}','{$oncoda_num}')";
+
+		if($conn->query($sql)) {
 			$ret_msg = "新增成功！";
 		} else {
 			$ret_msg = "新增失敗！";
@@ -91,37 +76,45 @@ if(!empty($op)) {
 		$conn->close();
 		break;
 
-		//汰除---------------------------------------------
-		case 'upd1':
-		$oncoda_sn=GetParam('oncoda_sn');
-		$list = getUserBySn($oncoda_sn);
-		$oncoda_grass = $list['oncoda_grass'];
-		$oncoda_labor = $list['oncoda_labor'];
-		$onadd_quantity=GetParam('onadd_quantity');//下種數量
-		$oncoda_soft = GetParam('supplier');//編輯人員
-		$onadd_quantity_del=GetParam('onadd_quantity_del');//汰除數量
-		$onelda_reason=GetParam('onelda_reason');//汰除原因
-		$oncoda_soft = GetParam('supplier');//編輯人員
-		$onadd_quantity_del123 = ($onadd_quantity - $onadd_quantity_del);
-		if($onadd_quantity_del123<=0) {
-			$oncoda_status = -1;
-		} else {
-			$oncoda_status = 1;
-		}
+		case 'upd_detail':
+		$oncoda_sn=GetParam('oncoda_sn');//成本種類
+		$oncoda_name=GetParam('oncoda_name');//成本名稱
+		$oncoda_unit=GetParam('oncoda_unit');//單位
+		$oncoda_num=GetParam('oncoda_num');//成本說明
+		$oncoda_cost=GetParam('oncoda_cost');//成本金額
 
-		if(empty($onadd_quantity_del)){
-			$ret_msg = "*為必填！";
+		$conn = getDB();
+		$sql = "UPDATE `online_cost_data` SET `oncoda_name`= '{$oncoda_name}',`oncoda_unit`= '{$oncoda_unit}',`oncoda_cost`= '{$oncoda_cost}',`oncoda_num`= '{$oncoda_num}' WHERE oncoda_sn = {$oncoda_sn}";
+
+		if($conn->query($sql)) {
+			$ret_msg = "更新成功！";
 		} else {
+			$ret_msg = "更新失敗！";
+		}
+		$conn->close();
+		break;
+
+		//移除成本細項---------------------------------------------
+		case 'del_table':
+		$oncost_sn=GetParam('oncost_sn');//成本細項編號
+
+		if(empty($oncost_sn)){
+			$ret_msg = "刪除失敗！";
+		}else{
 			$now = time();
 			$conn = getDB();
-			$sql1 = "UPDATE online_cost_data SET onadd_quantity='{$onadd_quantity_del123}', oncoda_status='{$oncoda_status}' WHERE oncoda_sn='{$oncoda_sn}'";
-			if($conn->query($sql1)) {
-				$ret_msg = "修改完成！";
+			$sql = "DELETE FROM onliine_cost_table WHERE oncost_sn='{$oncost_sn}'";
+			if($conn->query($sql)) {
+				$ret_msg = "刪除完成！";
 			} else {
-				$ret_msg = "修改失敗！";
+				$ret_msg = "刪除失敗！";
 			}
+			$conn->close();
 		}
+		break;
 
+		default:
+		$ret_msg = 'error!';
 		break;
 		//汰除---------------------------------------------
 
@@ -238,8 +231,8 @@ if(!empty($op)) {
 		$(document).ready(function() {
 			<?php
 					//	init search parm
-			print "$('#search [name=oncoda_status] option[value={$oncoda_status}]').prop('selected','selected');";
-			print "$('#search [name=onadd_growing] option[value={$onadd_growing}]').prop('selected','selected','selected','selected','selected','selected','selected');";
+			// print "$('#search [name=oncoda_status] option[value={$oncoda_status}]').prop('selected','selected');";
+			// print "$('#search [name=onadd_growing] option[value={$onadd_growing}]').prop('selected','selected','selected','selected','selected','selected','selected');";
 			?>
 
 			$('button.upd').on('click', function(){
@@ -285,37 +278,8 @@ if(!empty($op)) {
 			//汰除-----------------------------------------------------------
 			$('button.upd1').on('click', function(){
 				$('#upd-modal1').modal();
-				$('#upd_form1')[0].reset();
+				$('#upd_form1 input[name=oncost_sn]').val($(this).data('oncost_sn'));
 
-				$.ajax({
-					url: './plant_business.php',
-					type: 'post',
-					dataType: 'json',
-					data: {op:"get", oncoda_sn:$(this).data('oncoda_sn')},
-					beforeSend: function(msg) {
-						$("#ajax_loading").show();
-					},
-					complete: function(XMLHttpRequest, textStatus) {
-						$("#ajax_loading").hide();
-					},
-					success: function(ret) {
-			                // console.log(ret);
-			                if(ret.code==1) {
-			                	var d = ret.data;
-			                	$('#upd_form1 input[name=oncoda_sn]').val(d.oncoda_sn);
-			                	$('#upd_form1 input[name=oncoda_grass]').val(d.oncoda_grass);
-			                	$('#upd_form1 input[name=oncoda_soft]').val(d.oncoda_soft);
-			                	$('#upd_form1 input[name=oncoda_labor]').val(d.oncoda_labor);
-			                	$('#upd_form1 input[name=oncoda_water]').val(d.oncoda_water);
-			                	$('#upd_form1 input[name=oncoda_electricity]').val(d.oncoda_electricity);
-			                	$('#upd_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
-			                }
-			            },
-			            error: function (xhr, ajaxOptions, thrownError) {
-		                	// console.log('ajax error');
-		                    // console.log(xhr);
-		                }
-		            });
 			});
 			//汰除-----------------------------------------------------------
 
@@ -360,6 +324,68 @@ if(!empty($op)) {
 				locale: "zh_TW",
 			});
 
+			$('button.upd_detail').on('click', function(){
+				$('#upd-detail-modal').modal();
+
+				oncoda_sn = $(this).data('oncoda_sn');
+
+				$.ajax({
+					url: './plant_business.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", oncoda_sn:$(this).data('oncoda_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                console.log(ret);
+			                if(ret.code==1) {
+			                	var d = ret.data;
+			                	$('#upd_detail_form1 input[name=oncoda_sn]').val(d.oncoda_sn);
+			                	$('#upd_detail_form1 input[name=oncoda_unit]').val(d.oncoda_unit);
+			                	$('#upd_detail_form1 input[name=oncoda_name]').val(d.oncoda_name);
+			                	$('#upd_detail_form1 input[name=oncoda_num]').val(d.oncoda_num);
+			                	$('#upd_detail_form1 input[name=oncoda_cost]').val(d.oncoda_cost);
+
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                    // console.log(xhr);
+		                }
+		            });
+
+			});
+
+			$('button.del_table').on('click', function(){
+				oncost_sn = $(this).data('oncost_sn')
+				bootbox.confirm("確認刪除？", function(result) {
+					if(result) {
+						$.ajax({
+							url: './plant_business.php',
+							type: 'post',
+							dataType: 'json',
+							data: {op:"del_table", oncost_sn:oncost_sn},
+							beforeSend: function(msg) {
+								$("#ajax_loading").show();
+							},
+							complete: function(XMLHttpRequest, textStatus) {
+								$("#ajax_loading").hide();
+							},
+							success: function(ret) {
+								alert_msg(ret.msg);
+							},
+							error: function (xhr, ajaxOptions, thrownError) {
+				                	// console.log('ajax error');
+				                }
+				            });
+					}
+				});
+			});
+
 			$('button.del').on('click', function(){
 				oncoda_sn = $(this).data('oncoda_sn')
 				bootbox.confirm("確認刪除？", function(result) {
@@ -386,7 +412,7 @@ if(!empty($op)) {
 				});
 			});
 
-			$('#add_form, #upd_form, #upd_form1, #upd_form2').validator().on('submit', function(e) {
+			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd_detail_form1').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
 					e.preventDefault();
 					var param = $(this).serializeArray();
@@ -394,7 +420,7 @@ if(!empty($op)) {
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
 
-					 	// console.table(param);
+					 	console.table(param);
 
 					 	$.ajax({
 					 		url: './plant_business.php',
@@ -416,7 +442,8 @@ if(!empty($op)) {
 			                 }
 			             });
 					 }
-					});
+			});
+
 			$('#datetimepicker1').datetimepicker({
 				minView: 2,
 				language:  'zh-TW',
@@ -448,7 +475,7 @@ if(!empty($op)) {
 		<div class="page-header">
 			<div class="row">
 				<div class="col-sm-6">
-					<h4>成本管理</h4>
+					<h4 style="font-size: 25px">成本管理</h4>
 				</div>
 			</div>
 		</div>
@@ -460,89 +487,27 @@ if(!empty($op)) {
 					<form autocomplete="off" method="post" action="./" id="add_form" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 class="modal-title">新品項資料建立</h4>
+							<h4 class="modal-title">新成本種類建立作業</h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="add">
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">名稱<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_grass" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="oncost_name" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">說明<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_labor" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="oncost_note" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花色<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_water" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花徑<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_electricity" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">高度<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">供應商<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label">下種日期&nbsp;</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="datetimepicker1" name="onadd_planting_date" placeholder="">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<select class="form-control" name="onadd_growing">
-												<option value="7">其他</option>
-												<option value="6">3.6</option>
-												<option value="5">3.5</option>
-												<option value="4">3.0</option>
-												<option value="3">2.8</option>
-												<option value="2">2.5</option>
-												<option selected="selected" value="1">1.7</option>
-											</select>
-										</div>
-									</div>
+									
 								</div>
 							</div>
 						</div>
@@ -556,116 +521,6 @@ if(!empty($op)) {
 			</div>
 		</div>
 
-		<div id="upd-modal" class="modal upd-modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<form autocomplete="off" method="post" action="./" id="upd_form" class="form-horizontal" role="form" data-toggle="validator">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 class="modal-title">換盆</h4>
-						</div>
-						<div class="modal-body">
-							<div class="row">
-								<div class="col-md-12">
-									<input type="hidden" name="op" value="upd">
-									<input type="hidden" name="oncoda_sn">
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_grass" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_labor" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花色<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_water" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花徑<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_electricity" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">高度<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">供應商<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label">換盆日期&nbsp;</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="datetimepicker2" name="onadd_planting_date" value="<?php echo (empty($device['onadd_planting_date'])) ? '' : date('Y-m-d', $device['onadd_planting_date']);?>" placeholder="">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>        								
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label" >換盆數量<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_plant_day" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>	
-									<div class="form-group">
-										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<select class="form-control" name="onadd_growing">
-												<option value="7">其他</option>
-												<option value="6">3.6</option>
-												<option value="5">3.5</option>
-												<option value="4">3.0</option>
-												<option value="3">2.8</option>
-												<option value="2">2.5</option>
-												<option selected="selected" value="1">1.7</option>
-											</select>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-							<button type="submit" class="btn btn-primary">更新</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-
 		<!--汰除----------------------------------------------------------->
 		<div id="upd-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
@@ -673,38 +528,38 @@ if(!empty($op)) {
 					<form autocomplete="off" method="post" action="./" id="upd_form1" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 class="modal-title">成本修改</h4>
+							<h4 class="modal-title">新增成本細項</h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
 								<div class="col-md-12">
-									<input type="hidden" name="op" value="upd1">
-									<input type="hidden" name="oncoda_sn">
+									<input type="hidden" name="op" value="add_detail">
+									<input type="hidden" name="oncost_sn">
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">1.7<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">項目<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_soft" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="oncoda_name" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">2.5<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">單位<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_grass" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="oncoda_unit" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>	
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">3.5<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">數量<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_labor" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="oncoda_num" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>	
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">其他<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">成本金額<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="oncoda_water" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="oncoda_cost" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>											  								
@@ -721,6 +576,59 @@ if(!empty($op)) {
 			</div>
 		</div>
 		<!--汰除----------------------------------------------------------->
+		<div id="upd-detail-modal" class="modal upd-modal1" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd_detail_form1" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">修改成本細項</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd_detail">
+									<input type="hidden" name="oncoda_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">項目<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="oncoda_name" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">單位<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="oncoda_unit" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>	
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="oncoda_num" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>	
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">成本金額<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="oncoda_cost" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>											  								
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">修改</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 		<!--汰除----------------------------------------------------------->
 		<div id="upd-modal2" class="modal upd-modal2" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
@@ -733,7 +641,7 @@ if(!empty($op)) {
 						<div class="modal-body">
 							<div class="row">
 								<div class="col-md-12">
-									<input type="hidden" name="op" value="upd1">
+									<input type="hidden" name="op" value="add_detail">
 									<input type="hidden" name="oncoda_sn">
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">水費<font color="red">*</font></label>
@@ -776,24 +684,26 @@ if(!empty($op)) {
 					<?php 
 						foreach ($cost_table as $key => $value) {
 					?>
-						<div id="search" style="clear:both;">
+						<div id="search" style="clear:both;" class="form-inline alert alert-info">
 							<div class="row">
-								<div class="col-md-10">
-									<div class="h4 page-header text-center offset-bottom" style="background-color:#D1E9E9;"><?php echo $value['oncost_name']?></div>
-								</div>
-								<div class="col-md-2">
-									<button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="">新增</button>
-								</div>
-	
+								<div class="col-md-12">
+									<div class="h3 page-header text-center offset-bottom" style="margin-left: 0px;margin-right: 0px;background:#bce7f1 ">
+										<font color="#000000"><?php echo $value['oncost_name']?></font>
+									</div>
+								</div>	
+							</div>
+							<div class="col-md-12" style="text-align: right">
+								<button type="button" class="btn btn-info btn-xs upd1" data-oncost_sn="<?php echo $value['oncost_sn'];?>">新增細項</button>
+								<button type="button" class="btn btn-danger btn-xs del_table" data-oncost_sn="<?php echo $value['oncost_sn'];?>">刪除此區</button>
 							</div>
 							<!-- content -->
 							<table class="table table-striped table-hover table-condensed tablesorter">
 								<thead>
 									<tr style="font-size: 1.1em">
-										<th style="text-align: center;">項目</th>
-										<th style="text-align: center;">單位</th>
-										<th style="text-align: center;">成本金額</th>
-										<th style="text-align: center;">操作</th>
+										<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">項目</th>
+										<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">單位</th>
+										<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">成本金額</th>
+										<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">操作</th>
 									</tr>
 								</thead>
 								<tbody >
@@ -802,12 +712,12 @@ if(!empty($op)) {
 										foreach ($cost_detail as $key2 => $value2) {
 									?>
 									<tr style="font-size: 1.1em">
-										<td  style="text-align: center;"><?php echo $value2['oncoda_name']; ?></td>
-										<td  style="text-align: center;"><?php echo $value2['oncoda_num'].$value2['oncoda_unit']; ?></td>
-										<td  style="text-align: center;"><?php echo $value2['oncoda_cost']." NT"; ?></td>
-										<td  style="text-align: center;">
-											<button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="">修改</button>
-											<button type="button" class="btn btn-danger btn-xs upd1" data-onadd_sn="">刪除</button>
+										<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo $value2['oncoda_name']; ?></td>
+										<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo $value2['oncoda_num'].$value2['oncoda_unit']; ?></td> 
+										<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo number_format($value2['oncoda_cost'])." NT"; ?></td>
+										<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">
+											<button type="button" class="btn btn-primary btn-xs upd_detail" data-oncoda_sn="<?php echo $value2['oncoda_sn'];?>" data-oncost_sn="<?php echo $value['oncost_sn'];?>" style="background-color:#A46B62;border:#A46B62">修改</button>
+											<button type="button" class="btn btn-danger btn-xs del" data-oncoda_sn="<?php echo $value2['oncoda_sn'];?>" data-oncost_sn="<?php echo $value['oncost_sn'];?>" style="background-color:#E94653;">刪除</button>
 										</td>
 									</tr>
 									<?php 
