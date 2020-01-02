@@ -1,7 +1,5 @@
 <?php
 include_once("./func_plant_purchase.php");
-// printr(getHistory_List(56));
-// exit();
 $qr_sn = "";
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
@@ -15,16 +13,7 @@ $DEVICE_SYSTEM = array(
 		8=>"瓶苗下種"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
-$permissions_mapping = array(
-    1=>'<font color="#666666">1.7</font>',
-    2=>'<font color="#666666">2.5</font>',
-    3=>'<font color="#666666">2.8</font>',
-    4=>'<font color="#666666">3.0</font>',
-    5=>'<font color="#666666">3.5</font>',
-    6=>'<font color="#666666">3.6</font>',
-    7=>'<font color="#666666">其他</font>',
-    8=>'<font color="#666666">瓶苗下種</font>'
-);
+$permissions_mapping = getMapping_size();
 $permmsion = '系統管理員';
 
 $op=GetParam('op');
@@ -2209,7 +2198,13 @@ if(!empty($op)) {
 	        						else{
 	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
 	        						}
-        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
+	        						if($permissions_mapping[$row['onadd_growing']] == '瓶苗下種' || $permissions_mapping[$row['onadd_growing']] == '其他'){
+	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'</td>';
+	        						}
+	        						else{
+	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
+	        						}
+        							
         							// if($row['onadd_growing']==1){
         							// 	$list_setting = getSettingBySn(1.7);
         							// 	$onchba_cycle = $list_setting['onchba_cycle'];

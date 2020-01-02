@@ -1093,4 +1093,19 @@ function getQuantityForseller($part_no,$part_name) {
 	$conn->close();
 	return $ret_data;
 }
+function getMapping_size() {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select onchba_sn,onchba_tsize from online_change_basin";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[$row['onchba_sn']] = '<font color="#666666">'.$row['onchba_tsize'].'</font>';
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
 ?>
