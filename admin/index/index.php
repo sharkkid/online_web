@@ -35,7 +35,7 @@ $size_mapping = array(
 	6=>'<font color="#666666">3.6寸</font>',
 	7=>'<font color="#666666">其他</font>' 
 );
-// printr(getTotalQty());
+// printr(getWorkListByMonth());
 // exit;
 
 	// page
@@ -204,6 +204,14 @@ $op=GetParam('op');
 							else{
 								event = "即將到達換盆日期";
 							}
+							if(data[i]['onadd_sellsize'] != null){
+								if(data[i]['practicesell_status'] == 1){
+									event += "，即將到達預估出貨尺寸的日期";
+								}else if(data[i]['practicesell_status'] == 2){
+									event += "，已超過預估出貨尺寸的日期";
+								}
+							}
+
 							if(data[i]['onadd_quantity'] > 0){
 								dy_modal.innerHTML = "<div class='modal-dialog modal-'><div class='modal-content'><div class='modal-body'><div class=\"panel panel-info\"><div class=\"panel-heading\"><h4 class=\"modal-title\">提醒事項</h4></div><div class=\"panel-body\" style=\"font-size: 1.4rem\"><label>品號："+data[i]['onadd_part_no']+"</label></br><label>品名："+data[i]['onadd_part_name']+"</label></br><label>下種日："+data[i]['onadd_planting_date']+"</label></br><label>預計成長日："+data[i]['expected_date']+"</br><label>數量："+data[i]['onadd_quantity']+"</label></br><label>提醒事項："+event+"</label></div></div></div><div class='modal-footer'><button type='button' class='btn btn-default' data-dismiss=\"modal\" id=\"btn_modal\">確認</button></div></div></div>";		
 								main_content.appendChild(dy_modal);	

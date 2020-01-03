@@ -13,13 +13,13 @@ function dateFormat($ctime, $format='Y-m-d H:i:s') {
 //================================
 // onliine_add_data.php
 //================================
-function getUser($where='', $offset=30, $rows=0) {
+function getPlantData($where='', $offset=30, $rows=0) {
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
-		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=1 order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
+		$sql="select * from onliine_add_data where onadd_status > 0 and onadd_plant_st=1 order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
 	else
-		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_plant_st=1 and ( $where ) order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
+		$sql="select * from onliine_add_data where onadd_status > 0 and onadd_plant_st=1 and ( $where ) order by onadd_add_date desc, onadd_sn desc limit $offset, $rows";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {

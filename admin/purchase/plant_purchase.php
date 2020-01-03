@@ -38,6 +38,7 @@ if(!empty($op)) {
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
 		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
 		$onadd_growing=getTargetSize($DEVICE_SYSTEM[GetParam('onadd_cur_size')],$DEVICE_SYSTEM[GetParam('onadd_growing')]);//預計成長大小
+		$onadd_sellsize=GetParam('onadd_sellsize');//預計出貨尺寸
 		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//換盆年
 		$onadd_quantity_cha=$test;//換盆月
 		$onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
@@ -58,8 +59,8 @@ if(!empty($op)) {
 				$onadd_planting_date = str2time($onadd_planting_date);
 				$now = time();
 				$conn = getDB();
-					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size) " .
-					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}', '{$onadd_cur_size}');";
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size, onadd_sellsize) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}', '{$onadd_cur_size}', '{$onadd_sellsize}');";
 
 					$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st,onproduct_pic_url) " .
 					"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '1', '{$onproduct_pic_url}');";
@@ -90,8 +91,8 @@ if(!empty($op)) {
 				$onadd_planting_date = str2time($onadd_planting_date);
 				$now = time();
 				$conn = getDB();
-					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size) " .
-					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}', '{$onadd_cur_size}');";
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size, onadd_sellsize) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}', '{$onadd_cur_size}', '$onadd_sellsize');";
 
 					$sql2 = "UPDATE onliine_product_data SET onproduct_part_no = '{$onadd_part_no}', onproduct_part_name = '{$onadd_part_name}', onproduct_color = '{$onadd_color}', onproduct_size = '{$onadd_size}', onproduct_height = '{$onadd_height}', onproduct_pot_size = '{$onadd_pot_size}', onproduct_supplier = '{$onadd_supplier}', onproduct_growing = '{$onadd_growing}', onproduct_isbought = '{$onadd_isbought}',onproduct_pic_url = '{$onproduct_pic_url}' 
 					    WHERE onproduct_part_no like '{$onadd_part_no}' and onproduct_part_name like '{$onadd_part_name}';";
@@ -250,6 +251,7 @@ if(!empty($op)) {
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
 		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
+		$onadd_sellsize=GetParam('onadd_sellsize');//預計出貨尺寸
 		$jsuser_sn = GetParam('supplier');//編輯人員
 		$left_amount = $onadd_quantity - $onadd_ml_amount;//移倉後剩餘數量
 
@@ -267,10 +269,10 @@ if(!empty($op)) {
 
 			$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}'	,onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$left_amount}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}' WHERE onadd_sn='{$onadd_sn}';";
 			
-			$sql2 = "INSERT INTO onliine_add_data(onadd_part_no,onadd_part_name,onadd_color,onadd_size,onadd_height,onadd_pot_size,onadd_supplier,onadd_planting_date,onadd_quantity,onadd_growing,jsuser_sn,onadd_location,onadd_cur_size,onadd_ml,onadd_add_date,onadd_mod_date,onadd_cycle, onadd_newpot_sn)	
-					VALUES('{$onadd_part_no}','{$onadd_part_name}','{$onadd_color}','{$onadd_size}','{$onadd_height}','{$onadd_pot_size}','{$onadd_supplier}','{$onadd_planting_date}','{$onadd_ml_amount}','{$onadd_growing}','{$supplier}','{$onadd_location}','{$onadd_cur_size}','{$onadd_ml}', '{$now}', '{$now}', '{$now}' ,'{$onadd_newpot_sn}')";
+			$sql2 = "INSERT INTO onliine_add_data(onadd_part_no,onadd_part_name,onadd_color,onadd_size,onadd_height,onadd_pot_size,onadd_supplier,onadd_planting_date,onadd_quantity,onadd_growing,jsuser_sn,onadd_location,onadd_cur_size,onadd_ml,onadd_add_date,onadd_mod_date,onadd_cycle, onadd_newpot_sn, onadd_sellsize)	
+					VALUES('{$onadd_part_no}','{$onadd_part_name}','{$onadd_color}','{$onadd_size}','{$onadd_height}','{$onadd_pot_size}','{$onadd_supplier}','{$onadd_planting_date}','{$onadd_ml_amount}','{$onadd_growing}','{$supplier}','{$onadd_location}','{$onadd_cur_size}','{$onadd_ml}', '{$now}', '{$now}', '{$now}' ,'{$onadd_newpot_sn}', '{$onadd_sellsize}')";
 
-			$sql3 = "UPDATE onliine_add_data SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}'	,onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$left_amount}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}' WHERE onadd_sn='{$onadd_sn}', onadd_status = '0';";		
+			$sql3 = "UPDATE onliine_add_data SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}'	,onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$left_amount}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}', onadd_status = '-1' WHERE onadd_sn='{$onadd_sn}' and onadd_status = '1';";		
 			// $sql2 = "UPDATE onliine_firstplant_data	SET onfp_plant_amount = '{$onadd_quantity}' WHERE onadd_sn='{$onadd_sn}' and onfp_status >= 1;";			
 	
 			if($conn->query($sql)) {
@@ -282,7 +284,7 @@ if(!empty($op)) {
 					$ret_msg = "更新成功！";
 				}
 				else{
-					$ret_msg = "更新失敗！".$sql2;
+					$ret_msg = "更新失敗！";
 				}
 				// if(IsfirtPlant($onadd_sn) == "1"){
 				// 	if($conn->query($sql2)) {
@@ -323,6 +325,7 @@ if(!empty($op)) {
 		$onadd_supplier=GetParam('onadd_supplier');//供應商
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+
 		$onadd_replant_number=GetParam('onadd_replant_number');//換盆數量
 		$onadd_quantity_cha123 =($onadd_quantity - $onadd_replant_number);
 
@@ -331,6 +334,7 @@ if(!empty($op)) {
 
 		$onadd_growing=getTargetSize($DEVICE_SYSTEM[GetParam('onadd_cur_size')],$DEVICE_SYSTEM[GetParam('onadd_growing')]);//預計成長大小
 		$onadd_cur_size=GetParam('onadd_cur_size');//換盆尺寸
+		$onadd_sellsize=GetParam('onadd_sellsize');//預估出貨尺寸
 		// $onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
@@ -369,8 +373,8 @@ if(!empty($op)) {
 				// 	$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
 				// 	$conn->query($sql);
 				// }	
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_newpot_sn, onadd_cur_size, onadd_location) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$sn}', '{$onadd_cur_size}', '{$onadd_location}');";
+				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_newpot_sn, onadd_cur_size, onadd_location, onadd_sellsize) " .
+				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$sn}', '{$onadd_cur_size}', '{$onadd_location}', '{$onadd_sellsize}');";
 
 				if($conn->query($sql)){
 					$onadd_id = mysqli_insert_id($conn);
@@ -624,7 +628,7 @@ if(!empty($op)) {
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
-	$product_list = getUser($search_where, $pg_offset, $pg_rows,$onadd_sn);
+	$product_list = getPlantData($search_where, $pg_offset, $pg_rows,$onadd_sn);
 	// echo "<hr><hr><hr><hr><hr>";printr($ex_P);printr($ex_p);printr($ex_);printr($search_where);
 	// exit();
 }
@@ -949,7 +953,10 @@ if(!empty($op)) {
 			                	// $('#upd_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
 			                	$('#upd_form input[name=onadd_quantity]').val(d.onadd_quantity);
 			                	$('#upd_form [name=onadd_cur_size] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');
-			                	$('#upd_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
+			                	$('#upd_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');	
+			                	if(d.onadd_sellsize != ""){
+			                		$('#upd_form [name=onadd_sellsize] option[value='+d.onadd_sellsize+']').prop('selected','selected','selected','selected','selected','selected','selected');	
+			                	}	                	
 			                	$('#upd_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
 			                }
 			            },
@@ -1069,7 +1076,10 @@ if(!empty($op)) {
 			                	$('#upd3_form input[name=onadd_quantity]').val(d.onadd_quantity);
 			                	$('#upd3_form input[name=onadd_growing]').val(d.onadd_growing);
 
-			                	$('#upd3_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
+			                	$('#upd3_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');	
+			                	if(d.onadd_sellsize != ""){		
+			                		$('#upd3_form [name=onadd_sellsize] option[value='+d.onadd_sellsize+']').prop('selected','selected','selected','selected','selected','selected','selected');	
+			                	}		
 			                	$('#upd3_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
 			                }
 			            },
@@ -1540,9 +1550,23 @@ if(!empty($op)) {
 										</div>
 									</div>	
 									<div class="form-group">
-										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">下階段換盆尺寸<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select class="form-control" name="onadd_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計出貨尺寸<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onadd_sellsize">
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
@@ -1675,9 +1699,23 @@ if(!empty($op)) {
 										</div>
 									</div>     								
 									<div class="form-group">
-										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">下階段換盆尺寸<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select readonly="readonly" class="form-control" name="onadd_growing">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計出貨尺寸<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onadd_sellsize">
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
@@ -2034,7 +2072,7 @@ if(!empty($op)) {
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">下階段換盆尺寸<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select class="form-control" id="dropdown_onadd_growing" name="onadd_growing">
 												<option value="7">其他</option>
@@ -2048,6 +2086,20 @@ if(!empty($op)) {
 										</div>
 									</div>
 
+									<div class="form-group">
+										<label class="col-sm-2 control-label">預計出貨尺寸<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" id="dropdown_onadd_sell" name="onadd_sellsize">
+												<option value="7">其他</option>
+												<option value="6">3.6</option>
+												<option value="5">3.5</option>
+												<option value="4">3.0</option>
+												<option value="3">2.8</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
+											</select>
+										</div>
+									</div>
 				
 								</div>
 							</div>
@@ -2144,8 +2196,10 @@ if(!empty($op)) {
 								<th style="text-align: center;">下種日期</th>
 								<th style="text-align: center;">下種數量</th>
 								<th style="text-align: center;">目前尺寸</th> <!-- 2019/8/29新增 -->
-								<th style="text-align: center;">預計成長大小</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">下階段換盆尺寸</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">預計出貨尺寸</th> <!-- 2020/01/2新增 -->
 								<th style="text-align: center;">預計成熟日</th> <!-- 2019/6/19新增 -->
+								
 								<th style="text-align: center;">育成率</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">放置區</th> <!-- 2019/8/7新增 -->
 								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
@@ -2198,13 +2252,19 @@ if(!empty($op)) {
 	        						else{
 	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
 	        						}
+	        						
 	        						if($permissions_mapping[$row['onadd_growing']] == '瓶苗下種' || $permissions_mapping[$row['onadd_growing']] == '其他'){
 	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'</td>';
 	        						}
 	        						else{
 	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
 	        						}
-        							
+	        						if(!empty($row['onadd_sellsize'])){
+        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_sellsize']].'寸</td>';
+        							}
+        							else{
+        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
+        							}
         							// if($row['onadd_growing']==1){
         							// 	$list_setting = getSettingBySn(1.7);
         							// 	$onchba_cycle = $list_setting['onchba_cycle'];
@@ -2238,6 +2298,7 @@ if(!empty($op)) {
 	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
 	        						}		
 	        						// printr($first_plant_amount);
+
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>'; 		
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>'; 			
         							if(!empty($row['onadd_quantity_cha'])){

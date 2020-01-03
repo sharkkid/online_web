@@ -391,7 +391,8 @@ function getSettingBySn($onchba_size,$onchba_tsize) {
 function getWorkListByMonth() {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
+	$sql="select * from onliine_add_data where onadd_status = 1 and onadd_schedule!=1";
+	$mapping = getMapping_size();
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -406,7 +407,18 @@ function getWorkListByMonth() {
         	$row['c_y'] = $c_y;
         	$row['o_m'] = $o_m;
         	$row['c_m'] = $c_m;
-
+        	$row['onadd_growing'] = $mapping[$row['onadd_growing']];
+        	$row['onadd_sellsize'] = $GLOBALS['size'][$row['onadd_sellsize']];
+        	$days=strtotime(date('today'))-strtotime($test);
+        	if($days > 0 && $days < 604800){// 0:尚未達標 1:即將到達預估出貨日期(成熟期前7天開始提醒)  2:已超過可出貨日期
+        		$row['practicesell_status'] = 1;
+        	}
+        	else if($days < 0){
+        		$row['practicesell_status'] = 2;
+        	}
+        	else{
+        		$row['practicesell_status'] = 0;
+        	}
         	if($o_y <= $c_y && !empty($row['onchba_cycle'])){
         		if($o_y == $c_y && $o_m <= $c_m){
         			$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);
@@ -424,6 +436,23 @@ function getWorkListByMonth() {
         		}        		
         	}
 
+
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
+function getMapping_size() {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="select onchba_sn,onchba_tsize from online_change_basin";
+	// echo $sql;
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data[$row['onchba_sn']] = $row['onchba_tsize'];
 		}
 		$qresult->free();
 	}
