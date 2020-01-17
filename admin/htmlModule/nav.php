@@ -84,14 +84,15 @@
                         </li>
 
                         <li>
-                            <a href="javascript: void(0);" aria-expanded="true"><i class="icon-tag"></i> 業務專區 <span class="fa arrow"></span></a>
-                            <!-- <ul class="nav-second-level nav" aria-expanded="true">
+                            <?php if($permmsion == 0 || $permmsion == 3){ ?>
+                                <a href="javascript: void(0);" aria-expanded="true"><i class="icon-tag"></i> 業務專區 <span class="fa arrow"></span></a>
+                                <!-- <ul class="nav-second-level nav" aria-expanded="true">
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_pdetails.php">品種資料</a></li>
-                            </ul> -->
-                             <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
+                                </ul> -->
+                                <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
                                  <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details.php">可接出貨量</a></li>
-                            </ul>
-
+                                </ul>
+                            <?php } ?>
                         </li>
                          <li><a href="<?php echo WT_SERVER;?>/admin/business/plant_business.php">"<i class="icon-map"></i> 成本管理 </a></li>
                         <li class="nav-heading"><span style="color: #2e2e2e">管理員項目</span></li>
@@ -102,6 +103,9 @@
                                 <li><a href="layout-sidebar-colored.html">語言設定</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/setting/plant_setting.php">成長週期設定</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/setting/space_setting.php">園區空間設定</a></li>
+                                <?php if($permmsion == 0){ ?>
+                                    <li><a href="<?php echo WT_SERVER;?>/admin/setting/person_setting.php">使用者管理</a></li>
+                                <?php } ?>
                                 <!-- plant_setting -->
                             </ul>
                         </li>

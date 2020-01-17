@@ -21,6 +21,8 @@ $permissions_mapping = array(
     7=>'<font color="#666666">其他</font>' 
 );
 
+$permmsion = $_SESSION['user']['jsuser_admin_permit'];
+
 $op=GetParam('op');
 if(!empty($op)) {
 	$ret_code = 1;
@@ -674,7 +676,9 @@ if(!empty($op)) {
 								<th style="text-align: center;">下一階段換盆/下種日期</th>
 								<!-- <th style="text-align: center;">總下種週期</th>       							 -->
 								<th style="text-align: center;">供應商</th>
-								<th style="text-align: center;">操作</th>
+								<?php if($permmsion == 0){ ?>			
+									<th style="text-align: center;">操作</th>
+								<?php } ?>	
 							</tr>
 						</thead>
 						<tbody>
@@ -721,10 +725,12 @@ if(!empty($op)) {
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$onadd_cycle.'月'.'</td>';
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_supplier'].'</td>';//品名
-        							echo '<td style="text-align: center;">
-        							<span><button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">執行</button></span>
-        							<span><button type="button" class="btn btn-danger btn-xs delay" data-onadd_sn="'.$row['onadd_sn'].'">延後</button></span>';
-        							echo '</td></tr>';
+        								if($permmsion == 0){ 
+        									echo '<td style="text-align: center;">
+        									<span><button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">執行</button></span>
+        									<span><button type="button" class="btn btn-danger btn-xs delay" data-onadd_sn="'.$row['onadd_sn'].'">延後</button></span>';
+        									echo '</td></tr>';
+        								}
 	        						}
 
         						?>

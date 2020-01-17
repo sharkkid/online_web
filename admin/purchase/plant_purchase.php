@@ -14,7 +14,9 @@ $DEVICE_SYSTEM = array(
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = getMapping_size();
-$permmsion = '系統管理員';
+
+$permmsion = $_SESSION['user']['jsuser_admin_permit'];
+$permmsion_option = $_SESSION['user']['jsuser_option'];
 
 $op=GetParam('op');
 if(!empty($op)) {
@@ -1965,6 +1967,7 @@ if(!empty($op)) {
 									<input type="hidden" name="op" value="add">
 									<input type="hidden" id="IsUploadImg" value="">
 									<div class="form-group">
+										<?php if(strpos($permmsion_option, "4") !== false || $permmsion == 0){ ?>
 										<label class="col-sm-2 control-label">產品圖片</label>
 										<div class="col-sm-10">
 											<div style="display: none;" id="img_newName"></div>
@@ -1974,6 +1977,7 @@ if(!empty($op)) {
 										    <div class="size" id="preview_size"></div>
 										    
 									    </div>
+										<?php } ?>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">苗種來源<font color="red">*</font></label>
@@ -2140,7 +2144,9 @@ if(!empty($op)) {
 
 				<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 						<ul class="nav nav-pills pull-right toolbar">
-							<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li>
+							<?php if($permmsion == 0 || strpos($permmsion_option, '1') !== false){ ?>
+								<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li>
+							<?php } ?>
 							<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_add.php'"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li> -->
 							<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_add.php'"></i> 返回苗種資料建立</button></li> -->
 						</ul>
@@ -2204,9 +2210,22 @@ if(!empty($op)) {
 								<th style="text-align: center;">放置區</th> <!-- 2019/8/7新增 -->
 								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">供應商</th>
-								<th style="text-align: center;">訂單客戶</th> <!-- 2019/6/19新增 -->						
-								<th style="text-align: center;">操作</th>
-								<th colspan="1" style="text-align: center;">操作</th>
+								<th style="text-align: center;">訂單客戶</th> <!-- 2019/6/19新增 -->			
+								<?php 
+									$flag = false;
+									for($i=1;$i<7;$i++){
+										if(strpos($permmsion_option, $i."") !== false){											
+											$flag = true;
+										}
+									}
+
+									if($permmsion == 0 || $flag){ ?>			
+										<th style="text-align: center;">操作</th>
+									}
+								<?php } ?>	
+								<?php if($permmsion == 0 || $permmsion == 3){ ?>			
+									<th colspan="1" style="text-align: center;">操作</th>
+								<?php } ?>	
 							</tr>
 						</thead>
 						<tbody >
@@ -2294,6 +2313,7 @@ if(!empty($op)) {
 	        							}
 	        						}
 	        						else{
+	        							// echo $row['onadd_newpot_sn']."<br>";
 	        							$first_plant_amount = getProductFirstQty($row['onadd_newpot_sn']);//第一次下種時間
 	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
 	        						}		
@@ -2314,25 +2334,46 @@ if(!empty($op)) {
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
 
-        							// 2019/6/19新增 - 展開收回操作列表
-        							echo '<td style="vertical-align: middle;text-align:center" style="border-right:0.1rem #BEBEBE dashed;text-align: center;">   	
-	        							    <span >
-	        							      	<button type="button" style="background-color:#E94653;" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>
-	        							      </span>
-	        							      <span >
+        							if($permmsion == 0 || $permmsion == 2){
+        								echo '<td style="vertical-align: middle;text-align:center" style="border-right:0.1rem #BEBEBE dashed;text-align: center;">';  
+										if(strpos($permmsion_option, "2") !== false || $permmsion == 0){										
+											echo '<span >
+	        							  	<button type="button" style="background-color:#E94653;" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>
+	        							  </span>';
+										}
+										// if(strpos($permmsion_option, "3") !== false){											
+										// 	echo '<span >
+	        	// 						  	<button type="button" style="background-color:#E94653;" class="btn btn-danger btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>
+	        	// 						  </span>';
+										// }
+										if(strpos($permmsion_option, "5") !== false || $permmsion == 0){											
+											echo '<span >
 	        							      	<button type="button" style="background-color:#6CBF87;border:#6CBF87" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
-	        							      </span>
-	        							      <span >
-	        							      	<button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>
 	        							      </span>';
-        							if($permmsion == '系統管理員'){
-	        							echo '<span ><button type="button" style="background-color:#FCD78B;border:#FCD78B;color:#642100" class="btn btn-warning btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">移倉</button></span>';
-	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
-	        						}       						
+										}
+										if(strpos($permmsion_option, "6") !== false || $permmsion == 0){											
+											echo '<span ><button type="button" style="background-color:#FCD78B;border:#FCD78B;color:#642100" class="btn btn-warning btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">移倉</button></span>';
+										}
+										
 
-	        						echo '<span > </span><span ><button type="button" class="btn btn-default btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'"><span style="font-size:2em;color:#000000" class="glyphicon glyphicon-qrcode"></span></button>';
-	        						echo '<td style="vertical-align: middle;text-align:center">
+	        							echo '<span >
+	        							      	<button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>
+	        							      </span>';        							
+	        							if($permmsion == 0 || $permmsion == 0){
+	        								echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
+	        							}
+	        							
+	        							echo '<span > </span><span ><button type="button" class="btn btn-default btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'"><span style="font-size:2em;color:#000000" class="glyphicon glyphicon-qrcode"></span></button>';
+	        							
+	        						}       	
+
+	        						if($permmsion == 0 || $permmsion == 3){
+	        							echo '<td style="vertical-align: middle;text-align:center">
 	        								<button type="button" class="btn btn-info btn-xs" onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_part_name='.$row['onadd_part_name'].'&onadd_quantity_del='.date("Y").'\'" ><span class="glyphicon glyphicon-list-alt" style="font-size:1.3em"></span> 展開</button>';
+	        						}					
+
+	        						
+	        						
 	        						echo '</td>';
         							echo '</tr>';
         						}

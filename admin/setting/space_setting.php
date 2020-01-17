@@ -21,6 +21,8 @@ $permissions_mapping = array(
     7=>'<font color="#666666">其他</font>' 
 );
 
+$permmsion = $_SESSION['user']['jsuser_admin_permit'];
+
 $op=GetParam('op');
 if(!empty($op)) {
 	$ret_code = 1;
@@ -340,14 +342,18 @@ if(!empty($op)) {
         					<thead>
         						<tr>
         							<th>目前園區所有空間</th>
-        							<th>操作</th>
+        							<?php if($permmsion == 0){ ?>
+        								<th>操作</th>
+        							<?php } ?>
         						</tr>
         					</thead>
         					<tbody>
         						<?php
         						echo '<tr>';
         						echo '<td>'.$space_list[0]['onsp_space'].'</td>';//品名
-        						echo '<td><button type="button" class="btn btn-primary btn-xs upd" data-onsp_sn="'.$space_list[0]['onsp_sn'].'">修改</button>&nbsp;';
+        						if($permmsion == 0){ 
+        							echo '<td><button type="button" class="btn btn-primary btn-xs upd" data-onsp_sn="'.$space_list[0]['onsp_sn'].'">修改</button>&nbsp;';
+        						}
         						echo '</td></tr>';
 
         						?>

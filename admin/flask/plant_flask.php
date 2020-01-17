@@ -24,7 +24,8 @@ $permissions_mapping = array(
     7=>'<font color="#666666">其他</font>',
     8=>'<font color="#666666">瓶苗下種</font>' 
 );
-$permmsion = '系統管理員';
+$permmsion = $_SESSION['user']['jsuser_admin_permit'];
+$permmsion_option = $_SESSION['user']['jsuser_option'];
 
 $op=GetParam('op');
 if(!empty($op)) {
@@ -1869,7 +1870,8 @@ if(!empty($op)) {
 								<div class="col-md-12">
 									<input type="hidden" name="op" value="add">
 									<div class="form-group">
-										<label class="col-sm-2 control-label">產品圖片</label>
+										<?php if(strpos($permmsion_option, "4") !== false || $permmsion == 0){ ?>
+										<label class="col-sm-2 control-label">產品圖片</label>										
 										<div class="col-sm-10">
 											<div style="display: none;" id="img_newName"></div>
 										    <input type="file" class="upl" id="myFile" name="myFile" accept="image/jpeg,image/jpg,image/gif,image/png">
@@ -1878,6 +1880,7 @@ if(!empty($op)) {
 										    <div class="size" id="preview_size"></div>
 										    
 									    </div>
+										<?php } ?>
 									</div>
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">苗種來源<font color="red">*</font></label>
@@ -2130,7 +2133,9 @@ if(!empty($op)) {
 					<!-- nav toolbar -->
 					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 						<ul class="nav nav-pills pull-right toolbar">
-							<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li>
+							<?php if($permmsion == '0' || strpos($permmsion_option, '1') !== false){ ?>
+								<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li>
+							<?php } ?>
 							<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_addflask.php'"><i class="glyphicon glyphicon-plus"></i>新品項建立</button></li> -->
 							<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_addflask.php'"></i> 返回瓶苗資料建立</button></li> -->
 						</ul>
@@ -2190,7 +2195,20 @@ if(!empty($op)) {
 								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">供應商</th>
 								<th style="text-align: center;">訂單客戶</th> <!-- 2019/6/19新增 -->						
-								<th colspan="2" style="text-align: center;">操作</th>
+								<?php 
+									$flag = false;
+									for($i=1;$i<7;$i++){
+										if(strpos($permmsion_option, $i."") !== false){											
+											$flag = true;
+										}
+									}
+
+									if($permmsion == 0 || $flag){ ?>			
+										<th style="text-align: center;">操作</th>									
+								<?php } ?>	
+								<?php if($permmsion == 0 || $permmsion == 3){ ?>			
+									<th colspan="1" style="text-align: center;">操作</th>
+								<?php } ?>
 							</tr>
 						</thead>
 						<tbody>
@@ -2253,17 +2271,29 @@ if(!empty($op)) {
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
 
+        							if($permmsion == 0 || $permmsion == 2){
         							// 2019/6/19新增 - 展開收回操作列表
-        							echo '<td style="text-align:center">
-	        							    <div>
-	        							      <button type="button" style="background-color:#E94653;" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp
-	        							      <button type="button" style="background-color:#6CBF87;border:#6CBF87" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
-	        							      <button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">下種</button>&nbsp;';
-        							if($permmsion == '系統管理員'){
-	        							// echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
-	        							// echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
+        								echo '<td style="text-align:center">
+	        							    <div>';
+	        							if(strpos($permmsion_option, "2") !== false || $permmsion == 0){										
+											echo '<button type="button" style="background-color:#E94653;" class="btn btn-danger btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">汰除</button>&nbsp';
+										}
+										if(strpos($permmsion_option, "5") !== false || $permmsion == 0){											
+											echo '<button type="button" style="background-color:#6CBF87;border:#6CBF87" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>&nbsp;';
+										}
+										
+	        							echo  '<button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">下種</button>&nbsp;';
+        								if($permmsion == 0 || strpos($permmsion_option, "3") !== false){
+	        								echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
+	        							}
+        								if($permmsion == 0){
+	        								echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
+	        							}
 	        						}
-	        						echo '<td><button type="button" class="btn btn-info btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+
+	        						if($permmsion == '0' || $permmsion == '3'){
+	        							echo '<td><button type="button" class="btn btn-info btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+	        						}
 
 	        						// echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
 	        						echo '

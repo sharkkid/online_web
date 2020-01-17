@@ -21,6 +21,9 @@ $permissions_mapping = array(
     7=>'<font color="#666666">其他</font>' 
 );
 
+$permmsion = $_SESSION['user']['jsuser_admin_permit'];
+$permmsion_option = $_SESSION['user']['jsuser_option'];
+
 
 
 $op=GetParam('op');
@@ -736,9 +739,11 @@ if(!empty($op)) {
         					// exit();
         					echo '<li>
 		        					<div class="am-panel am-panel-default col-sm-12" id="img_div">
-		        						<div class="am-panel-bd"">
-		        						<button style="float:left clear:both;" class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button>
-		        							<hr>
+		        						<div class="am-panel-bd"">';
+		        						if($permmsion == 0 || strpos($permmsion_option, "4") !== false){
+		        							echo '<button style="float:left clear:both;" class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button><hr>';
+		        						}
+		        							echo '
 		        							<div class="col-sm-6" id="imgbox" style="">
 		        								<img style="clear:both;" id="img_print" class="am-img-responsive thumbnail " src="'.$produce_image.'">
 		        							</div>

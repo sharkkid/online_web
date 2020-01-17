@@ -21,6 +21,8 @@ $permissions_mapping = array(
     7=>'<font color="#666666">其他</font>' 
 );
 
+$permmsion = $_SESSION['user']['jsuser_admin_permit'];
+
 $op=GetParam('op');
 if(!empty($op)) {
 	$ret_code = 1;
@@ -420,7 +422,9 @@ if(!empty($op)) {
         				<table class="table table-striped table-hover table-condensed tablesorter">
         					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 								<ul class="nav nav-pills pull-right toolbar">
-									<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新週期建立</button></li>
+									<?php if($permmsion == 0){ ?>
+										<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新週期建立</button></li>
+									<?php } ?>
 									<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" 		onclick="javascript:location.href='./plant_purchase_add.php'"><i class="glyphicon glyphicon-plus"></i> 		新品項建立</button></li> -->
 									<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" 		onclick="javascript:location.href='./plant_purchase_add.php'"></i> 返回苗種資料建立</button></li> -->
 								</ul>
@@ -430,7 +434,9 @@ if(!empty($op)) {
         							<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">原始尺寸</th>
         							<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">預計成長尺寸</th>
         							<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">週期(日)</th>
-        							<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">操作</th>
+        							<?php if($permmsion == 0){ ?>
+        								<th style="text-align: center;vertical-align: middle;font-size: 1.8rem;">操作</th>
+									<?php } ?>
         						</tr>
         					</thead>
         					<tbody>
@@ -448,9 +454,12 @@ if(!empty($op)) {
         										}
         										echo '<td style="text-align: center;vertical-align: middle;font-size: 1.8rem;">'.$row['onchba_tsize'].' 寸</td>';//預計成長尺寸
         										echo '<td style="text-align: center;vertical-align: middle;font-size: 1.8rem;">'.$row['onchba_cycle'].' 日</td>';//預計成長日
-        										echo '<td style="text-align: center;vertical-align: middle;">
+        										if($permmsion == 0){
+        											echo '<td style="text-align: center;vertical-align: middle;">
         												<button style="background-color:#FCD78B;border:#FCD78B;color:#642100" type="button" class="btn btn-primary btn-xs upd" data-onchba_sn="'.$row['onchba_sn'].'">修改</button>&nbsp;
-        												<button  style="background-color:#E94653;" type="button" class="btn btn-danger btn-xs del" data-onchba_sn="'.$row['onchba_sn'].'">移除</button>&nbsp;</td></tr>';
+        												<button  style="background-color:#E94653;" type="button" class="btn btn-danger btn-xs del" data-onchba_sn="'.$row['onchba_sn'].'">移除</button>&nbsp;</td>';
+        										}
+        										echo '</tr>';
         									}
 
         								}

@@ -23,6 +23,8 @@ $permissions_mapping = array(
 	8=>'<font color="#666666">瓶苗下種</font>' 
 );
 
+$permmsion = $_SESSION['user']['jsuser_admin_permit'];
+
 // printr(getQuantityForseller('W2005','天使angel  (TY262)'));
 // exit;
 
@@ -740,8 +742,10 @@ if(!empty($op)) {
 		<!-- <?php printr($data_list);?> -->
 		<div class="col-md-6" style="margin-bottom: 10px;clear:both;">
 			<ul class="nav nav-pills pull-right toolbar">
-				<li><button type="button" class="btn btn-primary btn-xs" onClick="upd_btn_click(<?php echo $data_list[0]['onproduct_sn'];?>)"><i class="glyphicon glyphicon-plus"></i>新增更多圖片</button></li>
-				<li><button type="button" class="btn btn-primary btn-xs upd1" <?php echo "data-onproduct_part_no=\"".$data_list[0]['onproduct_part_no']."\" data-onproduct_part_name=\"".$data_list[0]['onproduct_part_name']."\"" ;?>><i class="glyphicon glyphicon-plus" ></i>預計出貨資料</button></li>
+				<?php if($permmsion == 0 || $permmsion == 3){ ?>
+					<li><button type="button" class="btn btn-primary btn-xs" onClick="upd_btn_click(<?php echo $data_list[0]['onproduct_sn'];?>)"><i class="glyphicon glyphicon-plus"></i>新增更多圖片</button></li>
+					<li><button type="button" class="btn btn-primary btn-xs upd1" <?php echo "data-onproduct_part_no=\"".$data_list[0]['onproduct_part_no']."\" data-onproduct_part_name=\"".$data_list[0]['onproduct_part_name']."\"" ;?>><i class="glyphicon glyphicon-plus" ></i>預計出貨資料</button></li>
+				<?php } ?>
 			</ul>
 			<hr>
 			<table id="table_summary" class="table table-hover">
@@ -750,7 +754,9 @@ if(!empty($op)) {
 						<th style="text-align: center;">下種日期</th>
 						<th style="text-align: center;">目前尺寸</th>
 						<th style="text-align: center;">數量</th>
-						<th style="text-align: center;">操作</th>        						
+						<?php if($permmsion == 0){ ?>
+							<th style="text-align: center;">操作</th> 
+						<?php } ?>      						
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -760,7 +766,9 @@ if(!empty($op)) {
 							echo '<td style="vertical-align: middle;text-align: center;">'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
 							echo '<td style="vertical-align: middle;text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
 							echo '<td style="vertical-align: middle;text-align: center;">'.$eli_list[$i]['SUM(onadd_quantity)'].'</td>';
-							echo '<td style="vertical-align: middle;text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');"><button type="button" class="btn btn-xs btn-warning">汰除</button></a></td>';      
+							if($permmsion == 0){
+								echo '<td style="vertical-align: middle;text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');"><button type="button" class="btn btn-xs btn-warning">汰除</button></a></td>'; 
+							}     
 							echo '</tr>';  							
 						}
 					?>    
