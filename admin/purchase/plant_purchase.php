@@ -1495,9 +1495,9 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -1646,7 +1646,7 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">放置區<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -2025,9 +2025,9 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="dropdown_onadd_location" name="onadd_location" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -2295,6 +2295,7 @@ if(!empty($op)) {
         							// 	$onchba_cycle = $list_setting['onchba_cycle'];
         							// }
         							$list_setting = getSettingBySn($row['onadd_growing']);
+        							// printr($list_setting);
         							$onchba_cycle = $list_setting['onchba_cycle'];
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';//預計成熟日

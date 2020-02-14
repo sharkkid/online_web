@@ -867,49 +867,17 @@ function getWorkListByMonth() {
 	return $ret_data;
 }
 
-function getExpectedShipByMonth($year,$onadd_part_no) {
+function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
 	$year_start = strtotime($year."/1/1");
     $year_end = strtotime(($year)."/12/31");
-	$list_setting1 = getSettingBySn(1.7);
-	$list_setting2 = getSettingBySn(2.5);
-	$list_setting3 = getSettingBySn(2.8);
-	$list_setting4 = getSettingBySn(3.0);
-	$list_setting5 = getSettingBySn(3.5);
-	$list_setting6 = getSettingBySn(3.6);
-	$list_setting7 = getSettingBySn('其他');
-	$list_setting8 = getSettingBySn('瓶苗下種');
+	$list_setting = getSettingBySn($onadd_growing);
 	$ret_data = array();
 	$conn = getDB();
 	$sql="select onadd_planting_date,onadd_quantity,onadd_growing from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_planting_date and onadd_plant_st = 1";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			switch ($row['onadd_growing']) {
-        		case 1:
-        			$onchba_cycle = $list_setting1['onchba_cycle'];
-        			break;
-        		case 2:
-        			$onchba_cycle = $list_setting2['onchba_cycle'];
-        			break;
-        		case 3:
-        			$onchba_cycle = $list_setting3['onchba_cycle'];
-        			break;
-        		case 4:
-        			$onchba_cycle = $list_setting4['onchba_cycle'];
-        			break;
-        		case 5:
-        			$onchba_cycle = $list_setting5['onchba_cycle'];
-        			break;
-        		case 6:
-        			$onchba_cycle = $list_setting6['onchba_cycle'];
-        			break;
-        		case 7:
-        			$onchba_cycle = $list_setting8['onchba_cycle'];
-        			break;
-        		case 8:
-        			$onchba_cycle = $list_setting8['onchba_cycle'];
-        			break;
-        	}
+			$onchba_cycle = $list_setting['onchba_cycle'];
 
         	if($row['onadd_plant_st']==2){
         		$onchba_cycle=1;
@@ -917,16 +885,12 @@ function getExpectedShipByMonth($year,$onadd_part_no) {
         	}else{
         		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         	}
-
 			
         	if(strtotime($test) > $year_start && strtotime($test) < $year_end){
-        		// echo 'original date = '.$row['onadd_planting_date'].'('.date("Y/m/d",$row['onadd_planting_date']).'),';
-        		// echo strtotime("+$onchba_cycle days", $row['onadd_planting_date']).'('.date("Y/m/d",strtotime("+$onchba_cycle days", $row['onadd_planting_date'])).')<br>';
         		$row['month'] = date("m", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         		$row['count'] = $row['onadd_quantity'];
         		$ret_data[] = $row;
         	}
-        	// printr($ret_data);
 		}
 		$qresult->free();
 	}

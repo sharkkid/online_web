@@ -197,7 +197,7 @@ if(!empty($op)) {
 	$onadd_part_name = GetParam('onadd_part_name');
 	$onadd_growing = GetParam('onadd_growing');
 	$onadd_quantity_del = GetParam('onadd_quantity_del');
-	$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no);
+	$user_list = getExpectedShipByMonth($onadd_quantity_del,$onadd_part_no,$onadd_growing);
 	$business_data = getBusinessData($onadd_part_no,$onadd_quantity_del);
 	// printr($user_list);
 	// exit;

@@ -957,6 +957,10 @@ if(!empty($op)) {
 			});
 			//汰除-----------------------------------------------------------
 
+			$('button.keep').on('click', function(){
+				location.reload();
+			});
+
 			//修改-----------------------------------------------------------
 			$('button.upd3').on('click', function(){
 				$('#upd-modal3').modal();
@@ -1497,10 +1501,10 @@ if(!empty($op)) {
 										</div>
 									</div>	
 									<div class="form-group">
-										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">目前大小<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select class="form-control" name="onadd_cur_size" >
-												<option selected="selected" value="8">瓶苗下種</option>
+												<option selected="selected" value="8">瓶苗</option>
 											</select>
 										</div>
 									</div>
@@ -1705,9 +1709,9 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -1928,9 +1932,9 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">放置區</label>
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區&nbsp;<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="dropdown_onadd_location" name="onadd_location" placeholder="" >
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
@@ -2116,7 +2120,7 @@ if(!empty($op)) {
 						</div>
 
 						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" data-dismiss="modal">保留</button>
+							<button type="button" class="btn btn-primary keep" data-dismiss="modal">保留</button>
 							<button type="submit" class="btn btn-danger">汰除</button>
 						</div>
 					</form>
@@ -2192,6 +2196,7 @@ if(!empty($op)) {
 								<th style="text-align: center;">目前尺寸</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">預計成熟日</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">育成率</th> <!-- 2019/6/19新增 -->
+								<th style="text-align: center;">放置區</th> 
 								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">供應商</th>
 								<th style="text-align: center;">訂單客戶</th> <!-- 2019/6/19新增 -->						
@@ -2264,10 +2269,11 @@ if(!empty($op)) {
 	        						else{
 	        							$first_plant_amount = getProductFirstQty($row['onadd_newpot_sn']);//第一次下種時間
 	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
-	        						}		
+	        						}		        						
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>';        								
         							$note = (!empty($row['onadd_quantity_cha'])) ? '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">瓶苗下種</td>' : '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
         							echo $note;
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>';
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
 

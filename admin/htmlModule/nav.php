@@ -72,7 +72,7 @@
                             </ul>
                         </li>
 
-                        <li><a href="<?php echo WT_SERVER;?>/admin/index/index.php">"<i class="icon-bar-chart"></i> 統計圖表 </a></li>
+                        <li><a href="<?php echo WT_SERVER;?>/admin/index/index.php<?php echo "?year=".date("Y")."&day=".date("Y-m-d");?>">"<i class="icon-bar-chart"></i> 統計圖表 </a></li>
 
                         <li>
                             <a href="javascript: void(0);" aria-expanded="true" ><i class="icon-list"></i> 工作排程管理 <span class="fa arrow"></span></a>

@@ -372,7 +372,7 @@ function uploadFile($fileInfo, $allowExt = array('jpeg', 'jpg', 'gif', 'png'), $
     
     // 將檔案從臨時目錄移至指定目錄
     if (!@move_uploaded_file($fileInfo['tmp_name'], $destination))  // 如果移動檔案失敗
-        exit('檔案移動失敗');
+        exit('檔案移動失敗'.$uniName);
 
     return $destination;
 }
