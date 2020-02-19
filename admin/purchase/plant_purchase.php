@@ -38,6 +38,13 @@ if(!empty($op)) {
 		$onadd_location=GetParam('onadd_location');//放置區
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+
+		$onadd_cost_plant=GetParam('onadd_cost_plant');//苗株費用
+		$onadd_cost_cup=GetParam('onadd_cost_cup');//軟杯費用
+		$onadd_cost_grass=GetParam('onadd_cost_grass');//水草費用
+		$onadd_cost_labour=GetParam('onadd_cost_labour');//人工費用
+		$onadd_cost_month=GetParam('onadd_cost_month');//種植費用
+		
 		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
 		$onadd_growing=getTargetSize($DEVICE_SYSTEM[GetParam('onadd_cur_size')],$DEVICE_SYSTEM[GetParam('onadd_growing')]);//預計成長大小
 		$onadd_sellsize=GetParam('onadd_sellsize');//預計出貨尺寸

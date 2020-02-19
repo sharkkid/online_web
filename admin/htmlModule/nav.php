@@ -79,7 +79,6 @@
                             <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
                                 <li><a href="<?php echo WT_SERVER;?>/admin/schedule/plant_schedule.php?area=6a3f">每月待辦事項</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/schedule/plant_re_schedule.php?area=6a3f">每週工作事項</a></li>
-
                             </ul>
                         </li>
 
@@ -94,7 +93,15 @@
                                 </ul>
                             <?php } ?>
                         </li>
-                         <li><a href="<?php echo WT_SERVER;?>/admin/business/plant_business.php">"<i class="icon-map"></i> 成本管理 </a></li>
+                        <li>
+                            <a href="javascript: void(0);" aria-expanded="true" ><i class="icon-list"></i> 成本管理 <span class="fa arrow"></span></a>
+                            <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
+                                <li><a href="<?php echo WT_SERVER;?>/admin/cost/plant_cost.php">"<i class="icon-map"></i> 苗株成本總表 </a></li>
+                                <li><a href="<?php echo WT_SERVER;?>/admin/business/plant_business.php">"<i class="icon-map"></i> 成本細項 </a></li>
+                            </ul>
+                        </li>
+
+                        
                         <li class="nav-heading"><span style="color: #2e2e2e">管理員項目</span></li>
                         <!-- <li><a href="<?php echo WT_SERVER;?>/admin/sys/sys_user.php"><i class="icon-user"></i> 帳號管理</a></li> -->
                         <li>
