@@ -838,7 +838,7 @@ if(!empty($op)) {
 							        	document.getElementById('dropdown_onadd_color').value = (data.onproduct_color!= "") ? data.onproduct_color : "";
 							        	document.getElementById('dropdown_onadd_size').value = (data.onproduct_size != "") ? data.onproduct_size : "";
 							        	document.getElementById('dropdown_onadd_height').value = (data.onproduct_height != "") ? data.onproduct_height : "";
-							        	document.getElementById('dropdown_onadd_location').value = (data.onproduct_location != "") ? data.onproduct_location : "";
+							        	// document.getElementById('dropdown_onadd_location').value = (data.onproduct_location != "") ? data.onproduct_location : "";
 							        	document.getElementById('dropdown_onadd_pot_size').value = (data.onproduct_pot_size != "") ? data.onproduct_pot_size : "";
 							        	document.getElementById('dropdown_onadd_supplier').value = (data.onproduct_supplier != "") ? data.onproduct_supplier : "";
 							        	document.getElementById('dropdown_onadd_growing').value = data.onproduct_growing;
@@ -929,6 +929,7 @@ if(!empty($op)) {
 			success: function(ret) {
 			        if(ret.code==1) {
 			        	all_part_no = ret.data;	
+			        	console.log(all_part_no);
 			        	/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
 						autocomplete(document.getElementById('dropdown_onadd_part_no'), all_part_no[0]);
 

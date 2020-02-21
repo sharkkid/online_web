@@ -123,7 +123,7 @@ function getAllProductsNo() {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="select onproduct_part_no,onproduct_part_name from  onliine_product_data where onproduct_status>=0 and onproduct_plant_st = 1";
+	$sql="select onproduct_part_no,onproduct_part_name from  onliine_product_data where onproduct_status>=0";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {

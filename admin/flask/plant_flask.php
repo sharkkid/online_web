@@ -15,6 +15,7 @@ $DEVICE_SYSTEM = array(
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
+	0=>'<font color="#666666">瓶苗</font>',
     1=>'<font color="#666666">1.7</font>',
     2=>'<font color="#666666">2.5</font>',
     3=>'<font color="#666666">2.8</font>',
@@ -50,6 +51,7 @@ if(!empty($op)) {
 		$onadd_next_day=GetParam('onadd_next_day');//下階段(出貨/下種)天數
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
 		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//換盆年
+		$onadd_buy_price=GetParam('onadd_buy_price');//採購價格
 		$onadd_quantity_cha=$test;//換盆月
 		$onadd_status=GetParam('onadd_status');//狀態 1 啟用 0 刪除
 		$onproduct_pic_url=GetParam('onproduct_pic_url');//產品圖片
@@ -58,7 +60,7 @@ if(!empty($op)) {
 			$onproduct_pic_url = ".".$onproduct_pic_url;
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
-		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)||empty($onadd_next_day)){
+		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)){
 			$ret_msg = "*為必填！";
 		} else { 
 			if($IsUploadImg == "0"){
@@ -66,8 +68,8 @@ if(!empty($op)) {
 				$onadd_planting_date = str2time($onadd_planting_date);
 				$now = time();
 				$conn = getDB();
-					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_next_day) " .
-					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '2', '{$onadd_location}', '{$onadd_next_day}');";
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size, onadd_buy_price) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '2', '{$onadd_location}', '8', '{$onadd_buy_price}');";
 
 					$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st,onproduct_pic_url) " .
 					"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '2', '{$onproduct_pic_url}');";
@@ -98,8 +100,8 @@ if(!empty($op)) {
 				$onadd_planting_date = str2time($onadd_planting_date);
 				$now = time();
 				$conn = getDB();
-					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location) " .
-					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '2', '{$onadd_location}');";
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '2', '{$onadd_location}', '8');";
 
 					$sql2 = "UPDATE onliine_product_data SET onproduct_part_no = '{$onadd_part_no}', onproduct_part_name = '{$onadd_part_name}', onproduct_color = '{$onadd_color}', onproduct_size = '{$onadd_size}', onproduct_height = '{$onadd_height}', onproduct_pot_size = '{$onadd_pot_size}', onproduct_supplier = '{$onadd_supplier}', onproduct_growing = '{$onadd_growing}', onproduct_isbought = '{$onadd_isbought}',onproduct_pic_url = '{$onproduct_pic_url}' 
 					    WHERE onproduct_part_no like '{$onadd_part_no}' and onproduct_part_name like '{$onadd_part_name}';";
@@ -782,7 +784,7 @@ if(!empty($op)) {
 							        	document.getElementById('dropdown_onadd_color').value = (data.onproduct_color!= "") ? data.onproduct_color : "";
 							        	document.getElementById('dropdown_onadd_size').value = (data.onproduct_size != "") ? data.onproduct_size : "";
 							        	document.getElementById('dropdown_onadd_height').value = (data.onproduct_height != "") ? data.onproduct_height : "";
-							        	document.getElementById('dropdown_onadd_location').value = (data.onproduct_location != "") ? data.onproduct_location : "";
+							        	$('#add_form input[name=dropdown_onadd_location]').val(data.onproduct_location);
 							        	document.getElementById('dropdown_onadd_pot_size').value = (data.onproduct_pot_size != "") ? data.onproduct_pot_size : "";
 							        	document.getElementById('dropdown_onadd_supplier').value = (data.onproduct_supplier != "") ? data.onproduct_supplier : "";
 							        	document.getElementById('dropdown_onadd_growing').value = data.onproduct_growing;
@@ -1047,6 +1049,8 @@ if(!empty($op)) {
 			                	$('#upd3_form input[name=onadd_location_old]').val(d.onadd_location);
 			                	$('#upd3_form [name=onadd_growing] option[value='+d.onadd_growing+']').prop('selected','selected','selected','selected','selected','selected','selected');			                	
 			                	$('#upd3_form [name=onadd_status] option[value='+d.onadd_status+']').prop('selected','selected');
+			                	$('#upd3_form [name=onadd_cur_size] option[value='+d.onadd_cur_size+']').prop('selected','selected');
+			                	
 			                }
 			            },
 			            error: function (xhr, ajaxOptions, thrownError) {
@@ -2141,12 +2145,19 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">採購數量(單棵)<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_buy_price" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<!-- <div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">下階段(下種/出貨) 天數<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_next_day" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
-									</div>
+									</div> -->
 									<div class="form-group" style="display: none">
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -2318,11 +2329,12 @@ if(!empty($op)) {
 								<th style="text-align: center;">品名</th>
 								<th style="text-align: center;">下種日期</th>
 								<th style="text-align: center;">下種數量</th>
-								<th style="text-align: center;">目前尺寸</th> <!-- 2019/6/19新增 -->
+								<!-- <th style="text-align: center;">目前尺寸</th> -->
+								<th style="text-align: center;">下階段尺寸</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">預計成熟日</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">育成率</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">放置區</th> 
-								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
+								<!-- <th style="text-align: center;">備註</th> --> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">供應商</th>
 								<!--<th style="text-align: center;">訂單客戶</th>  2019/6/19新增 -->						
 								<?php 
@@ -2345,23 +2357,25 @@ if(!empty($op)) {
 								echo '<tr>';
 									if($row['onadd_isbought'] == 0){
 										if($row['onadd_newpot_sn'] == 0){
-	        								// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
-	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
-	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+											if($row['onadd_ml'] == 0){
+												echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
+	        									$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+											}
+											else{
+	        									echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_ml'].'</td>';//產品編號
+	        									$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
+	        								}
 	        							}
 	        							else{
-	        								// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
 	        								echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</td>';//產品編號
 	        								$qr_sn = date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 	        							}
 									}else{
 										if($row['onadd_newpot_sn'] == 0){
-											// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</a></td>';//產品編號
 											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'].'</td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_sn'];
 										}
 										else{
-											// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"><a href="javascript:void(0);" onclick="history(\''.$row['onadd_part_no'].'\',\''.$row['onadd_part_name'].'\',\''.$row['onadd_newpot_sn'].'\')">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</a></td>';//產品編號
 											echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'].'</td>';//產品編號
 											$qr_sn = "P".date('Y',$row['onadd_planting_date']).'-'.$row['onadd_newpot_sn'];
 										}
@@ -2370,7 +2384,8 @@ if(!empty($op)) {
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//數量
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
+        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_cur_size']].'</td>';//目前尺寸
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';//下階段尺寸
         							//預計成熟日
         							$cur_size = $GLOBAL['DEVICE_SYSTEM'][$row['onadd_cur_size']];
         							$growing_size = $GLOBAL['DEVICE_SYSTEM'][$row['onadd_growing']];
@@ -2397,9 +2412,9 @@ if(!empty($op)) {
 	        							$incubation_rate = getProductAllNowQty($row['onadd_newpot_sn'])/$first_plant_amount;
 	        						}		        						
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>';        								
-        							$note = (!empty($row['onadd_quantity_cha'])) ? '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">瓶苗下種</td>' : '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
+        							// $note = (!empty($row['onadd_quantity_cha'])) ? '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">瓶苗下種</td>' : '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>';
-        							echo $note;        							
+        							// echo $note;        							
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
         							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
 

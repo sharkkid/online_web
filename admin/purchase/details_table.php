@@ -467,7 +467,7 @@ if(!empty($op)) {
 						    <input type="hidden" name="MAX_FILE_SIZE" value="2097152">
 						    <input type="hidden" id="onproduct_sn" name="onproduct_sn" value="">
 						    <input type="hidden" id="onproduct_type" name="onproduct_type" value="2">
-						    <input type="hidden" id="parameters" name="parameters" value="<?php echo "details_table.php?onadd_part_no=".GetParam('onadd_part_no')."&onadd_growing=".GetParam('onadd_growing').'&onadd_quantity_del='.GetParam('onadd_quantity_del'); ?>">
+						    <input type="hidden" id="parameters" name="parameters" value="<?php echo "details_table.php?onadd_part_no=".GetParam('onadd_part_no')."&onadd_growing=".GetParam('onadd_growing').'&onadd_quantity_del='.GetParam('onadd_quantity_del').'&onadd_part_name='.GetParam('onadd_part_name'); ?>">
 						    <!-- accept 限制上傳檔案類型 -->
 						    <input type="file" name="myFile" accept="image/jpeg,image/jpg,image/gif,image/png">
 
