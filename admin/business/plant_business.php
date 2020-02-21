@@ -192,6 +192,8 @@ if(!empty($op)) {
 	exit;
 } else {
 	$cost_table = get_CostTable();
+	// printr($cost_table);
+	// exit;
 }
 ?>
 <!DOCTYPE html>

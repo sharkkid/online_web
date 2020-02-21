@@ -1216,6 +1216,7 @@ if(!empty($op)) {
 					var onproduct_pic_url = {name:"onproduct_pic_url",value:$('#img_newName').html().substring(1,$('#img_newName').html().length)};
 					param.push(onproduct_pic_url);
 					console.log(param);
+
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
 
@@ -1234,43 +1235,49 @@ if(!empty($op)) {
 					 			if(ret.msg != '下種成功！'){
 					 				alert_msg(ret.msg);
 					 			}	
-					 			else{				 			
-					 				bootbox.confirm("下種成功！庫存剩餘數量是否汰除？", function(result) {
-										if(result) {											
-											$('#eli-modal1').modal();
-											$.ajax({
-												url: './plant_flask.php',
-												type: 'post',
-												dataType: 'json',
-												data: {op:"get", onadd_sn:param[1]['value']},
-												beforeSend: function(msg) {
-													$("#ajax_loading").show();
-												},
-												complete: function(XMLHttpRequest, textStatus) {
-													$("#ajax_loading").hide();
-												},
-												success: function(ret) {
-			        							        console.log(ret);
-			        							        if(ret.code==1) {
-			        							        	var d = ret.data;			        							        	
-			        							        	$('#eli_form1 input[name=onadd_sn]').val(d.onadd_sn);
-			        							        	$('#eli_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
-			        							        	$('#eli_form1 input[name=onadd_part_name]').val(d.onadd_part_name);
-			        							        	$('#eli_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
-			        							        	// $('#eli_form1 input[name=onadd_quantity_del]').val((d.onadd_quantity-d.onadd_quantity));
-			        							        	
-			        							        }
-			        							    },
-			        							    error: function (xhr, ajaxOptions, thrownError) {
-		            							    	// console.log('ajax error');
-		            							        // console.log(xhr);
-		            							    }
-		            							});
-										}
-										else{
-											alert_msg(ret.msg);
-										}
-									});
+					 			else{	
+					 				console.log((param[12]['value'] - param[14]['value']));
+					 				if((param[12]['value'] - param[14]['value']) != 0){		 			
+						 				bootbox.confirm("下種成功！庫存剩餘數量是否汰除？", function(result) {
+											if(result) {											
+												$('#eli-modal1').modal();
+												$.ajax({
+													url: './plant_flask.php',
+													type: 'post',
+													dataType: 'json',
+													data: {op:"get", onadd_sn:param[1]['value']},
+													beforeSend: function(msg) {
+														$("#ajax_loading").show();
+													},
+													complete: function(XMLHttpRequest, textStatus) {
+														$("#ajax_loading").hide();
+													},
+													success: function(ret) {
+				        							        console.log(ret);
+				        							        if(ret.code==1) {
+				        							        	var d = ret.data;			        							        	
+				        							        	$('#eli_form1 input[name=onadd_sn]').val(d.onadd_sn);
+				        							        	$('#eli_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
+				        							        	$('#eli_form1 input[name=onadd_part_name]').val(d.onadd_part_name);
+				        							        	$('#eli_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
+				        							        	// $('#eli_form1 input[name=onadd_quantity_del]').val((d.onadd_quantity-d.onadd_quantity));
+				        							        	
+				        							        }
+				        							    },
+				        							    error: function (xhr, ajaxOptions, thrownError) {
+			            							    	// console.log('ajax error');
+			            							        // console.log(xhr);
+			            							    }
+			            							});
+											}
+											else{
+												alert_msg(ret.msg);
+											}
+										});
+						 			}
+						 			else{
+						 				alert_msg(ret.msg);
+						 			}
 					 			}
 					 		},
 					 		error: function (xhr, ajaxOptions, thrownError) {
@@ -1574,11 +1581,11 @@ if(!empty($op)) {
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>	
-									<div class="form-group">
+									<div class="form-group" style="display: none;">
 										<label class="col-sm-2 control-label">目前大小<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select class="form-control" name="onadd_cur_size" >
-												<option selected="selected" value="8">瓶苗</option>
+												<option selected="selected" value="1">1.7</option>
 											</select>
 										</div>
 									</div>
@@ -1591,8 +1598,8 @@ if(!empty($op)) {
 												<option value="5">3.5</option>
 												<option value="4">3.0</option>
 												<option value="3">2.8</option>
-												<option value="2">2.5</option>
-												<option selected="selected" value="1">1.7</option>
+												<option selected="selected" value="2">2.5</option>
+												<option value="1">1.7</option>
 											</select>
 										</div>
 									</div>

@@ -108,7 +108,11 @@ if(!empty($op)) {
 
 					if($conn->query($sql)) {
 						$onadd_id = mysqli_insert_id($conn);						
-							$conn->query($sql2);
+							if(IsProductExit($onadd_part_no,$onadd_part_name)=="0"){
+								$conn->query($sql2);
+							}else{
+								
+							}
 							$sql3 = "INSERT INTO `onliine_firstplant_data`(`onfp_add_date`, `onfp_plant_date`, `jsuser_sn`, `onfp_plant_amount`,`onfp_part_no`,onadd_sn) VALUES ('{$now}', '{$onadd_planting_date}','{$jsuser_sn}','{$onadd_quantity}','{$onadd_part_no}','{$onadd_id}');";
 							if($conn->query($sql3)){
 								$ret_msg = "新增成功！";
@@ -1218,43 +1222,6 @@ if(!empty($op)) {
 				 '<?php echo WT_SERVER;?>/admin/purchase/test.php'+data,
 				  '_blank' // <- This is what makes it open in a new window.
 				);
-				// $('#qr_modal').modal();
-				// var onadd_sn = $('#temp_onadd_sn').val();
-				// $.ajax({
-				// 	url: './plant_purchase.php',
-				// 	type: 'post',
-				// 	dataType: 'json',
-				// 	data: {op:"download", onadd_sn:onadd_sn},
-				// 	beforeSend: function(msg) {
-				// 		$("#ajax_loading").show();
-				// 	},
-				// 	complete: function(XMLHttpRequest, textStatus) {
-				// 		$("#ajax_loading").hide();
-				// 	},
-				// 	success: function(ret) {
-			 //                console.log(onadd_sn);
-			 //                if(ret.code==1) {
-			 //                	$('#qr_sticker_img').removeAttr("src");
-			 //                	$('#qr_sticker_img').attr("src",ret.data['img_url']);
-				// 				$('#qr_sticker_sn').html($('#qr_sn').html());
-				// 				$('#qr_sticker_part_no').html($('#qr_part_no').html());
-				// 				$('#qr_sticker_part_name').html($('#qr_part_name').html());
-				// 				$('#qr_sticker_date').html($('#qr_plant_date').html());
-				// 				$('#qr_sticker_location').html($('#qr_location').html());
-				// 				$('#qr_sticker_qrcode').attr("src",($('#qr_img').attr("src")));
-			 //                	PrintElem('qr_sticker');
-
-			 //                	setTimeout(
-				// 				    function() {		
-				// 				    	document.getElementById('qr_sticker').setAttribute("style", "width: 410px; height: 720px;display:none;");
-				// 				    }, 500);			                	
-			 //                }
-			 //            },
-			 //            error: function (xhr, ajaxOptions, thrownError) {
-		  //               	// console.log('ajax error');
-		  //                   // console.log(xhr);
-		  //               }
-		  //           });
 			});
 
 			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd3_form').validator().on('submit', function(e) {
@@ -1264,7 +1231,7 @@ if(!empty($op)) {
 					var param = $(this).serializeArray();
 					var onproduct_pic_url = {name:"onproduct_pic_url",value:$('#img_newName').html().substring(1,$('#img_newName').html().length)};
 					param.push(onproduct_pic_url);
-					console.log(param);
+					// console.log(param);
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
 					 	$.ajax({
@@ -2357,8 +2324,13 @@ if(!empty($op)) {
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
-        							if(!empty($permissions_mapping[$row['onadd_cur_size']])){
-	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
+        							if(!empty($permissions_mapping[$row['onadd_cur_size']])){        								
+        								if($row['onadd_cur_size'] == 8){//瓶苗下種
+											echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_cur_size']].'</td>';
+        								}
+										else{
+	        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_cur_size']].'寸'.'</td>';
+										}
 	        						}
 	        						else{
 	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
@@ -2452,9 +2424,9 @@ if(!empty($op)) {
 	        							echo '<span >
 	        							      	<button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>
 	        							      </span>';        							
-	        							if($permmsion == 0 || $permmsion == 0){
-	        								echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
-	        							}
+	        							// if($permmsion == 0 || $permmsion == 0){
+	        							// 	echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
+	        							// }
 	        							
 	        							echo '<span > </span><span ><button type="button" class="btn btn-default btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'"><span style="font-size:2em;color:#000000" class="glyphicon glyphicon-qrcode"></span></button>';
 	        							

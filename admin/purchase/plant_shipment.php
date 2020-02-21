@@ -9,7 +9,8 @@ $DEVICE_SYSTEM = array(
 		4=>"3.0",
 		5=>"3.5",
 		6=>"3.6",
-		7=>"其他"
+		7=>"其他",
+		8=>"瓶苗下種"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -79,7 +80,11 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$user_list = getUser($search_where, $pg_offset, $pg_rows);
-	$User_forExcel = getUser_forExcel($search_where, $pg_offset, $pg_rows);
+	// printr($user_list);
+	// exit;
+	$User_forExcel = getUser_forExcel($search_where);
+	// printr($User_forExcel);
+	// exit;
 	if($export_error==1) {
         ob_end_clean(); //  避免亂碼
         header("Content-Type:text/html; charset=utf-8");
@@ -98,16 +103,17 @@ if(!empty($op)) {
     // 塞值
         $n = 3;
         for($i=0;$i<count($User_forExcel);$i++){
-            $sheet->setCellValue('A'.($n+$i), date('Y',$user_list[$i]['onshda_add_date']).'-'.$user_list[$i]['onadd_sn']);//產品編號
-            $sheet->setCellValue('B'.($n+$i), $user_list[$i]['onadd_part_no']);//品號
-            $sheet->setCellValue('C'.($n+$i), $user_list[$i]['onadd_part_name']);//品名
-            $sheet->setCellValue('D'.($n+$i), date('Y-m-d',$user_list[$i]['onshda_add_date']));//出貨日期
-            $sheet->setCellValue('E'.($n+$i), $user_list[$i]['onshda_quantity']);//出貨數量
-            $sheet->setCellValue('F'.($n+$i), $user_list[$i]['onshda_price']);//出貨單價
-            $sheet->setCellValue('G'.($n+$i), $user_list[$i]['onshda_price']*$user_list[$i]['onshda_quantity']);//總收入
-            $sheet->setCellValue('H'.($n+$i), $user_list[$i]['oncoda_cost']+($user_list[$i]['onadd_cost_month']*$user_list[$i]['date_month']));//總成本
-            $sheet->setCellValue('I'.($n+$i), $user_list[$i]['onshda_price']*$user_list[$i]['onshda_quantity']-($user_list[$i]['oncoda_cost']+($user_list[$i]['onadd_cost_month']*$user_list[$i]['date_month'])));//毛利
-            $sheet->setCellValue('J'.($n+$i), $user_list[$i]['onshda_client']);//客戶
+            $sheet->setCellValue('A'.($n+$i), date('Y',$User_forExcel[$i]['onshda_add_date']).'-'.$User_forExcel[$i]['onadd_sn']);//產品編號
+            $sheet->setCellValue('B'.($n+$i), $User_forExcel[$i]['onadd_part_no']);//品名
+            $sheet->setCellValue('C'.($n+$i), $User_forExcel[$i]['onadd_part_name']);//品號
+            $sheet->setCellValue('D'.($n+$i), $DEVICE_SYSTEM[$User_forExcel[$i]['onadd_cur_size']]);//目前尺寸
+            $sheet->setCellValue('E'.($n+$i), date('Y-m-d',$User_forExcel[$i]['onshda_add_date']));//出貨日期
+            $sheet->setCellValue('F'.($n+$i), $User_forExcel[$i]['onshda_quantity']);//出貨數量
+            $sheet->setCellValue('G'.($n+$i), $User_forExcel[$i]['onshda_price']);//出貨單價
+            $sheet->setCellValue('H'.($n+$i), $User_forExcel[$i]['onshda_price']*$User_forExcel[$i]['onshda_quantity']);//總收入
+            $sheet->setCellValue('I'.($n+$i), $User_forExcel[$i]['oncoda_cost']+($User_forExcel[$i]['onadd_cost_month']*$User_forExcel[$i]['date_month']));//總成本
+            $sheet->setCellValue('J'.($n+$i), $User_forExcel[$i]['onshda_price']*$User_forExcel[$i]['onshda_quantity']-($User_forExcel[$i]['oncoda_cost']+($User_forExcel[$i]['onadd_cost_month']*$User_forExcel[$i]['date_month'])));//毛利
+            $sheet->setCellValue('K'.($n+$i), $User_forExcel[$i]['onshda_client']);//客戶
         }
 
 

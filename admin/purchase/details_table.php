@@ -661,6 +661,7 @@ if(!empty($op)) {
 						<ol class="carousel-indicators">
 							<?php							
 							$pics = getPic($data_list[0]['onproduct_sn']);
+							// printr(count($pics));
 							for($i=0;$i<count($pics);$i++){
 								if($i==0)
 									echo '<li data-target="#carousel-example-generic" data-slide-to="'.$i.'" class="active"></li>';
@@ -685,8 +686,25 @@ if(!empty($op)) {
 										}
 									}
 								}
-								else
-									echo "<img class='img-rounded' style='text-align:center;' src='images/nopic.png' >";
+								else{
+									if($pics > 0){
+										for($i=1;$i<count($pics);$i++){
+											if($i==1){												
+												echo '<div class="item active">';
+													echo "<img class='img-rounded' src='".$pics[$i]['onpic_img_path']."'>";
+												echo '</div>';
+											}
+											else{
+												echo '<div class="item">';
+													echo "<img class='img-rounded' src='".$pics[$i]['onpic_img_path']."'>";
+												echo '</div>';
+											}
+										}
+									}
+									else{
+										echo "<img class='img-rounded' style='text-align:center;' src='images/nopic.png' >";
+									}
+								}
 							?>
 							
 						</div>
@@ -765,6 +783,7 @@ if(!empty($op)) {
 			<table id="table_summary" class="table table-hover">
 				<thead style="font-size: 1.3em">
 					<tr>
+						<th style="text-align: center;">產品批號</th>
 						<th style="text-align: center;">下種日期</th>
 						<th style="text-align: center;">目前尺寸</th>
 						<th style="text-align: center;">數量</th>
@@ -777,6 +796,35 @@ if(!empty($op)) {
 					<?php
 						for($i=0;$i<count($eli_list);$i++){
 							echo '<tr>';
+							if($eli_list[$i]['onadd_isbought'] == 0){
+								if($eli_list[$i]['onadd_newpot_sn'] == 0){
+									if($eli_list[$i]['onadd_ml'] == 0){
+										echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date(	'Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_sn'].'</td>';//產品編號
+	        							$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_sn'];
+									}else{											
+	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date(	'Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_ml'].'</td>';//產品編號
+	        							$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_ml'];
+	        						}
+	        					}
+	        					else{
+	        						echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_newpot_sn'].'</td>';//產品編號
+	        						$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_newpot_sn'];
+	        					}
+							}else{
+								if($eli_list[$i]['onadd_newpot_sn'] == 0){
+									if($eli_list[$i]['onadd_ml'] == 0){
+										echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date(	'Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_sn'].'</td>';//產品編號
+	        							$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_sn'];
+									}else{											
+	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date(	'Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_ml'].'</td>';//產品編號
+	        							$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_ml'];
+	        						}
+								}
+								else{
+									echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_newpot_sn'].'</td>';//產品編號
+									$qr_sn = "P".date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_newpot_sn'];
+								}
+							}
 							echo '<td style="vertical-align: middle;text-align: center;">'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
 							// if($eli_list[$i]['onadd_cur_size'] == 0 || $eli_list[$i]['onadd_cur_size'] == 8)
 							// 	echo '<td style="vertical-align: middle;text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'</td>';

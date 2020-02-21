@@ -60,7 +60,7 @@
                                 <li><a href="<?php echo WT_SERVER;?>/admin/flask/plant_flask.php">瓶苗資料管理</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_elimination.php">汰除統計報表</a></li>
                                 <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_shipment.php">出貨統計報表</a></li>
-                                <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details1234.php">品種資料</a></li>                                 
+                                <!-- <li><a href="<?php echo WT_SERVER;?>/admin/purchase/plant_purchase_details1234.php">品種資料</a></li>                                  -->
                             </ul>
                         </li>
                         <li>
@@ -96,7 +96,7 @@
                         <li>
                             <a href="javascript: void(0);" aria-expanded="true" ><i class="icon-list"></i> 成本管理 <span class="fa arrow"></span></a>
                             <ul class="nav-second-level nav" aria-expanded="true" style="background-color: #f7efd8">
-                                <li><a href="<?php echo WT_SERVER;?>/admin/cost/plant_cost.php">"<i class="icon-map"></i> 苗株成本總表 </a></li>
+                                <!-- <li><a href="<?php echo WT_SERVER;?>/admin/cost/plant_cost.php">"<i class="icon-map"></i> 苗株成本總表 </a></li> -->
                                 <li><a href="<?php echo WT_SERVER;?>/admin/business/plant_business.php">"<i class="icon-map"></i> 成本細項 </a></li>
                             </ul>
                         </li>

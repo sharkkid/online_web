@@ -17,30 +17,40 @@ function getUser($where='', $offset=30, $rows=0) {
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
-		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where a.onshda_status = 1 and b.onadd_status =1 GROUP by a.onadd_sn desc limit $offset, $rows";
+	 	$sql="select * from online_shipment_data a where onshda_status>=0 order by onshda_add_date desc, onshda_sn desc limit $offset, $rows";
 	else
-		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where a.onshda_status = 1 and b.onadd_status =1 and ( $where ) GROUP by a.onadd_sn desc limit $offset, $rows";
+	 	$sql="select * from online_shipment_data a where onshda_status>=0 and ( $where ) order by onshda_add_date desc, onshda_sn desc limit $offset, $rows";
+
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
-		while($row = $qresult->fetch_assoc()) {
-			$sql_getdata = "select distinct onproduct_isbought from onliine_product_data where onproduct_status>=0 and onproduct_part_no like '".$row['onadd_part_no']."'";
-			$qresult2 = $conn->query($sql_getdata);
-			
-			$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];
-			$ret_data[] = $row;
-		}
+	 	while($row = $qresult->fetch_assoc()) {
+	  		$sql_getdata = "select distinct onproduct_isbought from onliine_product_data where onproduct_status>=0 and onproduct_part_no like '".$row['onadd_part_no']."'";
+	  		$qresult2 = $conn->query($sql_getdata);
+	  
+	  		$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];
+	  		$ret_data[] = $row;
+	 	}
 	}
 	$conn->close();
 	return $ret_data;
 }
 
-function getUser_forExcel($where='', $offset=30, $rows=0) {
+function getUser_forExcel($where='') {
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
-		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where a.onshda_status = 1 and b.onadd_status =1 GROUP by a.onadd_sn desc limit $offset, $rows";
+		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month 
+			FROM `online_shipment_data` a 
+			left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn
+			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
+			where a.onshda_status = 1 and b.onadd_status = 1 GROUP by a.onadd_sn desc";
 	else
-		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where a.onshda_status = 1 and b.onadd_status =1 and ( $where ) GROUP by a.onadd_sn desc limit $offset, $rows";
+		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month 
+			FROM `online_shipment_data` a 
+			left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn
+			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
+			where a.onshda_status = 1 and b.onadd_status = 1 and ( $where ) GROUP by a.onadd_sn desc";
+
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
@@ -50,28 +60,59 @@ function getUser_forExcel($where='', $offset=30, $rows=0) {
 			$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];
 			$ret_data[] = $row;
 		}
-	}
-	$conn->close();
-	return $ret_data;
-}
+	}	
 
-function getUserQty($where='') {
-	$conn = getDB();
 	if(empty($where))
-		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where a.onshda_status = 1 and b.onadd_status =1 GROUP by a.onadd_sn";
+		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month 
+			FROM `online_shipment_data` a 
+			left join `onliine_add_data` b on a.onadd_sn = b.onadd_newpot_sn
+			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
+			where a.onshda_status = 1 GROUP by a.onadd_sn desc";
 	else
-		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where a.onshda_status = 1 and b.onadd_status =1 and ( $where ) GROUP by a.onadd_sn";
+		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month 
+			FROM `online_shipment_data` a 
+			left join `onliine_add_data` b on a.onadd_sn = b.onadd_newpot_sn
+			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
+			where a.onshda_status = 1 and ( $where ) GROUP by a.onadd_sn desc";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$ret_data[] = $row;
+			$sql_getdata = "select distinct onproduct_isbought from onliine_product_data where onproduct_status>=0 and onproduct_part_no like '".$row['onadd_part_no']."'";
+			$qresult2 = $conn->query($sql_getdata);
+			
+			$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];
+			$ret_data2[] = $row;
 		}
-		$qresult->free();
 	}
-	$ret_data = count($ret_data);
+
+	$data = array_merge($ret_data, $ret_data2);
+	// printr($data);
+	
 	$conn->close();
-	return $ret_data;
+	return $data;
+}
+
+function getUserQty($where='') {
+	$ret_data = array();
+	$conn = getDB();
+	if(empty($where))
+	 	$sql="select * from online_shipment_data a where onshda_status>=0 order by onshda_add_date desc, onshda_sn desc";
+	else
+	 	$sql="select * from online_shipment_data a where onshda_status>=0 and ( $where ) order by onshda_add_date desc, onshda_sn desc";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+	 	while($row = $qresult->fetch_assoc()) {
+	  		$sql_getdata = "select distinct onproduct_isbought from onliine_product_data where onproduct_status>=0 and onproduct_part_no like '".$row['onadd_part_no']."'";
+	  		$qresult2 = $conn->query($sql_getdata);
+	  
+	  		$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];
+	  		$ret_data[] = $row;
+	 	}
+	}
+	$conn->close();
+	return count($ret_data);
 }
 
 function getUserBySn($onshda_sn) {
