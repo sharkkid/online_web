@@ -36,35 +36,35 @@ if(!empty($op)) {
 } else {
 	// search
 	if(($onadd_part_no = GetParam('onadd_part_no'))) {
-		$search_where[] = "onadd_part_no like '%{$onadd_part_no}%'";
+		$search_where[] = "a.onadd_part_no like '%{$onadd_part_no}%'";
 		$search_query_string['onadd_part_no'] = $onadd_part_no;
 	}
 
 	if(($onadd_part_name = GetParam('onadd_part_name'))) {
-		$search_where[] = "onadd_part_name like '%{$onadd_part_name}%'";
+		$search_where[] = "a.onadd_part_name like '%{$onadd_part_name}%'";
 		$search_query_string['onadd_part_name'] = $onadd_part_name;
 	}
 
 	if(($start = GetParam('start',""))) {
 		$start_c = str2time($start ." 00:00");
-		$search_where[] = "onshda_add_date>={$start_c}";
+		$search_where[] = "a.onshda_add_date>={$start_c}";
 		$search_query_string['start'] = $start;
 	} else {
 		$start_c = time() - 30 * 86400;
 		$start = date('Y-m-d 00:00', $start_c);
-		$search_where[] = "onshda_add_date>={$start_c}";
+		$search_where[] = "a.onshda_add_date>={$start_c}";
 		$search_query_string['start'] = $start;
 		$start = date('Y-m-d', $start_c);
 	}
 
 	if(($end = GetParam('end',""))) {
 		$end_c = str2time($end ." 23:59");
-		$search_where[] = "onshda_add_date<={$end_c}";
+		$search_where[] = "a.onshda_add_date<={$end_c}";
 		$search_query_string['end'] = $end;
 	} else {
 		$end_c = time();
 		$end = date("Y-m-d 23:59", $end_c);
-		$search_where[] = "onshda_add_date<={$end_c}";
+		$search_where[] = "a.onshda_add_date<={$end_c}";
 		$search_query_string['end'] = $end;
 		$end = date("Y-m-d", $end_c);
 	}
@@ -79,7 +79,7 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$user_list = getUser($search_where, $pg_offset, $pg_rows);
-
+	$User_forExcel = getUser_forExcel($search_where, $pg_offset, $pg_rows);
 	if($export_error==1) {
         ob_end_clean(); //  避免亂碼
         header("Content-Type:text/html; charset=utf-8");
@@ -91,27 +91,24 @@ if(!empty($op)) {
 
         if(!file_exists($inputfilename)) exceptions("查無Excel巡檢表");
         $originalexcel = PHPExcel_IOFactory::load($inputfilename);
-
         // init data
         $add_date = date('Y/m/d H:i:s');
         $sheetname = 'data';
-
         $sheet = $originalexcel->getSheetByName($sheetname);
-        printr($user_list);
-        exit;
     // 塞值
-        $n = 2;
-        for($i=0;$i<count($user_list);$i++){
-            $sheet->setCellValue('A'.($n+$i), date('Y',$user_list[$i]['onshda_add_date']).'-'.$user_list[$i]['onshda_sn']);//產品編號
+        $n = 3;
+        for($i=0;$i<count($User_forExcel);$i++){
+            $sheet->setCellValue('A'.($n+$i), date('Y',$user_list[$i]['onshda_add_date']).'-'.$user_list[$i]['onadd_sn']);//產品編號
             $sheet->setCellValue('B'.($n+$i), $user_list[$i]['onadd_part_no']);//品號
             $sheet->setCellValue('C'.($n+$i), $user_list[$i]['onadd_part_name']);//品名
             $sheet->setCellValue('D'.($n+$i), date('Y-m-d',$user_list[$i]['onshda_add_date']));//出貨日期
             $sheet->setCellValue('E'.($n+$i), $user_list[$i]['onshda_quantity']);//出貨數量
-            $sheet->setCellValue('E'.($n+$i), $user_list[$i]['onshda_price']);//出貨單價
+            $sheet->setCellValue('F'.($n+$i), $user_list[$i]['onshda_price']);//出貨單價
+            $sheet->setCellValue('G'.($n+$i), $user_list[$i]['onshda_price']*$user_list[$i]['onshda_quantity']);//總收入
+            $sheet->setCellValue('H'.($n+$i), $user_list[$i]['oncoda_cost']+($user_list[$i]['onadd_cost_month']*$user_list[$i]['date_month']));//總成本
+            $sheet->setCellValue('I'.($n+$i), $user_list[$i]['onshda_price']*$user_list[$i]['onshda_quantity']-($user_list[$i]['oncoda_cost']+($user_list[$i]['onadd_cost_month']*$user_list[$i]['date_month'])));//毛利
             $sheet->setCellValue('J'.($n+$i), $user_list[$i]['onshda_client']);//客戶
         }
-
-        $sheet->setTitle('出貨報表');
 
 
     // 產生檔案
@@ -363,7 +360,9 @@ if(!empty($op)) {
 				});
 
 				$('button.export_excel').on('click', function(){
-            	    window.open("plant_shipment.php?export_error=1");
+            	    window.open("plant_shipment.php?export_error=1&start="+
+            	    	<?PHP echo '"'.GetParam('start')."&end=".GetParam('end')."&onadd_part_no=".GetParam('onadd_part_no')."&onadd_part_name=".GetParam('onadd_part_name').'"';
+            	    	?>);
 	
             	});
 		});

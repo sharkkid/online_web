@@ -61,13 +61,12 @@ if(!empty($op)) {
 		case 'add_detail':
 		$oncost_sn=GetParam('oncost_sn');//成本種類
 		$oncoda_name=GetParam('oncoda_name');//成本名稱
-		$oncoda_cost_size =GetParam('oncoda_cost_size');//盆栽大小
-		$oncoda_unit=GetParam('oncoda_unit');//單位
+		$oncoda_cost_size =GetParam('oncoda_cost_size');//盆栽大小		
 		$oncoda_num=GetParam('oncoda_num');//成本說明
 		$oncoda_cost=GetParam('oncoda_cost');//成本金額
 
 		$conn = getDB();
-		$sql = "INSERT INTO `online_cost_data`(`oncost_sn`,`oncoda_status`, `oncoda_name`, `oncoda_unit`, `oncoda_cost_size`, `oncoda_cost`, `oncoda_num`) VALUES ('{$oncost_sn}','1','{$oncoda_name}','{$oncoda_unit}','{$oncoda_cost_size}','{$oncoda_cost}','{$oncoda_num}')";
+		$sql = "INSERT INTO `online_cost_data`(`oncost_sn`,`oncoda_status`, `oncoda_name`, `oncoda_cost_size`, `oncoda_cost`, `oncoda_num`) VALUES ('{$oncost_sn}','1','{$oncoda_name}','{$oncoda_cost_size}','{$oncoda_cost}','{$oncoda_num}')";
 
 		if($conn->query($sql)) {
 			$ret_msg = "新增成功！";
@@ -80,12 +79,11 @@ if(!empty($op)) {
 		case 'upd_detail':
 		$oncoda_sn=GetParam('oncoda_sn');//成本種類
 		$oncoda_name=GetParam('oncoda_name');//成本名稱
-		$oncoda_unit=GetParam('oncoda_unit');//單位
 		$oncoda_num=GetParam('oncoda_num');//成本說明
 		$oncoda_cost=GetParam('oncoda_cost');//成本金額
 
 		$conn = getDB();
-		$sql = "UPDATE `online_cost_data` SET `oncoda_name`= '{$oncoda_name}',`oncoda_unit`= '{$oncoda_unit}',`oncoda_cost`= '{$oncoda_cost}',`oncoda_num`= '{$oncoda_num}' WHERE oncoda_sn = {$oncoda_sn}";
+		$sql = "UPDATE `online_cost_data` SET `oncoda_name`= '{$oncoda_name}',`oncoda_cost`= '{$oncoda_cost}',`oncoda_num`= '{$oncoda_num}' WHERE oncoda_sn = {$oncoda_sn}";
 
 		if($conn->query($sql)) {
 			$ret_msg = "更新成功！";
@@ -346,7 +344,6 @@ if(!empty($op)) {
 			                if(ret.code==1) {
 			                	var d = ret.data;
 			                	$('#upd_detail_form1 input[name=oncoda_sn]').val(d.oncoda_sn);
-			                	$('#upd_detail_form1 input[name=oncoda_unit]').val(d.oncoda_unit);
 			                	$('#upd_detail_form1 input[name=oncoda_name]').val(d.oncoda_name);
 			                	$('#upd_detail_form1 input[name=oncoda_cost_size ]').val(d.oncoda_cost_size );
 			                	$('#upd_detail_form1 input[name=oncoda_num]').val(d.oncoda_num);
@@ -559,13 +556,13 @@ if(!empty($op)) {
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-									<div class="form-group">
+									<!-- <div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">單位<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="oncoda_unit" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
-									</div>	
+									</div>	 -->
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">數量<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -613,13 +610,13 @@ if(!empty($op)) {
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-									<div class="form-group">
+									<!-- <div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">單位<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="oncoda_unit" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
-									</div>	
+									</div>	 -->
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">數量<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -716,12 +713,7 @@ if(!empty($op)) {
 							<!-- content -->
 							<table class="table table-striped table-hover table-condensed tablesorter" style="font-size: 1.5rem">
 								<thead>
-									<tr style="font-size: 1.3em">	
-										<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">項目</th>
-										<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">單位</th>
-										<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">成本金額</th>
-										<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">操作</th>
-									</tr>
+									<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;"></th>
 								</thead>
 								<tbody >
 									<?PHP foreach ($DEVICE_SYSTEM as $key => $val) { 
@@ -739,15 +731,18 @@ if(!empty($op)) {
 													</td>
 												</tr>	
 										<?PHP } ?>
-										
+										<tr style="font-size: 1.3em">	
+											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">項目</th>
+											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">成本金額</th>
+											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">操作</th>
+										</tr>
 									<?php 
 									
 											foreach ($cost_detail as $key2 => $value2) {									
 									?>									
 											<tr style="font-size: 1.1em;">
 												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo $value2['oncoda_name']; ?></td>
-												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo $value2['oncoda_num'].$value2['oncoda_unit']; ?></td> 
-												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo number_format($value2['oncoda_cost'])." NT"; ?></td>
+												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo number_format($value2['oncoda_cost'],1)." NT"; ?></td>
 												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">
 													<button type="button" class="btn btn-primary btn-xs upd_detail" data-oncoda_sn="<?php echo $value2['oncoda_sn'];?>" data-oncost_sn="<?php echo $value['oncost_sn'];?>" style="background-color:#A46B62;border:#A46B62">修改</button>
 													<button type="button" class="btn btn-danger btn-xs del" data-oncoda_sn="<?php echo $value2['oncoda_sn'];?>" data-oncost_sn="<?php echo $value['oncost_sn'];?>" style="background-color:#E94653;">刪除</button>
