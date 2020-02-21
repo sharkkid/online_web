@@ -70,10 +70,11 @@ if(!empty($op)) {
 
 		case 'delay':
 			$onadd_sn=GetParam('onadd_sn');
+			$onadd_delay_reason=GetParam('onadd_delay_reason');
 			$ret_data = array();
 			if(!empty($onadd_sn)){
 				$conn = getDB();
-				$sql = "UPDATE onliine_add_data SET onadd_schedule = '2' WHERE onadd_sn='{$onadd_sn}'";
+				$sql = "UPDATE onliine_add_data SET onadd_schedule = '3', onadd_delay_reason = '{$onadd_delay_reason}' WHERE onadd_sn='{$onadd_sn}'";
 				if($conn->query($sql)){
 					$ret_code = 1;
 				$ret_msg = "延後成功!";
@@ -412,33 +413,16 @@ if(!empty($op)) {
 				locale: "zh_TW",
 			});
 
+
+			//延後-----------------------------------------------------------
 			$('button.delay').on('click', function(){
+				$('#delay-modal').modal();
+				$('#delay_form')[0].reset();				
 				var onadd_sn = $(this).data('onadd_sn');
-				bootbox.confirm("確認延後？", function(result) {
-					if(result) {
-						$.ajax({
-							url: './plant_re_schedule.php',
-							type: 'post',
-							dataType: 'json',
-							data: {op:"delay", onadd_sn:onadd_sn},
-							beforeSend: function(msg) {
-								$("#ajax_loading").show();
-							},
-							complete: function(XMLHttpRequest, textStatus) {
-								$("#ajax_loading").hide();
-							},
-							success: function(ret) {
-								alert_msg(ret.msg);
-							},
-							error: function (xhr, ajaxOptions, thrownError) {
-						        	// console.log('ajax error');
-						        }
-						});
-					}
-				});
+				$('#delay_form input[name=onadd_sn]').val(onadd_sn);			
 			});
 
-			$('#add_form, #upd_form, #upd_form1, #upd_form2').validator().on('submit', function(e) {
+			$('#add_form, #upd_form, #upd_form1, #upd_form2, #delay_form').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
 					e.preventDefault();
 					var param = $(this).serializeArray();
@@ -468,7 +452,7 @@ if(!empty($op)) {
 			                 }
 			             });
 					 }
-					});
+				});
 
 
 		        $('button.cancel').on('click', function() {
@@ -638,6 +622,41 @@ if(!empty($op)) {
 			</div>
 		</div>
 
+		<!-- modal -->
+		<div id="delay-modal" class="modal delay-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="delay_form" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title" id="schedule_title">工作排程延後設定</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="delay">
+									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_newpot_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">延後原因<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_delay_reason" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">確認延後</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
 		<!-- container -->
 		<div class="container-fluid">
 			<div class="row">
@@ -698,32 +717,16 @@ if(!empty($op)) {
 									} 	
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_part_name'].'</td>';//品名  	
-        							if($row['onadd_plant_st']==2){
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.''.'</td>';
-        							}else{						
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
-        							}
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_quantity'].'</td>';//品名
-        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
-        							if($row['onadd_growing']==1){
-        								$list_setting = getSettingBySn(1.7);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}else if($row['onadd_growing']==2){
-        								$list_setting = getSettingBySn(2.5);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}else if($row['onadd_growing']==5){
-        								$list_setting = getSettingBySn(3.5);
-        								$onchba_cycle = $list_setting['onchba_cycle'];
-        							}
-        							if($row['onadd_plant_st']==2){
-        								$onchba_cycle=1;
-        								$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							}else{
-        								$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							}
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.date('Y/m/d',$row['onadd_planting_date']).'</td>';        							
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_quantity'].'</td>';//數量
+
+        							$cur_size = $GLOBAL['DEVICE_SYSTEM'][$row['onadd_cur_size']];
+        							$growing_size = $GLOBAL['DEVICE_SYSTEM'][$row['onadd_growing']];
+        							$onchba_cycle = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
+        							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
+        							
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$test.'</td>';
-        							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
-        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$onadd_cycle.'月'.'</td>';
+
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_supplier'].'</td>';//品名
         								if($permmsion == 0){ 
         									echo '<td style="text-align: center;">

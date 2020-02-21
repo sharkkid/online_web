@@ -1,6 +1,7 @@
 <?php
 include_once(dirname(__FILE__).'/../config.php');
 $onchba_cycle = '0';
+
 function dateFormat($ctime, $format='Y-m-d H:i:s') {
 	$now = time();
 	if($now > $ctime) {
@@ -93,14 +94,18 @@ function getUser($where='', $offset=30, $rows=0) {
 }
 
 function getWorkListByMonth($where='', $offset=30, $rows=0) {
-	$list_setting1 = getSettingBySn('1.7');
-	$list_setting2 = getSettingBySn('2.5');
-	$list_setting3 = getSettingBySn('2.8');
-	$list_setting4 = getSettingBySn('3.0');
-	$list_setting5 = getSettingBySn('3.5');	
-	$list_setting6 = getSettingBySn('3.6');
-	$list_setting7 = getSettingBySn('其他');
-	$list_setting8 = getSettingBySn('瓶苗下種');
+	$DEVICE_SYSTEM = array(
+		0=>"其它",
+		1=>"1.7",
+		2=>"2.5",
+		3=>"2.8",
+		4=>"3.0",
+		5=>"3.5",
+		6=>"3.6",
+		7=>"其他",
+		8=>"瓶苗下種"
+			// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
+	);
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
@@ -111,34 +116,11 @@ function getWorkListByMonth($where='', $offset=30, $rows=0) {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			switch ($row['onadd_growing']) {
-        		case '1':
-        			$GLOBALS['onchba_cycle'] = $list_setting1['onchba_cycle'];
-        			break;
-        		case '2':
-        			$GLOBALS['onchba_cycle'] = $list_setting2['onchba_cycle'];
-        			break;
-        		case '3':
-        			$GLOBALS['onchba_cycle'] = $list_setting3['onchba_cycle'];
-        			break;
-        		case '4':
-        			$GLOBALS['onchba_cycle'] = $list_setting4['onchba_cycle'];
-        			break;
-        		case '5':        			
-        			$GLOBALS['onchba_cycle'] = $list_setting5['onchba_cycle'];
-        			break;
-        		case '6':
-        			$GLOBALS['onchba_cycle'] = $list_setting6['onchba_cycle'];
-        			break;
-        		case '7':
-        			$GLOBALS['onchba_cycle'] = $list_setting7['onchba_cycle'];
-        			break;
-        		case '8':
-        			$GLOBALS['onchba_cycle'] = $list_setting8['onchba_cycle'];
-        			break;
-        	}
-        	$row['onchba_cycle'] = $GLOBALS['onchba_cycle'];
-        	$test = date("Y/m/d", strtotime("+".$GLOBALS['onchba_cycle']." days", $row['onadd_planting_date']));
+			$cur_size = $DEVICE_SYSTEM[$row['onadd_cur_size']];
+			$growing_size = $DEVICE_SYSTEM[$row['onadd_growing']];
+			$row['onchba_cycle'] = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
+
+        	$test = date("Y/m/d", strtotime("+".$row['onchba_cycle']." days", $row['onadd_planting_date']));
         	$o_y = date('Y',strtotime($test));        	
         	$c_y = date('Y');
         	$o_m = date('m',strtotime($test));
@@ -157,13 +139,13 @@ function getWorkListByMonth($where='', $offset=30, $rows=0) {
 					$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
         			$row['expected_date'] = date('Y/m/d',strtotime($test));
 					$ret_data[] = $row;
-        		}        		
+        		} 
         	}
-        	// $ret_data[] = $row;
 		}
 		$qresult->free();
 	}
 	$conn->close();
+
 	return $ret_data;
 }
 
@@ -187,15 +169,19 @@ function getUseradd($where='', $offset=30, $rows=0) {
 }
 
 function getUserQty($where='') {
-	$list_setting1 = getSettingBySn('1.7');
-	$list_setting2 = getSettingBySn('2.5');
-	$list_setting3 = getSettingBySn('2.8');
-	$list_setting4 = getSettingBySn('3.5');
-	$list_setting5 = getSettingBySn('3.0');
-	$list_setting6 = getSettingBySn('3.5');
-	$list_setting7 = getSettingBySn('3.6');
-	$list_setting7 = getSettingBySn('瓶苗下種');
-	$ret_data = 0;
+	$DEVICE_SYSTEM = array(
+		0=>"其它",
+		1=>"1.7",
+		2=>"2.5",
+		3=>"2.8",
+		4=>"3.0",
+		5=>"3.5",
+		6=>"3.6",
+		7=>"其他",
+		8=>"瓶苗下種"
+			// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
+	);
+	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
@@ -205,38 +191,11 @@ function getUserQty($where='') {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			switch ($row['onadd_growing']) {
-        		case 1:
-        			$onchba_cycle = $list_setting1['onchba_cycle'];
-        			break;
-        		case 2:
-        			$onchba_cycle = $list_setting2['onchba_cycle'];
-        			break;
-        		case 3:
-        			$onchba_cycle = $list_setting5['onchba_cycle'];
-        			break;
-        		case 4:
-        			$onchba_cycle = $list_setting1['onchba_cycle'];
-        			break;
-        		case 5:
-        			$onchba_cycle = $list_setting2['onchba_cycle'];
-        			break;
-        		case 6:
-        			$onchba_cycle = $list_setting5['onchba_cycle'];
-        			break;
-        		case 7:
-        			$onchba_cycle = $list_setting5['onchba_cycle'];
-        			break;
-        		case 8:
-        			$onchba_cycle = $list_setting5['onchba_cycle'];
-        			break;
-        	}
-        	// echo $onchba_cycle.",";
-        	if($row['onadd_plant_st']==2){
-        		$test = date("Y/m/d", strtotime("+".$onchba_cycle." days", $row['onadd_planting_date']));
-        	}else{
-        		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        	}
+			$cur_size = $DEVICE_SYSTEM[$row['onadd_cur_size']];
+			$growing_size = $DEVICE_SYSTEM[$row['onadd_growing']];
+			$row['onchba_cycle'] = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
+
+			$test = date("Y/m/d", strtotime("+".$row['onchba_cycle']." days", $row['onadd_planting_date']));
         	$o_y = date('Y',strtotime($test));        	
         	$c_y = date('Y');
         	$o_m = date('m',strtotime($test));
@@ -288,11 +247,10 @@ function getUserBySn($onadd_sn) {
 	$conn->close();
 	return $ret_data;
 }
-function getSettingBySn($onchba_size) {
+function getSettingBySn($onchba_size,$onchba_tsize) {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from online_change_basin where onchba_size like '{$onchba_size}'";
-	// echo $sql;
+	$sql="select * from online_change_basin where onchba_size like '{$onchba_size}' and onchba_tsize like '{$onchba_tsize}'";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		if ($row = $qresult->fetch_assoc()) {

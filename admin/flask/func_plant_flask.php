@@ -335,11 +335,11 @@ function getUserBySn($onadd_sn) {
 	$conn->close();
 	return $ret_data;
 }
-function getSettingBySn($onchba_size) {
+
+function getSettingBySn($onchba_size,$onchba_tsize) {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from online_change_basin where onchba_size='{$onchba_size}'";
-
+	$sql="select * from online_change_basin where onchba_size like '{$onchba_size}' and onchba_tsize like '{$onchba_tsize}'";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		if ($row = $qresult->fetch_assoc()) {
@@ -627,7 +627,7 @@ function getEliQtyBySn($onadd_sn) {
 function getProductAllNowQty($onadd_sn) {
 	$ret_data = 0;
 	$conn = getDB();	
-	$sql="select SUM(onadd_quantity) as now_total from onliine_add_data where onadd_status>=1 and onadd_sn like '$onadd_sn' or onadd_newpot_sn like '$onadd_sn'";
+	$sql="select SUM(onadd_quantity) as now_total from onliine_add_data where onadd_status>=1 and onadd_sn like '$onadd_sn' or onadd_newpot_sn like '$onadd_sn'  or onadd_ml like '$onadd_sn'";
 	$sql2="select SUM(onshda_quantity) as ship_total from online_shipment_data where onshda_status>=1 and onadd_sn like '$onadd_sn'";
 	// echo $sql;
 	$qresult = $conn->query($sql);

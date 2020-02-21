@@ -749,15 +749,15 @@ if(!empty($op)) {
 		        							</div>
 		        							<div class="col-sm-6" id="img_data" style="text-align: center;">
 			        							<span style="font-size:1.5em;">
-				        							<a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del=2019&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'">'.$AllProductData[$i]['onproduct_part_name'].
+				        							<a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del='.date('Y').'&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'">'.$AllProductData[$i]['onproduct_part_name'].
 				        							'</a>
 			        							</span>
 			        							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
 		        							';
-		        							// printr($AllProductData);
+		        							// printr($product_size_n);
 		        								for($n=0;$n<6;$n++){
 		        									if($product_size_n[$n]['onadd_growing'] != null){
-		        										echo '<span style="font-size:1em;text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_growing']].'寸：'.$product_size_n[$n]['sum'].' 株';
+		        										echo '<span style="font-size:1em;text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_cur_size']].'寸：'.$product_size_n[$n]['sum'].' 株';
 		        									}	        									
 		        								}
 		        								if($AllProductData[$i]['onproduct_color'] != '')

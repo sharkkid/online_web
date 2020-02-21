@@ -1,17 +1,6 @@
 <?php
 include_once("./func_plant_purchase.php");
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
-$DEVICE_SYSTEM = array(
-	1=>"1.7",
-	2=>"2.5",
-	3=>"2.8",
-	4=>"3.0",
-	5=>"3.5",
-	6=>"3.6",
-	7=>"其他",
-	8=>"瓶苗下種"
-		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
-);
 $permissions_mapping = array(
 	1=>'<font color="#666666">1.7</font>',
 	2=>'<font color="#666666">2.5</font>',
@@ -217,7 +206,7 @@ if(!empty($op)) {
 	// page
 	$pg_page = GetParam('pg_page', 1);
 	$pg_rows = 20;
-	$pg_total = GetParam('pg_total')=='' ? getUserQty($search_where) : GetParam('pg_total');
+	$pg_total = GetParam('pg_total')=='' ? count(getUserQty($search_where)) : GetParam('pg_total');
 	$pg_offset = $pg_rows * ($pg_page - 1);
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
@@ -843,6 +832,7 @@ if(!empty($op)) {
 								<th style="text-align: center;">下階段換盆</th>
 								<!-- <th style="text-align: center;">總下種週期</th>       							 -->
 								<th style="text-align: center;">供應商</th>
+								<th style="text-align: center;">延後原因</th>
 								<?php if($permmsion == 0){ ?>
 									<th style="text-align: center;">操作</th>
 								<?php } ?>
@@ -863,17 +853,22 @@ if(!empty($op)) {
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
         							if($row['onadd_plant_st']==2){
-        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.''.'</td>';
+        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_planting_date'].'</td>';
         							}else{						
-        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',str2time($row['onadd_planting_date'])).'</td>';
+        								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_planting_date'].'</td>';
         							}
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['expected_date'].'</td>';
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$onadd_cycle.'月'.'</td>';
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';//品名
+        							if($row['onadd_schedule'] == 3){
+        								echo '<td style="vertical-align: middle;text-align: center;">'.$row['onadd_delay_reason'].'</td>';
+        							}else{
+        								echo '<td style="vertical-align: middle;text-align: center;">尚未延後</td>';
+        							}
         							if($permmsion == 0){
-        								echo '<td style="vertical-align: middle;text-align: center;"><button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button>&nbsp;';
+        								echo '<td style="vertical-align: middle;text-align: center;"><button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button></td>';
         							}
         							// if($row['onadd_schedule']=='2'){        							
         							// }else{

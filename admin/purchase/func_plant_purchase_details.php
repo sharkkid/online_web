@@ -381,7 +381,7 @@ function getSizeQtyBySn($onadd_part_no,$onadd_part_name) {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="SELECT Sum(onadd_quantity) as sum,onadd_growing FROM `onliine_add_data` WHERE onadd_part_no = '{$onadd_part_no}' and onadd_part_name = '{$onadd_part_name}' and onadd_status >= 1 and onadd_plant_st = 1 group by onadd_growing order by onadd_growing";
+	$sql="SELECT *,Sum(onadd_quantity) as sum FROM `onliine_add_data` WHERE onadd_part_no = '{$onadd_part_no}' and onadd_part_name = '{$onadd_part_name}' and onadd_status >= 1 and onadd_plant_st = 1 and onadd_cur_size not in(0,8) group by onadd_growing order by onadd_growing";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {

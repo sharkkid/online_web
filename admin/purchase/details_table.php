@@ -13,6 +13,7 @@ $DEVICE_SYSTEM = array(
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
+	0=>'<font color="#666666">瓶苗</font>',
 	1=>'<font color="#666666">1.7</font>',
 	2=>'<font color="#666666">2.5</font>',
 	3=>'<font color="#666666">2.8</font>',
@@ -74,13 +75,14 @@ if(!empty($op)) {
 		$onbuda_date = strtotime (GetParam('onbuda_date'));
 		$onbuda_client = GetParam('onbuda_client');
 		$onbuda_seller = GetParam('onbuda_seller');
+		$onbuda_sell_price = GetParam('onbuda_sell_price');
 		$onbuda_year = substr(GetParam('onbuda_date'),0,4);
 		$onbuda_month = substr(GetParam('onbuda_date'),5,-3);
 		$now = time();
 		$conn = getDB();
 
-		$sql = "INSERT INTO `onliine_business_data`(`onbuda_add_date`, `onbuda_mod_date`, `onbuda_status`, `onbuda_part_no`, `onbuda_part_name`, `onbuda_date`, `onbuda_quantity`, `onbuda_size`, `onbuda_client`, `onbuda_year`, `onbuda_day`, onbuda_seller) ".
-			"VALUES('{$now}', '{$now}', '1','{$onbuda_part_no}','{$onbuda_part_name}','{$onbuda_date}','{$onbuda_quantity}','{$onbuda_size}','{$onbuda_client}','{$onbuda_year}','{$onbuda_month}','{$onbuda_seller}');";
+		$sql = "INSERT INTO `onliine_business_data`(`onbuda_add_date`, `onbuda_mod_date`, `onbuda_status`, `onbuda_part_no`, `onbuda_part_name`, `onbuda_date`, `onbuda_quantity`, `onbuda_size`, `onbuda_client`, `onbuda_year`, `onbuda_day`, onbuda_seller, onbuda_sell_price) ".
+			"VALUES('{$now}', '{$now}', '1','{$onbuda_part_no}','{$onbuda_part_name}','{$onbuda_date}','{$onbuda_quantity}','{$onbuda_size}','{$onbuda_client}','{$onbuda_year}','{$onbuda_month}','{$onbuda_seller}', '{$onbuda_sell_price}');";
 		if($conn->query($sql)) {
 			$ret_msg = "完成！";
 		} else {
@@ -237,7 +239,8 @@ if(!empty($op)) {
 	<link href="./../../css1/style.css" rel="stylesheet">
 	<?php include('./../htmlModule/head.php');?>
 	<script src="./../../lib/jquery.twbsPagination.min.js"></script>
-	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+    <script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-TW.js" charset="UTF-8"></script>
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
 	<script type="text/javascript">
 		//汰除-----------------------------------------------------------
@@ -280,6 +283,10 @@ if(!empty($op)) {
 			};
 			//汰除-----------------------------------------------------------
 		$(document).ready(function() {
+			$('#carousel-example-generic').carousel({
+			    interval: false
+			});
+
 			<?php
 					//	init search parm
 			// print "$('#search [name=onadd_status] option[value={$onadd_status}]').prop('selected','selected');";
@@ -389,10 +396,10 @@ if(!empty($op)) {
 					$("#ajax_loading").hide();
 				},
 				success: function(ret) {
-					$('#month_customers_cotent').html('<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨尺寸</label><label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label></div></div>');
+					$('#month_customers_cotent').html('<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">客戶名稱</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨數量</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨日期</label><label for="addModalInput1" class="col-sm-2 control-label">預計出貨尺寸</label><label for="addModalInput1" class="col-sm-2 control-label">該筆新增日期</label><label for="addModalInput1" class="col-sm-2 control-label">售出價格</label></div></div>');
 					$.each(ret.data, function(key,value){	
 						if(key < ret.data.length){										
-							$('#month_customers_cotent').html($('#month_customers_cotent').html()+'<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_client+'</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_quantity+'</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_date+'</label></label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_size+'吋</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_add_date+'</label></div></div>');								
+							$('#month_customers_cotent').html($('#month_customers_cotent').html()+'<div class="col-md-12"><div class="col-sm-10"><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_client+'</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_quantity+'</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_date+'</label></label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_size+'吋</label><label for="addModalInput1" class="col-sm-2 control-label">'+value.onbuda_add_date+'</label><label for="addModalInput1" class="col-sm-2 control-label">$'+value.onbuda_sell_price+'</label></div></div>');								
 						}
 
 					});
@@ -622,7 +629,14 @@ if(!empty($op)) {
 											<input type="text" class="form-control" id="addModalInput1" name="onbuda_seller" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
-									</div>  								
+									</div>  
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">銷售價格(單棵)<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onbuda_sell_price" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>  							
 								</div>
 							</div>
 						</div>
@@ -754,9 +768,9 @@ if(!empty($op)) {
 						<th style="text-align: center;">下種日期</th>
 						<th style="text-align: center;">目前尺寸</th>
 						<th style="text-align: center;">數量</th>
-						<?php if($permmsion == 0){ ?>
+						<!-- <?php if($permmsion == 0){ ?>
 							<th style="text-align: center;">操作</th> 
-						<?php } ?>      						
+						<?php } ?>   -->    						
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -764,11 +778,14 @@ if(!empty($op)) {
 						for($i=0;$i<count($eli_list);$i++){
 							echo '<tr>';
 							echo '<td style="vertical-align: middle;text-align: center;">'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
+							// if($eli_list[$i]['onadd_cur_size'] == 0 || $eli_list[$i]['onadd_cur_size'] == 8)
+							// 	echo '<td style="vertical-align: middle;text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'</td>';
+							// else
 							echo '<td style="vertical-align: middle;text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
 							echo '<td style="vertical-align: middle;text-align: center;">'.$eli_list[$i]['SUM(onadd_quantity)'].'</td>';
-							if($permmsion == 0){
-								echo '<td style="vertical-align: middle;text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');"><button type="button" class="btn btn-xs btn-warning">汰除</button></a></td>'; 
-							}     
+							// if($permmsion == 0){
+							// 	echo '<td style="vertical-align: middle;text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');"><button type="button" class="btn btn-xs btn-warning">汰除</button></a></td>'; 
+							// }     
 							echo '</tr>';  							
 						}
 					?>    
@@ -791,7 +808,7 @@ if(!empty($op)) {
 						$font_size = '';
 						// echo GetParam('onadd_quantity_del');
 						for($i=0;$i<5;$i++){
-							$n = (2019+$i);
+							$n = ((date('Y')-1)+$i);
 							if($n == GetParam('onadd_quantity_del')){
 								echo '<li class="active"><a style="color:#000000;">'.$n.'</a></li>';
 							}
