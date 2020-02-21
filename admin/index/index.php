@@ -521,45 +521,12 @@ $op=GetParam('op');
 			<div class="col-md-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						預留區
+						栽培區
 					</div>
 					<div class="panel-body">
-						<div class="scrollDiv">
-							<ul class="sidebar-list projects-list">                           
-								<table class="table">
-								  <thead>
-								    <tr>
-								      <th scope="col">位置</th>
-								      <th scope="col">尺寸</th>
-								      <th scope="col">目前數量</th>
-								    </tr>
-								  </thead>
-								  <tbody>
-								  	<?php 
-								  		for($i=0;$i<count($TotalQty);$i++){
-								  			for($j=1;$j<=6;$j++){
-								  				if($j==1){
-										  			echo "<tr>";
-										  				echo "<td>".$TotalQty[$i]['location']."</td>";
-										  				echo "<td>".$size_mapping[$j]."</td>";
-										  				echo "<td><a href=\"".WT_SERVER."/admin/purchase/plant_purchase.php?onadd_part_no=&onadd_part_name=&onadd_location=".$TotalQty[$i]['location']."\">".$TotalQty[$i][$j]."</a></td>";
-										  			echo "</tr>";
-										  		}
-										  		else{
-										  			echo "<tr>";
-										  				echo "<td></td>";
-										  				echo "<td>".$size_mapping[$j]."</td>";
-										  				echo "<td><a href=\"".WT_SERVER."/admin/purchase/plant_purchase.php?onadd_part_no=&onadd_part_name=&onadd_location=".$TotalQty[$i]['location']."\">".$TotalQty[$i][$j]."</a></td>";
-										  			echo "</tr>";
-										  		}
-									  		}
-								  		}
-
-								  	?>								    
-								  </tbody>
-								</table>
-							</ul>
-						</div>
+						<a href="./../map/map.php?area=0001"  target="_blank">
+							<img style="width: 100%;height: 100%;object-fit:cover;" src="./../../uploads/map/img/0001-1.jpg">
+						</a>
 					</div>
 				</div>
 			</div>

@@ -372,10 +372,10 @@ function get_CostTable() {
 	$conn->close();
 	return $ret_data;
 }
-function get_CostDetail($oncost_sn) {
+function get_CostDetail($oncost_sn,$oncoda_cost_size) {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from online_cost_data where oncoda_status = 1 and oncost_sn = {$oncost_sn}";
+	$sql="select * from online_cost_data where oncoda_status = 1 and oncost_sn = {$oncost_sn} and oncoda_cost_size = $oncoda_cost_size";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {

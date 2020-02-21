@@ -97,8 +97,8 @@ if(!empty($op)) {
         $sheetname = 'data';
 
         $sheet = $originalexcel->getSheetByName($sheetname);
-        // printr($user_list);
-        // exit;
+        printr($user_list);
+        exit;
     // 塞值
         $n = 2;
         for($i=0;$i<count($user_list);$i++){
@@ -107,7 +107,8 @@ if(!empty($op)) {
             $sheet->setCellValue('C'.($n+$i), $user_list[$i]['onadd_part_name']);//品名
             $sheet->setCellValue('D'.($n+$i), date('Y-m-d',$user_list[$i]['onshda_add_date']));//出貨日期
             $sheet->setCellValue('E'.($n+$i), $user_list[$i]['onshda_quantity']);//出貨數量
-            $sheet->setCellValue('F'.($n+$i), $user_list[$i]['onshda_client']);//客戶
+            $sheet->setCellValue('E'.($n+$i), $user_list[$i]['onshda_price']);//出貨單價
+            $sheet->setCellValue('J'.($n+$i), $user_list[$i]['onshda_client']);//客戶
         }
 
         $sheet->setTitle('出貨報表');
@@ -417,7 +418,7 @@ if(!empty($op)) {
 
         								<button type="submit" class="btn btn-info" op="search">搜尋</button>
         								<div class="form-group">
-                                            <button type="submit" class="btn btn-info export_excel">匯出汰除報表</button>
+                                            <button type="submit" class="btn btn-info export_excel">匯出出貨報表</button>
                                         </div>
         							</div>
         						</div>
