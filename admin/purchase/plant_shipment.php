@@ -432,7 +432,8 @@ if(!empty($op)) {
         							<th style="text-align: center;">品號</th>
         							<th style="text-align: center;">品名</th>
         							<th style="text-align: center;">出貨日期</th>
-        							<th style="text-align: center;">出貨數量</th>     							
+        							<th style="text-align: center;">出貨數量</th>     
+        							<th style="text-align: center;">價格(單棵)</th>							
         							<th style="text-align: center;">客戶</th>
         						</tr>
         					</thead>
@@ -449,8 +450,9 @@ if(!empty($op)) {
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onshda_add_date']).'</td>';
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onshda_quantity'].'</td>';//品名
-        							echo '<td style="text-align: center;">'.$row['onshda_client'].'</td>';//品名
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onshda_quantity'].'</td>';//出貨數量
+        							echo '<td style="text-align: center;">'.$row['onshda_price'].'</td>';//出貨價格(單棵)
+        							echo '<td style="text-align: center;">'.$row['onshda_client'].'</td>';//出貨對象
         							echo '</td></tr>';
         						}
         						?>

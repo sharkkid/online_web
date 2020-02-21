@@ -8,7 +8,8 @@ $DEVICE_SYSTEM = array(
 		4=>"3.0",
 		5=>"3.5",
 		6=>"3.6",
-		7=>"其他"
+		7=>"其他",
+		8=>"瓶苗下種"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -18,7 +19,8 @@ $permissions_mapping = array(
     4=>'<font color="#666666">3.0</font>',
     5=>'<font color="#666666">3.5</font>',
     6=>'<font color="#666666">3.6</font>',
-    7=>'<font color="#666666">其他</font>' 
+    7=>'<font color="#666666">其他</font>',
+    8=>'<font color="#666666">瓶苗下種</font>' 
 );
 
 $permmsion = $_SESSION['user']['jsuser_admin_permit'];
@@ -179,6 +181,17 @@ if(!empty($op)) {
 	<script src="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
 	<link rel="stylesheet" href="./../../lib/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
 	<script type="text/javascript">
+		function setDropdownReadOnly(controlName, state) {
+	        var ddl = document.getElementById(controlName);
+
+	        for (i = 0; i < ddl.length; i++) {
+	            if (i == ddl.selectedIndex)
+	                ddl[i].disabled = false;
+	            else
+	                ddl[i].disabled = state;
+	        }
+	    }
+
 		$(document).ready(function() {
 			<?php
 					//	init search parm
@@ -215,6 +228,15 @@ if(!empty($op)) {
 		                    // console.log(xhr);
 		                }
 		            });
+			});
+
+			$('#dropdown_onadd_cur_size').change(function(e) {
+				if($('#dropdown_onadd_cur_size').val() == 8){
+					$('#dropdown_onadd_growing').val(1);
+					setDropdownReadOnly("dropdown_onadd_growing",true);
+				}else{
+					setDropdownReadOnly("dropdown_onadd_growing",false);
+				}
 			});
 
 			bootbox.setDefaults({
@@ -365,6 +387,7 @@ if(!empty($op)) {
 										<label class="col-sm-2 control-label">目前尺寸<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select class="form-control" id="dropdown_onadd_cur_size" name="onchba_size">
+												<option value="8">瓶苗下種</option>
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
@@ -447,7 +470,11 @@ if(!empty($op)) {
         							if(!empty($user_list[0]['onchba_size'])){        									
         									foreach ($user_list as $key => $row) {
         										if ($key==0) {
-        											echo '<tr style="border-bottom-style:double;"><td style="text-align: center;vertical-align: middle;font-size: 2.3rem;" rowspan='.(count($user_list)+1).'>'.$user_list[0]['onchba_size'].' 寸</td></tr>';
+        											echo '<tr style="border-bottom-style:double;"><td style="text-align: center;vertical-align: middle;font-size: 2.3rem;" rowspan='.(count($user_list)+1).'>';
+        											if($user_list[0]['onchba_size'] == "瓶苗下種")
+        												echo $user_list[0]['onchba_size'].'</td></tr>';
+        											else
+        												echo $user_list[0]['onchba_size'].' 寸</td></tr>';
         										}
         										if(count($user_list)-1 == $key){
         											echo "<tr style='border-bottom-style:double;'>";

@@ -88,7 +88,7 @@ $sum35 = getDetails('5');//計算3.5
 $sum36 = getDetails('6');//計算3.6
 $sum37 = getDetails('7');//計算其他
 $sum38 = getDetails('8');//計算瓶苗下種
-$others = $sum28+$sum30+$sum36+$sum37+$sum38;
+$others = $sum28+$sum30+$sum36+$sum37;
 // printr(getWorkListByMonth());
 // exit();
 
@@ -215,7 +215,7 @@ $op=GetParam('op');
 							if(data[i]['onadd_quantity'] > 0){
 								dy_modal.innerHTML = "<div class='modal-dialog modal-'><div class='modal-content'><div class='modal-body'><div class=\"panel panel-info\"><div class=\"panel-heading\"><h4 class=\"modal-title\">提醒事項</h4></div><div class=\"panel-body\" style=\"font-size: 1.4rem\"><label>品號："+data[i]['onadd_part_no']+"</label></br><label>品名："+data[i]['onadd_part_name']+"</label></br><label>下種日："+data[i]['onadd_planting_date']+"</label></br><label>預計成長日："+data[i]['expected_date']+"</br><label>數量："+data[i]['onadd_quantity']+"</label></br><label>提醒事項："+event+"</label></div></div></div><div class='modal-footer'><button type='button' class='btn btn-default' data-dismiss=\"modal\" id=\"btn_modal\">確認</button></div></div></div>";		
 								main_content.appendChild(dy_modal);	
-								$('#myModal'+i).modal('show');
+								// $('#myModal'+i).modal('show');
 							}
 							
 							}
@@ -273,9 +273,9 @@ $op=GetParam('op');
                 <?php 
                 	echo "['x',".$str1."],";
 	                echo "['x',".$str2."],";
-	                echo "['下種',".$str3."],";
+	                // echo "['下種',".$str3."],";
 	                echo "['出貨',".$str4."],";
-	                echo "['耗損',".$str5."],";
+	                echo "['汰除',".$str5."],";
                 ?>
                 
                 // ['x', <?php echo "'".date("Y-m-d",time())."'"; ?>],
@@ -286,9 +286,9 @@ $op=GetParam('op');
                 // ],
                 ],
                 colors: {
-                	進貨: '#23b7e5',
-                	出貨: '#BABABA',
-                	耗損: '#26A69A'
+                	// 進貨: '#23b7e5',
+                	出貨: '#2ECC71 ',
+                	汰除: '#C70039 '
                 }
             },
             axis: {
@@ -439,7 +439,7 @@ $op=GetParam('op');
 							if(empty($sum35)){
 								echo "<h2 class='mv-0'>".'0'."</h2>" ;
 							}else{
-								echo "<h2 class='mv-0'>"."<a style='text-decoration:none;color:white;' href='./../purchase/plant_purchase.php?onadd_growing=5'>".$sum35."</a>"."</h2>" ;
+								echo "<h2 class='mv-0'>"."<a style='text-decoration:none;color:white;' href='./../purchase/plant_purchase.php?onadd_growing=6'>".$sum35."</a>"."</h2>" ;
 							}
 							?>
 						</div>
@@ -459,7 +459,11 @@ $op=GetParam('op');
 								// if(empty($sum35))
 								// 	echo "<h2 class='mv-0'>0</h2>" ;								
 								// else
-									echo "<h2 class='mv-0'>".$others."</h2>" ;
+								if(empty($others)){
+									echo "<h2 class='mv-0'>".'0'."</h2>" ;
+								}else{
+									echo "<h2 class='mv-0'>"."<a style='text-decoration:none;color:white;' href='./../purchase/plant_purchase.php?onadd_growing=7'>".$others."</a>"."</h2>" ;
+								}
 								?>
 									
 								</h2>

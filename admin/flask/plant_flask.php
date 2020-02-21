@@ -46,6 +46,7 @@ if(!empty($op)) {
 		$onadd_supplier=GetParam('onadd_supplier');//供應商
 		$onadd_planting_date=GetParam('onadd_planting_date');//下種日期
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
+		$onadd_next_day=GetParam('onadd_next_day');//下階段(出貨/下種)天數
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
 		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//換盆年
 		$onadd_quantity_cha=$test;//換盆月
@@ -56,7 +57,7 @@ if(!empty($op)) {
 			$onproduct_pic_url = ".".$onproduct_pic_url;
 		$jsuser_sn = GetParam('supplier');//編輯人員
 
-		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)){
+		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)||empty($onadd_next_day)){
 			$ret_msg = "*為必填！";
 		} else { 
 			if($IsUploadImg == "0"){
@@ -64,8 +65,8 @@ if(!empty($op)) {
 				$onadd_planting_date = str2time($onadd_planting_date);
 				$now = time();
 				$conn = getDB();
-					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location) " .
-					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '2', '{$onadd_location}');";
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_next_day) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '2', '{$onadd_location}', '{$onadd_next_day}');";
 
 					$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st,onproduct_pic_url) " .
 					"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '2', '{$onproduct_pic_url}');";
@@ -988,7 +989,8 @@ if(!empty($op)) {
 			                	$('#upd3_form input[name=onadd_size]').val(d.onadd_size);
 			                	$('#upd3_form input[name=onadd_height]').val(d.onadd_height);
 			                	$('#upd3_form input[name=onadd_pot_size]').val(d.onadd_pot_size);
-			                	$('#upd3_form input[name=onadd_location]').val(d.onadd_location);
+			                	if(d.onadd_location != "")
+			                		$('#upd3_form [name=onadd_location] option[value='+d.onadd_location+']').prop('selected','selected','selected','selected','selected','selected','selected');
 			                	$('#upd3_form input[name=onadd_supplier]').val(d.onadd_supplier);
 			                	$('#upd3_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
 			                	$('#upd3_form input[name=onadd_quantity]').val(d.onadd_quantity);
@@ -1666,7 +1668,7 @@ if(!empty($op)) {
 					<form autocomplete="off" method="post" action="./" id="upd3_form" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 class="modal-title">修改</h4>
+							<h4 class="modal-title">移倉</h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
@@ -1676,32 +1678,32 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="true">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none;">
 										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32" readonly="true">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none;">
 										<label for="addModalInput1" class="col-sm-2 control-label">花色</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none;">
 										<label for="addModalInput1" class="col-sm-2 control-label">花徑</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none;">
 										<label for="addModalInput1" class="col-sm-2 control-label">高度</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" >
@@ -1711,18 +1713,28 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">放置區<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
+											<select class="form-control" name="onadd_location">
+												<option value="B5">B5</option>
+												<option value="B4">B4</option>
+												<option value="B3">B3</option>
+												<option value="B2">B2</option>
+												<option value="B1">B1</option>
+												<option value="A5">A5</option>
+												<option value="A4">A4</option>
+												<option value="A3">A3</option>
+												<option value="A2">A2</option>
+												<option selected="selected" value="A1">A1</option>
+											</select>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none;">
 										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" >
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
-									<div class="form-group">
+									<div class="form-group" style="display: none;">
 										<label for="addModalInput1" class="col-sm-2 control-label">供應商</label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" >
@@ -1934,8 +1946,18 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">放置區&nbsp;<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
+											<select class="form-control" name="onadd_location">
+												<option value="B5">B5</option>
+												<option value="B4">B4</option>
+												<option value="B3">B3</option>
+												<option value="B2">B2</option>
+												<option value="B1">B1</option>
+												<option value="A5">A5</option>
+												<option value="A4">A4</option>
+												<option value="A3">A3</option>
+												<option value="A2">A2</option>
+												<option selected="selected" value="A1">A1</option>
+											</select>
 										</div>
 									</div>
 									<div class="form-group">
@@ -1953,20 +1975,27 @@ if(!empty($op)) {
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="col-sm-2 control-label">下種日期&nbsp;<font color="red">*</font></label>
+										<label class="col-sm-2 control-label">入庫日期<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="datetimepicker1" name="onadd_planting_date" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">入庫數量<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>
 									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">下階段(下種/出貨) 天數<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_next_day" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group" style="display: none">
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select class="form-control" id="dropdown_onadd_growing" name="onadd_growing">
@@ -2199,7 +2228,7 @@ if(!empty($op)) {
 								<th style="text-align: center;">放置區</th> 
 								<th style="text-align: center;">備註</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">供應商</th>
-								<th style="text-align: center;">訂單客戶</th> <!-- 2019/6/19新增 -->						
+								<!--<th style="text-align: center;">訂單客戶</th>  2019/6/19新增 -->						
 								<?php 
 									$flag = false;
 									for($i=1;$i<7;$i++){
@@ -2208,9 +2237,7 @@ if(!empty($op)) {
 										}
 									}
 
-									if($permmsion == 0 || $flag){ ?>			
-										<th style="text-align: center;">操作</th>									
-								<?php } ?>	
+									?>	
 								<?php if($permmsion == 0 || $permmsion == 3){ ?>			
 									<th colspan="1" style="text-align: center;">操作</th>
 								<?php } ?>
@@ -2246,7 +2273,7 @@ if(!empty($op)) {
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_no'].'</td>';//品號
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_part_name'].'</td>';//品名  							
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
+        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//數量
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';
         							if($row['onadd_growing']==1){
         								$list_setting = getSettingBySn(1.7);
@@ -2272,10 +2299,10 @@ if(!empty($op)) {
 	        						}		        						
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.number_format(($incubation_rate*100),2).'%</td>';        								
         							$note = (!empty($row['onadd_quantity_cha'])) ? '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">瓶苗下種</td>' : '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';
-        							echo $note;
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_location'].'</td>';
+        							echo $note;        							
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
+        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;"></td>';        							
 
         							if($permmsion == 0 || $permmsion == 2){
         							// 2019/6/19新增 - 展開收回操作列表
@@ -2289,17 +2316,18 @@ if(!empty($op)) {
 										}
 										
 	        							echo  '<button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">下種</button>&nbsp;';
+	        							// echo '<button type="button" class="btn btn-success btn-xs" data-onadd_sn="'.$row['onadd_sn'].'">移倉</button>&nbsp;';
         								if($permmsion == 0 || strpos($permmsion_option, "3") !== false){
-	        								echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">修改</button>&nbsp;';
+	        								echo '<button type="button" class="btn btn-success btn-xs upd3" data-onadd_sn="'.$row['onadd_sn'].'">移倉</button>&nbsp;';
 	        							}
         								if($permmsion == 0){
 	        								echo '<button type="button" class="btn btn-danger btn-xs del" data-onadd_sn="'.$row['onadd_sn'].'">刪除</button>&nbsp;';
 	        							}
 	        						}
 
-	        						if($permmsion == '0' || $permmsion == '3'){
-	        							echo '<td><button type="button" class="btn btn-info btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
-	        						}
+	        						// if($permmsion == '0' || $permmsion == '3'){
+	        						// 	echo '<td><button type="button" class="btn btn-info btn-xs"  onclick="javascript:location.href=\''.WT_SERVER.'/admin/purchase/details_table.php?onadd_part_no='.$row['onadd_part_no'].'&onadd_growing='.$row['onadd_growing'].'&onadd_quantity_del='.date("Y").'\'" >展開</button>';
+	        						// }
 
 	        						// echo '<button type="button" class="btn btn-info btn-xs qr" data-onadd_sn="'.$row['onadd_sn'].'" data-qr_sn="'.$qr_sn.'">產生二維條碼</button>&nbsp;
 	        						echo '

@@ -122,7 +122,7 @@ if(!empty($op)) {
 						if(ret.data.url != "") {
 							location.replace(ret.data.url);
 						} else {
-							location.replace('<?php echo WT_SERVER;?>/admin/index/index.php');
+							location.replace('<?php echo WT_SERVER;?>/admin/index/index.php<?php echo "?year=".date("Y")."&day=".date("Y-m-d");?>');
 						}
 					} else {
 						alert('帳號密碼錯誤！')
