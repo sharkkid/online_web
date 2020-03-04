@@ -457,7 +457,8 @@ function getSettingBySn($onchba_size,$onchba_tsize) {
 function getTargetSize($onchba_size,$onchba_tsize) {
 	$ret_data = "";
 	$conn = getDB();
-	$sql="SELECT onchba_sn FROM `online_change_basin` WHERE onchba_size like {$onchba_size} and onchba_tsize like {$onchba_tsize}";
+
+	$sql="SELECT onchba_sn FROM `online_change_basin` WHERE onchba_size like '{$onchba_size}' and onchba_tsize like '{$onchba_tsize}'";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
@@ -1062,7 +1063,7 @@ function getMapping_size() {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$ret_data[$row['onchba_sn']] = '<font color="#666666">'.$row['onchba_tsize'].'</font>';
+			$ret_data[$row['onchba_sn']] = $row['onchba_tsize'];
 		}
 		$qresult->free();
 	}
