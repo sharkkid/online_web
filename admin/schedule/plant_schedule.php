@@ -175,19 +175,22 @@ if(!empty($op)) {
 		case 'delay':
 			$onadd_sn=GetParam('onadd_sn');
 			$onadd_delay_reason=GetParam('onadd_delay_reason');
-			$now=time();
+			$now=strtotime("+7 day", time());
 			$ret_data = array();
 			if(!empty($onadd_sn)){
 				$conn = getDB();
 				$sql = "INSERT INTO `online_work_delay`(`onadd_sn`, `onwd_reason`, `onwd_date`, `onwd_status`) 
 				VALUES ('{$onadd_sn}','{$onadd_delay_reason}',$now,1)";
+				$sql2 = "UPDATE  `onliine_add_data` SET onadd_delay_date = $now WHERE onadd_sn = $onadd_sn";
 				if($conn->query($sql)){
-					$ret_code = 1;
-				$ret_msg = "延後成功!";
+					if($conn->query($sql2)){
+						$ret_code = 1;
+						$ret_msg = "延後成功!";
+					}
 				}
 				else{
 					$ret_msg = "延後失敗!";
-				$ret_code = 0;
+					$ret_code = 0;
 				}				
 			} else {
 				$ret_msg = "延後失敗!";

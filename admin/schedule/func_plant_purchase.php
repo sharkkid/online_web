@@ -116,21 +116,23 @@ function getWorkListByMonth($where='', $offset=30, $rows=0) {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$delay_days = getWorkDelayDays($row['onadd_sn']);
+			// $delay_days = getWorkDelayDays($row['onadd_sn']);
 			$cur_size = $DEVICE_SYSTEM[$row['onadd_cur_size']];
 			$growing_size = $DEVICE_SYSTEM[$row['onadd_growing']];
 			$row['onchba_cycle'] = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
 
         	$test = date("Y/m/d", strtotime("+".$row['onchba_cycle']." days", $row['onadd_planting_date']));
-        	$show_day = date("Y/m/d", strtotime("+".$row['onchba_cycle']+($delay_days-7)." days", $row['onadd_planting_date']));
+        	// $show_day = date("Y/m/d", strtotime("+".$row['onchba_cycle']+($delay_days-7)." days", $row['onadd_planting_date']));
         	$nowdays = time();
-        	$tdays = strtotime($show_day);
-        	if($tdays < $nowdays){
-        		$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
-        		$row['expected_date'] = date('Y/m/d',strtotime($test));
-        		$row['show_day'] = date('Y/m/d',strtotime($show_day));
-				$ret_data[] = $row;
-        	}
+        	$tdays = strtotime($test);
+        	if(time() > $row['onadd_delay_date']){
+	        	if($tdays < $nowdays){
+	        		$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
+	        		$row['expected_date'] = date('Y/m/d',strtotime($test));
+	        		// $row['show_day'] = date('Y/m/d',strtotime($show_day));
+					$ret_data[] = $row;
+	        	}
+	        }
 
 		}
 		$qresult->free();
@@ -198,21 +200,24 @@ function getUserQty($where='') {
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
-			$delay_days = getWorkDelayDays($row['onadd_sn']);
+			// $delay_days = getWorkDelayDays($row['onadd_sn']);
 			$cur_size = $DEVICE_SYSTEM[$row['onadd_cur_size']];
 			$growing_size = $DEVICE_SYSTEM[$row['onadd_growing']];
 			$row['onchba_cycle'] = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
 
         	$test = date("Y/m/d", strtotime("+".$row['onchba_cycle']." days", $row['onadd_planting_date']));
-        	$show_day = date("Y/m/d", strtotime("+".$row['onchba_cycle']+($delay_days-7)." days", $row['onadd_planting_date']));
+        	// $show_day = date("Y/m/d", strtotime("+".$row['onchba_cycle']+($delay_days-7)." days", $row['onadd_planting_date']));
         	$nowdays = time();
-        	$tdays = strtotime($show_day);
-        	if($tdays < $nowdays){
-        		$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
-        		$row['expected_date'] = date('Y/m/d',strtotime($test));
-        		$row['show_day'] = date('Y/m/d',strtotime($show_day));
-				$ret_data[] = $row;
-        	}
+        	$tdays = strtotime($test);
+        	if(time() > $row['onadd_delay_date']){
+	        	if($tdays < $nowdays){
+	        		$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
+	        		$row['expected_date'] = date('Y/m/d',strtotime($test));
+	        		// $row['show_day'] = date('Y/m/d',strtotime($show_day));
+					$ret_data[] = $row;
+	        	}
+	        }
+
 		}
 		$qresult->free();
 	}

@@ -2139,6 +2139,14 @@ if(!empty($op)) {
 											</select>
 										</div>
 									</div>
+
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">採購單價<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_buy_price" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
 				
 								</div>
 							</div>
