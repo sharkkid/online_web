@@ -723,29 +723,31 @@ if(!empty($op)) {
 										if (!empty($cost_detail)){
 											if ($key>1) {?>
 												<tr style="font-size: 2rem;border-top:1rem solid #d1f1fa;">
-													<td  style="background-color: #fefcf6;text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;" colspan="4">盆栽大小：<?PHP echo $val;?>
+													<td  style="background-color: #fefcf6;text-align: center;color:#52565e; vertical-align: middle;text-align: center;" colspan="4">盆栽大小：<?PHP echo $val;?>
 													</td>
 												</tr>	
 											
 										<?PHP }else{ ?>
 												<tr style="font-size: 2rem;">
-													<td  style="background-color: #fefcf6;text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;" colspan="4">盆栽大小：<?PHP echo $val;?>
+													<td  style="background-color: #fefcf6;text-align: center;color:#52565e; vertical-align: middle;text-align: center;" colspan="4">盆栽大小：<?PHP echo $val;?>
 													</td>
 												</tr>	
 										<?PHP } ?>
 										<tr style="font-size: 1.3em">	
 											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">項目</th>
 											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">成本金額</th>
+											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">數量</th>
 											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">操作</th>
 										</tr>
 									<?php 
-									
+									// printr($cost_detail);
 											foreach ($cost_detail as $key2 => $value2) {									
 									?>									
 											<tr style="font-size: 1.1em;">
 												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo $value2['oncoda_name']; ?></td>
 												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo number_format($value2['oncoda_cost'],1)." NT"; ?></td>
-												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">
+												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo number_format($value2['oncoda_num'],0); ?></td>
+												<td  style="text-align: center;color:#52565e; vertical-align: middle;text-align: center;">
 													<button type="button" class="btn btn-primary btn-xs upd_detail" data-oncoda_sn="<?php echo $value2['oncoda_sn'];?>" data-oncost_sn="<?php echo $value['oncost_sn'];?>" style="background-color:#A46B62;border:#A46B62">修改</button>
 													<button type="button" class="btn btn-danger btn-xs del" data-oncoda_sn="<?php echo $value2['oncoda_sn'];?>" data-oncost_sn="<?php echo $value['oncost_sn'];?>" style="background-color:#E94653;">刪除</button>
 												</td>

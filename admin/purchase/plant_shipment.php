@@ -83,8 +83,7 @@ if(!empty($op)) {
 	// printr($user_list);
 	// exit;
 	$User_forExcel = getUser_forExcel($search_where);
-	// printr($User_forExcel);
-	// exit;
+	
 	if($export_error==1) {
         ob_end_clean(); //  避免亂碼
         header("Content-Type:text/html; charset=utf-8");
@@ -115,7 +114,8 @@ if(!empty($op)) {
             $sheet->setCellValue('J'.($n+$i), $User_forExcel[$i]['onshda_price']*$User_forExcel[$i]['onshda_quantity']-($User_forExcel[$i]['oncoda_cost']+($User_forExcel[$i]['onadd_cost_month']*$User_forExcel[$i]['date_month'])));//毛利
             $sheet->setCellValue('K'.($n+$i), $User_forExcel[$i]['onshda_client']);//客戶
         }
-
+        // printr($User_forExcel);
+		// exit;
 
     // 產生檔案
         $excelextend = substr($inputfilename, strpos($inputfilename, "."));

@@ -43,51 +43,60 @@ function getUser_forExcel($where='') {
 			FROM `online_shipment_data` a 
 			left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn
 			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
-			where a.onshda_status = 1 and b.onadd_status = 1 GROUP by a.onadd_sn desc";
+			where c.oncoda_cost_status = 0 and a.onshda_status = 1 GROUP by a.onadd_sn desc";
 	else
 		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month 
 			FROM `online_shipment_data` a 
 			left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn
 			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
-			where a.onshda_status = 1 and b.onadd_status = 1 and ( $where ) GROUP by a.onadd_sn desc";
+			where c.oncoda_cost_status = 0 and a.onshda_status = 1 and ( $where ) GROUP by a.onadd_sn desc";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
 			$sql_getdata = "select distinct onproduct_isbought from onliine_product_data where onproduct_status>=0 and onproduct_part_no like '".$row['onadd_part_no']."'";
 			$qresult2 = $conn->query($sql_getdata);
-			
 			$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];
+
+			$sql_onadd_cost_month = "SELECT c.oncoda_cost as onadd_cost_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where c.oncoda_cost_status = 1 and a.onshda_status = 1 GROUP by a.onadd_sn desc";
+			$qresult3 = $conn->query($sql_onadd_cost_month);	
+			$row['onadd_cost_month'] = $qresult3->fetch_assoc()['onadd_cost_month'];
 			$ret_data[] = $row;
 		}
 	}	
 
 	if(empty($where))
-		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month 
+		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30)+1 as date_month 
 			FROM `online_shipment_data` a 
 			left join `onliine_add_data` b on a.onadd_sn = b.onadd_newpot_sn
 			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
-			where a.onshda_status = 1 GROUP by a.onadd_sn desc";
+			where c.oncoda_cost_status = 0 and a.onshda_status = 1 GROUP by a.onadd_sn desc";
 	else
-		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30) as date_month 
+		$sql="SELECT a.onadd_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-b.onadd_planting_date)/60/60/24/30)+1 as date_month 
 			FROM `online_shipment_data` a 
 			left join `onliine_add_data` b on a.onadd_sn = b.onadd_newpot_sn
 			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
-			where a.onshda_status = 1 and ( $where ) GROUP by a.onadd_sn desc";
+			where c.oncoda_cost_status = 0 and a.onshda_status = 1 and ( $where ) GROUP by a.onadd_sn desc";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
 			$sql_getdata = "select distinct onproduct_isbought from onliine_product_data where onproduct_status>=0 and onproduct_part_no like '".$row['onadd_part_no']."'";
-			$qresult2 = $conn->query($sql_getdata);
-			
+			$sql_onadd_cost_month = "SELECT c.oncoda_cost as onadd_cost_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_newpot_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where c.oncoda_cost_status = 1 and a.onshda_status = 1 GROUP by a.onadd_sn desc";
+			$qresult2 = $conn->query($sql_getdata);			
 			$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];
+			$qresult3 = $conn->query($sql_onadd_cost_month);
+			$row['onadd_cost_month'] = $qresult3->fetch_assoc()['onadd_cost_month'];
 			$ret_data2[] = $row;
 		}
 	}
-
+	!isset($ret_data) ? $ret_data = array() : none;
+	!isset($ret_data2) ? $ret_data2 = array() : none;
 	$data = array_merge($ret_data, $ret_data2);
+	// printr($where);
+	// printr($sql);
 	// printr($data);
+	// exit;
 	
 	$conn->close();
 	return $data;

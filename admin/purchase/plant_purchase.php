@@ -46,6 +46,7 @@ if(!empty($op)) {
 		$onadd_cost_grass=GetParam('onadd_cost_grass');//水草費用
 		$onadd_cost_labour=GetParam('onadd_cost_labour');//人工費用
 		$onadd_cost_month=GetParam('onadd_cost_month');//種植費用
+		$onadd_buy_price=GetParam('onadd_buy_price');//採購價格
 		
 		$onadd_cur_size=GetParam('onadd_cur_size');//目前尺寸
 		$onadd_growing=GetParam('onadd_growing');//預計成長大小
@@ -70,8 +71,8 @@ if(!empty($op)) {
 				$onadd_planting_date = str2time($onadd_planting_date);
 				$now = time();
 				$conn = getDB();
-					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size, onadd_sellsize) " .
-					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}', '{$onadd_cur_size}', '{$onadd_sellsize}');";
+					$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_isbought, onadd_plant_st, onadd_location, onadd_cur_size, onadd_sellsize ,onadd_buy_price) " .
+					"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_quantity}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$onadd_isbought}', '1', '{$onadd_location}', '{$onadd_cur_size}', '{$onadd_sellsize}', '{$onadd_buy_price}');";
 
 					$sql2 = "INSERT INTO onliine_product_data(onproduct_add_date, onproduct_date, onproduct_status, jsuser_sn, onproduct_part_no, onproduct_part_name, onproduct_color, onproduct_size, onproduct_height, onproduct_pot_size, onproduct_supplier, onproduct_growing, onproduct_isbought, onproduct_plant_st,onproduct_pic_url) " .
 					"VALUES ('{$now}', '{$now}', '1', '{$jsuser_sn}' , '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_growing}', '{$onadd_isbought}', '1', '{$onproduct_pic_url}');";
@@ -1860,7 +1861,7 @@ if(!empty($op)) {
 										</div>
 									</div>    
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">價格(單棵)<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">出貨單價<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="onshda_price" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
@@ -2137,7 +2138,13 @@ if(!empty($op)) {
 											</select>
 										</div>
 									</div>
-				
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">採購單價<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_buy_price" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
