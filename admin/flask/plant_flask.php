@@ -11,7 +11,8 @@ $DEVICE_SYSTEM = array(
 		5=>"3.5",
 		6=>"3.6",
 		7=>"其他",
-		8=>"瓶苗下種"
+		8=>"瓶苗下種",
+		9=>"出貨"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -1585,7 +1586,7 @@ if(!empty($op)) {
 										<label class="col-sm-2 control-label">目前大小<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select class="form-control" name="onadd_cur_size" >
-												<option selected="selected" value="1">1.7</option>
+												<option selected="selected" value="8">瓶苗下種</option>
 											</select>
 										</div>
 									</div>
@@ -1598,8 +1599,8 @@ if(!empty($op)) {
 												<option value="5">3.5</option>
 												<option value="4">3.0</option>
 												<option value="3">2.8</option>
-												<option selected="selected" value="2">2.5</option>
-												<option value="1">1.7</option>
+												<option value="2">2.5</option>
+												<option selected="selected" value="1">1.7</option>
 											</select>
 										</div>
 									</div>
@@ -2337,8 +2338,8 @@ if(!empty($op)) {
 								<th style="text-align: center;">下種日期</th>
 								<th style="text-align: center;">下種數量</th>
 								<!-- <th style="text-align: center;">目前尺寸</th> -->
-								<th style="text-align: center;">下階段尺寸</th> <!-- 2019/6/19新增 -->
-								<th style="text-align: center;">預計成熟日</th> <!-- 2019/6/19新增 -->
+								<!-- <th style="text-align: center;">下階段尺寸</th>  2019/6/19新增 --> 
+								<!-- <th style="text-align: center;">預計成熟日</th> -->
 								<th style="text-align: center;">育成率</th> <!-- 2019/6/19新增 -->
 								<th style="text-align: center;">放置區</th> 
 								<!-- <th style="text-align: center;">備註</th> --> <!-- 2019/6/19新增 -->
@@ -2392,14 +2393,14 @@ if(!empty($op)) {
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y-m-d',$row['onadd_planting_date']).'</td>';
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//數量
         							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_cur_size']].'</td>';//目前尺寸
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';//下階段尺寸
+        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$permissions_mapping[$row['onadd_growing']].'寸'.'</td>';//下階段尺寸
         							//預計成熟日
         							$cur_size = $GLOBAL['DEVICE_SYSTEM'][$row['onadd_cur_size']];
         							$growing_size = $GLOBAL['DEVICE_SYSTEM'][$row['onadd_growing']];
         							$onchba_cycle = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
         							// printr($cur_size);
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
-        							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';
+        							// echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$test.'</td>';
 
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));   
         							//育成率 (公式 (數量-汰除)/數量)      

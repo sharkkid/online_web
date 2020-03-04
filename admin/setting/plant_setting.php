@@ -9,7 +9,8 @@ $DEVICE_SYSTEM = array(
 		5=>"3.5",
 		6=>"3.6",
 		7=>"其他",
-		8=>"瓶苗下種"
+		8=>"瓶苗下種",
+		9=>"出貨"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -20,7 +21,8 @@ $permissions_mapping = array(
     5=>'<font color="#666666">3.5</font>',
     6=>'<font color="#666666">3.6</font>',
     7=>'<font color="#666666">其他</font>',
-    8=>'<font color="#666666">瓶苗下種</font>' 
+    8=>'<font color="#666666">瓶苗下種</font>',
+    9=>'<font color="#666666">出貨</font>' 
 );
 
 $permmsion = $_SESSION['user']['jsuser_admin_permit'];
@@ -403,6 +405,7 @@ if(!empty($op)) {
 										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<select class="form-control" id="dropdown_onadd_growing" name="onchba_tsize">
+												<option value="9">出貨</option>
 												<option value="7">其他</option>
 												<option value="6">3.6</option>
 												<option value="5">3.5</option>
@@ -471,15 +474,19 @@ if(!empty($op)) {
         									foreach ($user_list as $key => $row) {
         										if ($key==0) {
         											echo '<tr style="border-bottom-style:double;"><td style="text-align: center;vertical-align: middle;font-size: 2.3rem;" rowspan='.(count($user_list)+1).'>';
-        											if($user_list[0]['onchba_size'] == "瓶苗下種")
-        												echo $user_list[0]['onchba_size'].'</td></tr>';
+        											if($row['onchba_size'] == "瓶苗下種")
+        												echo $row['onchba_size'].'</td></tr>';
         											else
-        												echo $user_list[0]['onchba_size'].' 寸</td></tr>';
+        												echo $row['onchba_size'].' 寸</td></tr>';
         										}
         										if(count($user_list)-1 == $key){
         											echo "<tr style='border-bottom-style:double;'>";
         										}
-        										echo '<td style="text-align: center;vertical-align: middle;font-size: 1.8rem;">'.$row['onchba_tsize'].' 寸</td>';//預計成長尺寸
+        										if($row['onchba_tsize'] == "出貨")
+        											echo '<td style="text-align: center;vertical-align: middle;font-size: 1.8rem;">'.$row['onchba_tsize'].' </td>';//預計成長尺寸
+        										else
+        											echo '<td style="text-align: center;vertical-align: middle;font-size: 1.8rem;">'.$row['onchba_tsize'].' 寸</td>';//預計成長尺寸
+
         										echo '<td style="text-align: center;vertical-align: middle;font-size: 1.8rem;">'.$row['onchba_cycle'].' 日</td>';//預計成長日
         										if($permmsion == 0){
         											echo '<td style="text-align: center;vertical-align: middle;">

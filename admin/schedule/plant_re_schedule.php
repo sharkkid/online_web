@@ -8,7 +8,9 @@ $DEVICE_SYSTEM = array(
 		4=>"3.0",
 		5=>"3.5",
 		6=>"3.6",
-		7=>"其他"
+		7=>"其他",
+		8=>"瓶苗下種",
+		9=>"出貨"
 		// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 );
 $permissions_mapping = array(
@@ -720,8 +722,8 @@ if(!empty($op)) {
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.date('Y/m/d',$row['onadd_planting_date']).'</td>';        							
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_quantity'].'</td>';//數量
 
-        							$cur_size = $GLOBAL['DEVICE_SYSTEM'][$row['onadd_cur_size']];
-        							$growing_size = $GLOBAL['DEVICE_SYSTEM'][$row['onadd_growing']];
+        							$cur_size = $DEVICE_SYSTEM[$row['onadd_cur_size']];
+        							$growing_size = $DEVICE_SYSTEM[$row['onadd_growing']];
         							$onchba_cycle = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
         							$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
         							

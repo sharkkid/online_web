@@ -809,7 +809,8 @@ function getWorkListByMonth() {
 		5=>"3.5",
 		6=>"3.6",
 		7=>"其他",
-		8=>"瓶苗下種"
+		8=>"瓶苗下種",
+		9=>"出貨"
 			// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 	);
 	$ret_data = array();
@@ -824,6 +825,7 @@ function getWorkListByMonth() {
 		while($row = $qresult->fetch_assoc()) {
 			$cur_size = $DEVICE_SYSTEM[$row['onadd_cur_size']];
 			$growing_size = $DEVICE_SYSTEM[$row['onadd_growing']];
+
 			$row['onchba_cycle'] = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
 
         	$test = date("Y/m/d", strtotime("+".$row['onchba_cycle']." days", $row['onadd_planting_date']));
@@ -865,7 +867,8 @@ function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
 		5=>"3.5",
 		6=>"3.6",
 		7=>"其他",
-		8=>"瓶苗下種"
+		8=>"瓶苗下種",
+		9=>"出貨"
 			// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
 	);
 	$year_start = strtotime($year."/1/1");
@@ -873,10 +876,12 @@ function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
 	$ret_data = array();
 	$conn = getDB();
 	$sql="select * from onliine_add_data where onadd_part_no='$onadd_part_no' AND onadd_planting_date and onadd_plant_st = 1";
+
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {			
-			$onchba_cycle = getSettingBySn($DEVICE_SYSTEM[$row['onadd_cur_size']],$DEVICE_SYSTEM[$row['onadd_growing']])['onchba_cycle'];;
+			$onchba_cycle = getSettingBySn($DEVICE_SYSTEM[$row['onadd_cur_size']],$DEVICE_SYSTEM[$row['onadd_growing']])['onchba_cycle'];
+			// echo "Q="$onchba_cycle."</br>";
         	if($row['onadd_plant_st']==2){
         		$onchba_cycle=1;
         		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
@@ -892,6 +897,7 @@ function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
 		}
 		$qresult->free();
 	}
+	// exit;
 	$conn->close();
 
 	$expected_number = array();
@@ -1043,7 +1049,7 @@ function getQuantityForseller($part_no,$part_name) {
 	$ret_data = array();
 	$conn = getDB();
 
-	$sql="select *,SUM(onadd_quantity) from onliine_add_data where onadd_status>=0 and onadd_part_no like '$part_no' and onadd_part_name like '$part_name' and onadd_status = 1 and onadd_cur_size not in(0,8) group by onadd_cur_size order by onadd_planting_date";
+	$sql="select *,SUM(onadd_quantity) from onliine_add_data where onadd_status>=0 and onadd_part_no like '$part_no' and onadd_part_name like '$part_name' and onadd_status = 1 and onadd_cur_size not in(0,8) and onadd_plant_st = 1 group by onadd_cur_size order by onadd_planting_date";
 	// echo $sql;
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {

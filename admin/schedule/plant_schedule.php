@@ -1,5 +1,6 @@
 <?php
 include_once("./func_plant_purchase.php");
+
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $permissions_mapping = array(
 	1=>'<font color="#666666">1.7</font>',
@@ -171,6 +172,75 @@ if(!empty($op)) {
 		}
 		break;
 
+		case 'delay':
+			$onadd_sn=GetParam('onadd_sn');
+			$onadd_delay_reason=GetParam('onadd_delay_reason');
+			$now=time();
+			$ret_data = array();
+			if(!empty($onadd_sn)){
+				$conn = getDB();
+				$sql = "INSERT INTO `online_work_delay`(`onadd_sn`, `onwd_reason`, `onwd_date`, `onwd_status`) 
+				VALUES ('{$onadd_sn}','{$onadd_delay_reason}',$now,1)";
+				if($conn->query($sql)){
+					$ret_code = 1;
+				$ret_msg = "延後成功!";
+				}
+				else{
+					$ret_msg = "延後失敗!";
+				$ret_code = 0;
+				}				
+			} else {
+				$ret_msg = "延後失敗!";
+				$ret_code = 0;
+			}
+		break;
+
+		case 'export_excel':
+			set_time_limit(300);
+			ob_end_clean();	//	避免亂碼
+			header("Content-Type:text/html; charset=utf-8");
+			include_once(WT_PATH_ROOT.'/lib/PHPExcel_1.8.0/PHPExcel.php');
+			include_once(WT_PATH_ROOT.'/lib/PHPExcel_1.8.0/PHPExcel/Writer/Excel2007.php');
+			
+			// init excel
+			$inputfilename = WT_PATH_ROOT.'/admin/purchase/delay_report.xlsx';
+
+			if(!file_exists($inputfilename)) exceptions("查無Excel巡檢表");
+			$originalexcel = PHPExcel_IOFactory::load($inputfilename);	
+			$record_list = getDelayRecord();
+			// printr($record_list);
+			// exit;
+
+			$originalexcel->getDefaultStyle()->getFont()->setName('微軟正黑體');	
+			$originalexcel->setActiveSheetIndex(0);														
+			$sheet = $originalexcel->getActiveSheet(0);
+			// $sheet->setCellValue('A4', $area."區每日體溫登記表");
+			// $sheet->setCellValue('A6', "日期：{$add_date}");
+			// $sheet->setAutoFilter('A7:H7');
+			$sheet->freezePane('C8'); // 凍結窗格
+			// $sheet->setTitle($area."區每日體溫登記表");
+			foreach ($record_list as $i => $v) {
+				$row = $i+8;
+				// 塞值				
+				$sheet->setCellValue('A'.$row, $v['onadd_isbought']."-".$v['onadd_sn']);
+				$sheet->setCellValue('B'.$row, $v['onadd_part_no']);
+				$sheet->setCellValue('C'.$row, $v['onadd_part_name']);
+				$sheet->setCellValue('D'.$row, $v['onwd_date']);
+				$sheet->setCellValue('E'.$row, $v['onwd_reason']);
+			}					
+			// 產生檔案
+			$excelextend = substr($inputfilename, strpos($inputfilename, "."));
+			$filename = date("Y-m-d",time())."_工作排程延長總表";
+			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			header("Content-Disposition: attachment;filename=".$filename.$excelextend);
+			header('Cache-Control: max-age=0');
+			$objWriter = PHPExcel_IOFactory::createWriter($originalexcel, 'Excel2007');
+			$objWriter->setIncludeCharts(TRUE);
+			$objWriter->save('php://output');
+			
+			exit;
+			break;
+
 		default:
 		$ret_msg = 'error!';
 		break;
@@ -328,6 +398,14 @@ if(!empty($op)) {
 		                }
 		            });
 			});
+
+			//汰除-----------------------------------------------------------
+			$('#delay_export').on('click', function(){
+				var start_excel = $("#Excel_Export input[name='start_excel']").val();
+				var ir_data_area = $("#searchInput_area").val();
+				window.open('./plant_schedule.php?op=export_excel');
+			});
+
 			$('button.upd2').on('click', function(){
 				$('#upd-modal2').modal();
 				$('#upd_form2')[0].reset();
@@ -390,7 +468,15 @@ if(!empty($op)) {
 				});
 			});
 
-			$('#add_form, #upd_form, #upd_form1, #upd_form2').validator().on('submit', function(e) {
+			//延後-----------------------------------------------------------
+			$('button.delay').on('click', function(){
+				$('#delay-modal').modal();
+				$('#delay_form')[0].reset();				
+				var onadd_sn = $(this).data('onadd_sn');
+				$('#delay_form input[name=onadd_sn]').val(onadd_sn);			
+			});
+
+			$('#add_form, #upd_form, #upd_form1, #upd_form2, #delay_form').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
 					e.preventDefault();
 					var param = $(this).serializeArray();
@@ -445,9 +531,6 @@ if(!empty($op)) {
 	<?php include('./../htmlModule/nav.php');?>
 	<!--main content start-->
 	<section class="main-content">
-
-
-
 		<!--page header start-->
 		<div class="page-header">
 			<div class="row">
@@ -458,102 +541,34 @@ if(!empty($op)) {
 		</div>
 
 		<!-- modal -->
-		<div id="add-modal" class="modal add-modal" tabindex="-1" role="dialog">
+		<div id="delay-modal" class="modal delay-modal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
-					<form autocomplete="off" method="post" action="./" id="add_form" class="form-horizontal" role="form" data-toggle="validator">
+					<form autocomplete="off" method="post" action="./" id="delay_form" class="form-horizontal" role="form" data-toggle="validator">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-							<h4 class="modal-title">新增資料</h4>
+							<h4 class="modal-title" id="schedule_title">工作排程延後設定</h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
 								<div class="col-md-12">
-									<input type="hidden" name="op" value="add">
+									<input type="hidden" name="op" value="delay">
+									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_newpot_sn">
 									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<label for="addModalInput1" class="col-sm-2 control-label">延後原因<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_delay_reason" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花色<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_color" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">花徑<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_size" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">高度<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_height" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">適合開花盆徑<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_pot_size" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">供應商<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_supplier" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label">下種日期&nbsp;</label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="datetimepicker1" name="onadd_planting_date" placeholder="">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="addModalInput1" class="col-sm-2 control-label">下種數量<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32">
-											<div class="help-block with-errors"></div>
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label">預計成長大小<font color="red">*</font></label>
-										<div class="col-sm-10">
-											<select class="form-control" name="onadd_growing">
-												<option value="7">其他</option>
-												<option value="6">3.6</option>
-												<option value="5">3.5</option>
-												<option value="4">3.0</option>
-												<option value="3">2.8</option>
-												<option value="2">2.5</option>
-												<option selected="selected" value="1">1.7</option>
-											</select>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-							<button type="reset" class="btn btn-default">清空</button>
-							<button type="submit" class="btn btn-primary">新增</button>
+							<button type="submit" class="btn btn-primary">確認延後</button>
 						</div>
 					</form>
 				</div>
@@ -798,7 +813,11 @@ if(!empty($op)) {
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-12">
-
+					<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
+						<ul class="nav nav-pills pull-right toolbar">							
+							<li><button data-parent="#toolbar" data-toggle="modal" id="delay_export" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-floppy-save"></i> 匯出延後紀錄</button></li>
+						</ul>
+					</div>
 					<!-- search -->
 					<div id="search" style="clear:both;">
 						<form autocomplete="off" method="get" action="./plant_schedule.php" id="search_form" class="form-inline alert alert-info" role="form">
@@ -832,7 +851,7 @@ if(!empty($op)) {
 								<th style="text-align: center;">下階段換盆</th>
 								<!-- <th style="text-align: center;">總下種週期</th>       							 -->
 								<th style="text-align: center;">供應商</th>
-								<th style="text-align: center;">延後原因</th>
+								<!-- <th style="text-align: center;">延後原因</th> -->
 								<?php if($permmsion == 0){ ?>
 									<th style="text-align: center;">操作</th>
 								<?php } ?>
@@ -858,17 +877,23 @@ if(!empty($op)) {
         								echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_planting_date'].'</td>';
         							}
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_quantity'].'</td>';//品名
+
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['expected_date'].'</td>';
+
         							$onadd_cycle = ((date('m',$row['onadd_cycle']))-(date('m',$row['onadd_planting_date'])));
         							// echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$onadd_cycle.'月'.'</td>';
         							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.$row['onadd_supplier'].'</td>';//品名
-        							if($row['onadd_schedule'] == 3){
-        								echo '<td style="vertical-align: middle;text-align: center;">'.$row['onadd_delay_reason'].'</td>';
-        							}else{
-        								echo '<td style="vertical-align: middle;text-align: center;">尚未延後</td>';
-        							}
+        							// if($row['onadd_schedule'] == 3){
+        							// 	echo '<td style="vertical-align: middle;text-align: center;">'.$row['onadd_delay_reason'].'</td>';
+        							// }else{
+        							// 	echo '<td style="vertical-align: middle;text-align: center;">尚未延後</td>';
+        							// }
         							if($permmsion == 0){
-        								echo '<td style="vertical-align: middle;text-align: center;"><button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button></td>';
+        								echo '<td style="vertical-align: middle;text-align: center;">
+        								<button type="button" class="btn btn-primary btn-xs upd1" data-onadd_sn="'.$row['onadd_sn'].'">下排程</button>
+        								<button type="button" class="btn btn-danger btn-xs delay" data-onadd_sn="'.$row['onadd_sn'].'">延後</button>
+        								</td>';
+
         							}
         							// if($row['onadd_schedule']=='2'){        							
         							// }else{

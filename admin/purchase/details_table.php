@@ -718,8 +718,10 @@ if(!empty($op)) {
 				</div> 
 				<div class="col-md-4">
 					<?php
-					foreach ($data_list as $row) {
-						echo '<div style="display:none" id="onproduct_sn">'.$row['onproduct_sn'].'</div>';
+					$data_list = $data_list[0];
+
+
+						echo '<div style="display:none" id="onproduct_sn">'.$data_list['onproduct_sn'].'</div>';
 						echo '<h3>'.$onproduct_part_no.'</h3>';
 					?> 
 						<table style="font-size: 1.5rem" class="table table-hover">
@@ -731,37 +733,37 @@ if(!empty($op)) {
 							<tbody>
 								<tr>
 									<td>品號(Part no.)：
-										<?php echo $row['onproduct_part_no']; ?> 
+										<?php echo $data_list['onproduct_part_no']; ?> 
 									</td>
 								</tr>
 								<tr>
 									<td>品名(Part name.)：
-										<?php echo $row['onproduct_part_name']; ?>
+										<?php echo $data_list['onproduct_part_name']; ?>
 									</td>
 								</tr>
 								<tr>
 									<td>花色 (Flower Color)：
-										<?php echo $row['onproduct_color']; ?>
+										<?php echo $data_list['onproduct_color']; ?>
 									</td>
 								</tr>
 								<tr>
 									<td>花徑 (Flower Size)：
-										<?php echo $row['onproduct_size']; ?>
+										<?php echo $data_list['onproduct_size']; ?>
 									</td>
 								</tr>
 								<tr>
 									<td>高度 (Plant Height)：
-										<?php echo $row['onproduct_height']; ?>
+										<?php echo $data_list['onproduct_height']; ?>
 									</td>
 								</tr>
 								<tr>
 									<td>適合開花盆徑 (Suitable flowering pot size)：
-										<?php echo $row['onproduct_pot_size']; ?> 
+										<?php echo $data_list['onproduct_pot_size']; ?> 
 									</td>
 								</tr>
 							</tbody>								
 						</table>				
-					<?php }
+					<?php 
 				?> 
 				</div>         
 			</div>

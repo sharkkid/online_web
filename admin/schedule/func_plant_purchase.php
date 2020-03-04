@@ -103,50 +103,57 @@ function getWorkListByMonth($where='', $offset=30, $rows=0) {
 		5=>"3.5",
 		6=>"3.6",
 		7=>"其他",
-		8=>"瓶苗下種"
-			// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
+		8=>"瓶苗下種",
+		9=>"出貨"
 	);
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
-		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
+		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1 limit $offset, $rows";
 	else
-		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1 and ( $where )";
+		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1 and ( $where ) limit $offset, $rows";
 	
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
+			$delay_days = getWorkDelayDays($row['onadd_sn']);
 			$cur_size = $DEVICE_SYSTEM[$row['onadd_cur_size']];
 			$growing_size = $DEVICE_SYSTEM[$row['onadd_growing']];
 			$row['onchba_cycle'] = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
 
         	$test = date("Y/m/d", strtotime("+".$row['onchba_cycle']." days", $row['onadd_planting_date']));
-        	$o_y = date('Y',strtotime($test));        	
-        	$c_y = date('Y');
-        	$o_m = date('m',strtotime($test));
-        	$c_m = date('m');
-        	$row['o_y'] = $o_y;
-        	$row['c_y'] = $c_y;
-        	$row['o_m'] = $o_m;
-        	$row['c_m'] = $c_m;
-        	if($o_y <= $c_y){
-        		if($o_y == $c_y && $o_m <= $c_m){
-					$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
-        			$row['expected_date'] = date('Y/m/d',strtotime($test));
-					$ret_data[] = $row;
-        		}
-        		else if($o_y < $c_y){
-					$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
-        			$row['expected_date'] = date('Y/m/d',strtotime($test));
-					$ret_data[] = $row;
-        		} 
+        	$show_day = date("Y/m/d", strtotime("+".$row['onchba_cycle']+($delay_days-7)." days", $row['onadd_planting_date']));
+        	$nowdays = time();
+        	$tdays = strtotime($show_day);
+        	if($tdays < $nowdays){
+        		$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
+        		$row['expected_date'] = date('Y/m/d',strtotime($test));
+        		$row['show_day'] = date('Y/m/d',strtotime($show_day));
+				$ret_data[] = $row;
         	}
+
 		}
 		$qresult->free();
 	}
 	$conn->close();
 
 	return $ret_data;
+}
+
+function getDaysBetweenTwoDays($start,$end){
+	$n=0;  
+	$date_from = $start;   
+	$date_from = strtotime($date_from); // Convert date to a UNIX timestamp  
+	  
+	// Specify the end date. This date can be any English textual format  
+	$date_to = $end;  
+	$date_to = strtotime($date_to); // Convert date to a UNIX timestamp  
+	  
+	// Loop from the start date to end date and output all dates inbetween  
+	for ($i=$date_from; $i<=$date_to; $i+=86400) {  
+	    $n++;
+	}  
+	return $n;
 }
 
 function getUseradd($where='', $offset=30, $rows=0) {
@@ -178,8 +185,8 @@ function getUserQty($where='') {
 		5=>"3.5",
 		6=>"3.6",
 		7=>"其他",
-		8=>"瓶苗下種"
-			// 1.7, 2.5, 2.8, 3.0, 3.5, 3.6 其他
+		8=>"瓶苗下種",
+		9=>"出貨"
 	);
 	$ret_data = array();
 	$conn = getDB();
@@ -187,30 +194,30 @@ function getUserQty($where='') {
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1";
 	else
 		$sql="select * from onliine_add_data where onadd_status>=0 and onadd_schedule!=1 and ( $where )";
-	// echo $sql;
+	
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {
+			$delay_days = getWorkDelayDays($row['onadd_sn']);
 			$cur_size = $DEVICE_SYSTEM[$row['onadd_cur_size']];
 			$growing_size = $DEVICE_SYSTEM[$row['onadd_growing']];
 			$row['onchba_cycle'] = getSettingBySn($cur_size,$growing_size)['onchba_cycle'];
 
-			$test = date("Y/m/d", strtotime("+".$row['onchba_cycle']." days", $row['onadd_planting_date']));
-        	$o_y = date('Y',strtotime($test));        	
-        	$c_y = date('Y');
-        	$o_m = date('m',strtotime($test));
-        	$c_m = date('m');
-        	$row['o_y'] = $o_y;
-        	$row['c_y'] = $c_y;
-        	$row['o_m'] = $o_m;
-        	$row['c_m'] = $c_m;
-        	if($o_y <= $c_y && $o_m <= $c_m){
-        		$ret_data++;
-			}
+        	$test = date("Y/m/d", strtotime("+".$row['onchba_cycle']." days", $row['onadd_planting_date']));
+        	$show_day = date("Y/m/d", strtotime("+".$row['onchba_cycle']+($delay_days-7)." days", $row['onadd_planting_date']));
+        	$nowdays = time();
+        	$tdays = strtotime($show_day);
+        	if($tdays < $nowdays){
+        		$row['onadd_planting_date'] = date('Y/m/d',$row['onadd_planting_date']);        		
+        		$row['expected_date'] = date('Y/m/d',strtotime($test));
+        		$row['show_day'] = date('Y/m/d',strtotime($show_day));
+				$ret_data[] = $row;
+        	}
 		}
 		$qresult->free();
 	}
 	$conn->close();
+
 	return $ret_data;
 }
 function getUserQtyadd($where='') {
@@ -251,6 +258,7 @@ function getSettingBySn($onchba_size,$onchba_tsize) {
 	$ret_data = array();
 	$conn = getDB();
 	$sql="select * from online_change_basin where onchba_size like '{$onchba_size}' and onchba_tsize like '{$onchba_tsize}'";
+
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		if ($row = $qresult->fetch_assoc()) {
@@ -408,6 +416,21 @@ function getHistoryQty($where='') {
 	return $ret_data;
 }
 
+function getWorkDelayDays($onadd_sn) {
+	$ret_data = 0;
+	$conn = getDB();
+	$sql="SELECT onwd_sn FROM `online_work_delay` WHERE onadd_sn = '{$onadd_sn}'";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$ret_data = $row['onwd_sn'];
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return ($ret_data*7);
+}
+
 //================================
 // sys_history_online.php
 //================================
@@ -485,4 +508,42 @@ function getHistoryEditQty($where='') {
 	$conn->close();
 	return $ret_data;
 }
+
+function getDelayRecord() {
+	$ret_data = array();
+	$conn = getDB();
+
+	$sql="SELECT * FROM `online_work_delay` WHERE onwd_status >= 1";
+
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while($row = $qresult->fetch_assoc()) {
+			$d = getUserBySn($row['onadd_sn']);
+			if($d['onadd_newpot_sn'] == 0){
+				if($d['onadd_ml'] == 0){
+					$row['onadd_sn'] = $d['onadd_sn'];
+				}else{											
+	        		$row['onadd_sn'] = $d['onadd_ml'];
+	        	}
+	        }
+	        else{
+	        	$row['onadd_sn'] = $d['onadd_newpot_sn'];
+	        }
+	        
+			$row['onadd_part_no'] = $d['onadd_part_no'];
+			$row['onadd_part_name'] = $d['onadd_part_name'];
+			if($d['onadd_isbought'] == 0)
+				$row['onadd_isbought'] = date("Y",$d['onadd_planting_date']);
+			elseif($d['onadd_isbought'] == 1)
+				$row['onadd_isbought'] = "P".date("Y",$d['onadd_planting_date']);
+			
+			$row['onwd_date'] = date("Y-m-d H:i:s",$row['onwd_date']);
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
 ?>
