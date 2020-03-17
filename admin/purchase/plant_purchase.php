@@ -1335,6 +1335,7 @@ if(!empty($op)) {
 					        							        if(ret.code==1) {
 					        							        	var d = ret.data;			        							        	
 					        							        	$('#eli_form1 input[name=onadd_sn]').val(d.onadd_sn);
+					        							        	$('#eli_form1 input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
 					        							        	$('#eli_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
 					        							        	$('#eli_form1 input[name=onadd_part_name]').val(d.onadd_part_name);
 					        							        	$('#eli_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
