@@ -789,6 +789,7 @@ if(!empty($op)) {
 						<th style="text-align: center;">下種日期</th>
 						<th style="text-align: center;">目前尺寸</th>
 						<th style="text-align: center;">數量</th>
+						<th style="text-align: center;">操作</th>
 						<!-- <?php if($permmsion == 0){ ?>
 							<th style="text-align: center;">操作</th> 
 						<?php } ?>   -->    						
@@ -796,43 +797,51 @@ if(!empty($op)) {
 				</thead>
 				<tbody></tbody>
 					<?php
-						for($i=0;$i<count($eli_list);$i++){
+						for($i=0;$i<count($eli_list);$i++){							
 							echo '<tr>';
 							if($eli_list[$i]['onadd_isbought'] == 0){
 								if($eli_list[$i]['onadd_newpot_sn'] == 0){
 									if($eli_list[$i]['onadd_ml'] == 0){
 										echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date(	'Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_sn'].'</td>';//產品編號
 	        							$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_sn'];
+	        							$sn = $eli_list[$i]['onadd_sn'];
 									}else{											
 	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date(	'Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_ml'].'</td>';//產品編號
 	        							$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_ml'];
+	        							$sn = $eli_list[$i]['onadd_ml'];
 	        						}
 	        					}
 	        					else{
 	        						echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">'.date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_newpot_sn'].'</td>';//產品編號
 	        						$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_newpot_sn'];
+	        						$sn = $eli_list[$i]['onadd_newpot_sn'];
 	        					}
 							}else{
 								if($eli_list[$i]['onadd_newpot_sn'] == 0){
 									if($eli_list[$i]['onadd_ml'] == 0){
 										echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date(	'Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_sn'].'</td>';//產品編號
 	        							$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_sn'];
+	        							$sn = $eli_list[$i]['onadd_sn'];
 									}else{											
 	        							echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date(	'Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_ml'].'</td>';//產品編號
 	        							$qr_sn = date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_ml'];
+	        							$sn = $eli_list[$i]['onadd_ml'];
 	        						}
 								}
 								else{
 									echo '<td style="vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;">P'.date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_newpot_sn'].'</td>';//產品編號
 									$qr_sn = "P".date('Y',$eli_list[$i]['onadd_planting_date']).'-'.$eli_list[$i]['onadd_newpot_sn'];
+									$sn = $eli_list[$i]['onadd_newpot_sn'];
 								}
 							}
+
 							echo '<td style="vertical-align: middle;text-align: center;">'.date('Y-m-d',$eli_list[$i]['onadd_planting_date']).'</td>';
 							// if($eli_list[$i]['onadd_cur_size'] == 0 || $eli_list[$i]['onadd_cur_size'] == 8)
 							// 	echo '<td style="vertical-align: middle;text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'</td>';
 							// else
 							echo '<td style="vertical-align: middle;text-align: center;">'.$permissions_mapping[$eli_list[$i]['onadd_cur_size']].'寸</td>';
 							echo '<td style="vertical-align: middle;text-align: center;">'.$eli_list[$i]['SUM(onadd_quantity)'].'</td>';
+							echo '<td style="vertical-align: middle;text-align: center;"><a href="'.WT_URL_ROOT.'/admin/purchase/plant_purchase.php?onadd_sn='.$sn.'";?>點我查看</a></td>';
 							// if($permmsion == 0){
 							// 	echo '<td style="vertical-align: middle;text-align: center;">'.'<a href="javascript:do_emli(\''.$eli_list[$i]['onadd_sn'].'\');"><button type="button" class="btn btn-xs btn-warning">汰除</button></a></td>'; 
 							// }     

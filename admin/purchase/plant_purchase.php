@@ -359,10 +359,26 @@ if(!empty($op)) {
 			$onadd_planting_date = str2time($onadd_planting_date);
 			$now = time();
 			$conn = getDB();
-			if($onadd_status != -1) {	
-				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_newpot_sn, onadd_cur_size, onadd_location, onadd_sellsize) " .
-				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$sn}', '{$onadd_cur_size}', '{$onadd_location}', '{$onadd_sellsize}');";
+			$onadd_cost = array();
+			if($onadd_status != -1) {
+				// 換盆前or出貨前成本計算----------------strat
+				$sql_cost = "SELECT SUM(b.oncoda_cost) as oncoda_cost,floor((UNIX_TIMESTAMP()-a.onadd_planting_date)/60/60/24/30)+1 as date_month 
+					FROM `onliine_add_data` a
+					left join `online_cost_data` b on a.onadd_cur_size = b.oncoda_cost_size
+					where b.oncoda_cost_status = 0 and a.onadd_sn='{$onadd_sn}'";
+				$qresult = $conn->query($sql_cost);	
+				$onadd_cost = $qresult->fetch_assoc();
+				$sql_onadd_cost_month = "SELECT c.oncoda_cost as onadd_cost_month FROM `online_shipment_data` a left join `onliine_add_data` b on a.onadd_sn = b.onadd_sn left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size where c.oncoda_cost_status = 1 and a.onshda_status = 1";
+				$qresult2 = $conn->query($sql_onadd_cost_month);	
+				$sql_previous_cost = "SELECT onadd_buy_price FROM `onliine_add_data` where onadd_sn='{$onadd_sn}'";
+				$onadd_cost_month = $qresult2->fetch_assoc();
+				$qresult3 = $conn->query($sql_previous_cost);	
+				$previous_cost = $qresult3->fetch_assoc();
+				$total_cost = $onadd_cost_month['onadd_cost_month']*$onadd_cost['date_month']+$onadd_cost['oncoda_cost']+$previous_cost['onadd_buy_price'];
+				// 換盆前or出貨前成本計算----------------end	
 
+				$sql = "INSERT INTO onliine_add_data (onadd_add_date, onadd_mod_date, onadd_part_no, onadd_part_name, onadd_color, onadd_size, onadd_height, onadd_pot_size, onadd_supplier, onadd_planting_date, onadd_quantity,onadd_buy_price,onadd_quantity_cha, onadd_growing, onadd_status, jsuser_sn, onadd_cycle, onadd_newpot_sn, onadd_cur_size, onadd_location, onadd_sellsize) " .
+				"VALUES ('{$now}', '{$now}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onadd_color}', '{$onadd_size}', '{$onadd_height}', '{$onadd_pot_size}', '{$onadd_supplier}', '{$onadd_planting_date}', '{$onadd_replant_number}','{$total_cost}','{$onadd_replant_number}', '{$onadd_growing}', '1', '{$jsuser_sn}', '{$now}', '{$sn}', '{$onadd_cur_size}', '{$onadd_location}', '{$onadd_sellsize}');";
 				if($conn->query($sql)){
 					$onadd_id = mysqli_insert_id($conn);
 
@@ -382,7 +398,8 @@ if(!empty($op)) {
 				if($onadd_quantity_cha123 == 0){
 					$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_cha123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
 					$conn->query($sql);
-				}		
+				}	
+				// $ret_msg = $onadd_cost_month['onadd_cost_month']."<br>".$onadd_cost['oncoda_cost']."<br>".$onadd_cost['date_month']."<br>".$previous_cost['onadd_buy_price']."<br>".$total_cost;	
 			}
 			else if($onadd_status == -1){
 				$ret_msg = "錯誤！換盆數量高於原下種數量！";
@@ -455,6 +472,7 @@ if(!empty($op)) {
 		$onadd_plant_year=GetParam('onadd_plant_year');//出貨數量
 		$onshda_price=GetParam('onshda_price');//單棵價格
 		$onshda_client=GetParam('onshda_client');//出貨客戶
+		$onadd_data_sn = GetParam('onadd_sn');//新流水號
 		$onadd_quantity_shi123 = ($onadd_quantity - $onadd_plant_year);
 		if($onadd_quantity_shi123 < 0) {
 			$onadd_status = -1;
@@ -482,8 +500,8 @@ if(!empty($op)) {
 			$now = time();
 			$conn = getDB();
 			$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_shi123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
-			$sql = "INSERT INTO online_shipment_data (onshda_add_date, onshda_mod_date, onshda_client, onshda_quantity, onadd_sn, onadd_part_no, onadd_part_name, onshda_price) " .
-				"VALUES ('{$now}', '{$now}', '{$onshda_client}', '{$onadd_plant_year}', '{$onadd_ml}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onshda_price}');";
+			$sql = "INSERT INTO online_shipment_data (onshda_add_date, onshda_mod_date, onshda_client, onshda_quantity, onadd_sn, onadd_part_no, onadd_part_name, onshda_price, onadd_data_sn) " .
+				"VALUES ('{$now}', '{$now}', '{$onshda_client}', '{$onadd_plant_year}', '{$onadd_ml}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onshda_price}' ,'{$onadd_data_sn}');";
 			if($conn->query($sql1) && $conn->query($sql)) {
 				$ret_msg = "出貨完成！";
 				if($onadd_quantity_shi123 == 0){
