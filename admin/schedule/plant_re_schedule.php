@@ -187,43 +187,51 @@ if(!empty($op)) {
 		$onadd_part_name = $list['onadd_part_name'];
 		$onadd_quantity=GetParam('onadd_quantity');//下種數量
 		$jsuser_sn = GetParam('supplier');//編輯人員
-		$onadd_quantity_shi=GetParam('onadd_quantity_shi');//汰除數量
-		$onshda_client=GetParam('onshda_client');//汰除數量
-		$onadd_quantity_shi123 = ($onadd_quantity - $onadd_quantity_shi);
-		if($onadd_quantity_shi123<=0) {
+		$onadd_plant_year=GetParam('onadd_plant_year');//出貨數量
+		$onshda_price=GetParam('onshda_price');//單棵價格
+		$onshda_client=GetParam('onshda_client');//出貨客戶
+		$onadd_quantity_shi123 = ($onadd_quantity - $onadd_plant_year);
+		if($onadd_quantity_shi123 < 0) {
 			$onadd_status = -1;
 		} else {
 			$onadd_status = 1;
 		}
 
-		if(empty($onadd_quantity_shi)){
-			$ret_msg = "*為必填！";
-		} else {
-			$now = time();
-			$conn = getDB();
-			$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_shi123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
-			if($conn->query($sql)) {
-				$ret_msg = "修改完成！";
-			} else {
-				$ret_msg = "修改失敗！";
-			}
-			$conn->close();
+		$onadd_newpot_sn = GetParam('onadd_newpot_sn');
+		if($onadd_newpot_sn == '0'){
+			if(GetParam('onadd_ml') == '0')
+				$onadd_ml=GetParam('onadd_sn');//移倉原始編號
+			else
+				$onadd_ml=GetParam('onadd_ml');//移倉原始編號
+		}else{
+			if(GetParam('onadd_ml') == '0')
+				$onadd_ml=$onadd_newpot_sn;//移倉原始編號
+			else
+				$onadd_ml=GetParam('onadd_ml');//移倉原始編號
 		}
 
-		if(empty($onadd_quantity_shi)){
+		if(empty($onadd_plant_year)){
 			$ret_msg = "*為必填！";
-		} else {
+		} 
+		else if($onadd_status != -1){
 			$now = time();
 			$conn = getDB();
-			$sql = "INSERT INTO online_shipment_data (onshda_add_date, onshda_mod_date, onshda_client, onshda_quantity, onadd_sn, onadd_part_no, onadd_part_name) " .
-				"VALUES ('{$now}', '{$now}', '{$onshda_client}', '{$onadd_quantity_shi}', '{$onadd_sn}', '{$onadd_part_no}', '{$onadd_part_name}');";
-			if($conn->query($sql)) {
-				$ret_msg = "修改完成！";
+			$sql1 = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_shi123}', onadd_status='{$onadd_status}' WHERE onadd_sn='{$onadd_sn}'";
+			$sql = "INSERT INTO online_shipment_data (onshda_add_date, onshda_mod_date, onshda_client, onshda_quantity, onadd_sn, onadd_part_no, onadd_part_name, onshda_price) " .
+				"VALUES ('{$now}', '{$now}', '{$onshda_client}', '{$onadd_plant_year}', '{$onadd_ml}', '{$onadd_part_no}', '{$onadd_part_name}', '{$onshda_price}');";
+			if($conn->query($sql1) && $conn->query($sql)) {
+				$ret_msg = "出貨完成！";
+				if($onadd_quantity_shi123 == 0){
+					$sql = "UPDATE onliine_add_data SET onadd_quantity='{$onadd_quantity_shi123}', onadd_status='-1' WHERE onadd_sn='{$onadd_sn}'";
+					$conn->query($sql);
+				}
 			} else {
-				$ret_msg = "修改失敗！";
-			}			
-			$conn->close();
-		} 
+				$ret_msg = "出貨失敗！";
+			}
+		}
+		else if($onadd_status == -1){
+			$ret_msg = "錯誤！ 出貨數量不可大於下種數量！";
+		}
 		break;
 		//出貨---------------------------------------------
 
@@ -377,6 +385,43 @@ if(!empty($op)) {
 		            });
 			});
 			//換盆-----------------------------------------------------------
+
+			//出貨-----------------------------------------------------------
+			$('button.upd2').on('click', function(){
+				$('#upd-modal2').modal();
+				$('#upd_form2')[0].reset();
+
+				$.ajax({
+					url: '../purchase/plant_purchase.php',
+					type: 'post',
+					dataType: 'json',
+					data: {op:"get", onadd_sn:$(this).data('onadd_sn')},
+					beforeSend: function(msg) {
+						$("#ajax_loading").show();
+					},
+					complete: function(XMLHttpRequest, textStatus) {
+						$("#ajax_loading").hide();
+					},
+					success: function(ret) {
+			                console.log(ret);
+			                if(ret.code==1) {
+			                	var d = ret.data;
+			                	$('#upd_form2 input[name=onadd_sn]').val(d.onadd_sn);
+			                	$('#upd_form2 input[name=onadd_part_name]').val(d.onadd_part_name);
+			                	$('#upd_form2 input[name=onadd_part_no]').val(d.onadd_part_no);
+			                	$('#upd_form2 input[name=onadd_quantity]').val(d.onadd_quantity);
+								$('#upd_form2 input[name=onadd_location]').val(d.onadd_location);
+			                	$('#upd_form2 input[name=onadd_ml]').val(d.onadd_ml);
+			                	$('#upd_form2 input[name=onadd_newpot_sn]').val(d.onadd_newpot_sn);
+			                }
+			            },
+			            error: function (xhr, ajaxOptions, thrownError) {
+		                	// console.log('ajax error');
+		                    // console.log(xhr);
+		                }
+		            });
+			});
+			//出貨-----------------------------------------------------------
 
 			//汰除-----------------------------------------------------------
 			$('button.upd1').on('click', function(){
@@ -624,6 +669,85 @@ if(!empty($op)) {
 			</div>
 		</div>
 
+		<!--出貨----------------------------------------------------------->
+		<div id="upd-modal2" class="modal upd-modal2" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="upd_form2" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">出貨</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd2">
+									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_ml">
+									<input type="hidden" name="onadd_newpot_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">放置區<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_location" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">可供出貨數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> 
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">出貨數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_plant_year" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">出貨對象<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onshda_client" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>    
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">價格(單棵)<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onshda_price" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>      								
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+							<button type="submit" class="btn btn-primary">確認出貨</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--出貨----------------------------------------------------------->
+
 		<!-- modal -->
 		<div id="delay-modal" class="modal delay-modal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
@@ -694,7 +818,7 @@ if(!empty($op)) {
 								<th style="text-align: center;">下種日期</th>
 								<th style="text-align: center;">下種數量</th>
 								<!-- <th style="text-align: center;">預計成長大小</th> -->
-								<th style="text-align: center;">下一階段換盆/下種日期</th>
+								<th style="text-align: center;">下一階段換盆/出貨日期</th>
 								<!-- <th style="text-align: center;">總下種週期</th>       							 -->
 								<th style="text-align: center;">供應商</th>
 								<?php if($permmsion == 0){ ?>			
@@ -732,8 +856,13 @@ if(!empty($op)) {
         							echo '<td style="border-right:0.1rem #BEBEBE dashed;text-align: center;vertical-align: middle;">'.$row['onadd_supplier'].'</td>';//品名
         								if($permmsion == 0){ 
         									echo '<td style="text-align: center;">
-        									<span><button type="button" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">執行</button></span>
-        									<span><button type="button" class="btn btn-danger btn-xs delay" data-onadd_sn="'.$row['onadd_sn'].'">延後</button></span>';
+        									<span >
+	        							      	<button type="button" style="background-color:#6CBF87;border:#6CBF87" class="btn btn-success btn-xs upd2" data-onadd_sn="'.$row['onadd_sn'].'">出貨</button>
+	        							    </span>
+        									<span><button type="button" style="background-color:#A46B62;border:#A46B62" class="btn btn-primary btn-xs upd" data-onadd_sn="'.$row['onadd_sn'].'">換盆</button>
+        									</span>
+        									<span><button type="button" class="btn btn-danger btn-xs delay" data-onadd_sn="'.$row['onadd_sn'].'">延後</button>
+        									</span>';
         									echo '</td></tr>';
         								}
 	        						}

@@ -518,6 +518,25 @@ if(!empty($op)) {
 		}
 		break;
 
+		case 'DelayAmonth':
+		$onadd_sn=GetParam('onadd_sn');
+
+		if(empty($onadd_sn)){
+			$ret_msg = "保留失敗！";
+		}else{
+			$now = time();
+			$conn = getDB();
+			$onadd_planting_date = strtotime(date("Y-m-d", getUserBySn($onadd_sn)['onadd_planting_date_unix']) . " + 1 month");
+			$sql = "UPDATE onliine_add_data SET onadd_planting_date = '{$onadd_planting_date}' WHERE onadd_sn = $onadd_sn";
+			if($conn->query($sql)) {
+				$ret_msg = "保留完成！";
+			} else {
+				$ret_msg = "保留失敗！";
+			}
+			$conn->close();
+		}
+		break;
+
 		//產品履歷---------------------------------------------
 		case 'get_history_list':
 		$onadd_sn = GetParam('onadd_sn');
@@ -918,6 +937,9 @@ if(!empty($op)) {
 		        }
 		    });
 
+			$('button.keep').on('click', function(){
+				location.reload();
+			});
 
 			$('button.upd').on('click', function(){
 				$('#upd-modal').modal();
@@ -1195,7 +1217,7 @@ if(!empty($op)) {
 				);
 			});
 
-			$('#add_form, #upd_form, #upd_form1, #upd_form2, #upd3_form').validator().on('submit', function(e) {
+			$('#add_form, #upd_form1, #upd3_form, #eli_form1').validator().on('submit', function(e) {
 				if (!e.isDefaultPrevented()) {
 					// var files = $("#myFile").get(0).files;   
 					e.preventDefault();
@@ -1225,7 +1247,127 @@ if(!empty($op)) {
 			                 }
 			             });
 					 }
-					});
+				});
+
+				//出貨、換盆後動作----------------------------------------------------------
+				$('#upd_form, #upd_form2').validator().on('submit', function(e) {
+				if (!e.isDefaultPrevented()) {
+					// var files = $("#myFile").get(0).files;   
+					e.preventDefault();
+					var param = $(this).serializeArray();
+					var onproduct_pic_url = {name:"onproduct_pic_url",value:$('#img_newName').html().substring(1,$('#img_newName').html().length)};
+					param.push(onproduct_pic_url);
+					$(this).parents('.modal').modal('hide');
+					var quantity = 0;
+					$(this)[0].reset();
+					 	$.ajax({
+					 		url: './plant_purchase.php',
+					 		type: 'post',
+					 		dataType: 'json',
+					 		data: param,
+					 		beforeSend: function(msg) {
+					 			$("#ajax_loading").show();
+					 		},
+					 		complete: function(XMLHttpRequest, textStatus) {
+					 			$("#ajax_loading").hide();
+					 		},
+					 		success: function(ret) {
+					 			if(ret.msg != '出貨完成！' && ret.msg != '換盆成功！'){
+					 				alert_msg(ret.msg);
+					 			}	
+					 			else{	
+					 				if(ret.msg == '出貨完成！'){
+					 					quantity = param[7]['value'] - param[8]['value'];
+					 				}
+					 				else{
+					 					quantity = param[12]['value'] - param[14]['value'];
+					 				}
+
+					 				if(quantity > 0){		 			
+						 				bootbox.confirm({
+						 					message:ret.msg+"，庫存剩餘數量是否汰除？",
+						 					buttons: {
+										        confirm: {
+										            label: '保留',
+										            className: 'btn-primary'
+										        },
+										        cancel: {
+										            label: '汰除',
+										            className: 'btn-danger'
+										        }
+										    },
+										    callback: function(result) {
+												if(result) {																					
+													$.ajax({
+														url: './plant_purchase.php',
+														type: 'post',
+														dataType: 'json',
+														data: {op:"DelayAmonth", onadd_sn:param[1]['value']},
+														beforeSend: function(msg) {
+															$("#ajax_loading").show();
+														},
+														complete: function(XMLHttpRequest, textStatus) {
+															$("#ajax_loading").hide();
+														},
+														success: function(ret) {
+					        							        alert_msg(ret.msg);
+					        							    },
+					        							    error: function (xhr, ajaxOptions, thrownError) {
+
+				            							    }
+				            						});
+												}
+												else{
+													$('#eli-modal1').modal();
+													$.ajax({
+														url: './plant_purchase.php',
+														type: 'post',
+														dataType: 'json',
+														data: {op:"get", onadd_sn:param[1]['value']},
+														beforeSend: function(msg) {
+															$("#ajax_loading").show();
+														},
+														complete: function(XMLHttpRequest, textStatus) {
+															$("#ajax_loading").hide();
+														},
+														success: function(ret) {
+					        							        console.log(ret);
+					        							        if(ret.code==1) {
+					        							        	var d = ret.data;			        							        	
+					        							        	$('#eli_form1 input[name=onadd_sn]').val(d.onadd_sn);
+					        							        	$('#eli_form1 input[name=onadd_part_no]').val(d.onadd_part_no);
+					        							        	$('#eli_form1 input[name=onadd_part_name]').val(d.onadd_part_name);
+					        							        	$('#eli_form1 input[name=onadd_quantity]').val(d.onadd_quantity);
+
+					        							        }
+					        							    },
+					        							    error: function (xhr, ajaxOptions, thrownError) {
+
+				            							    }
+				            						});
+												}
+											}
+										});
+
+						 			}
+						 			else if(quantity < 0){
+						 				alert_msg("錯誤！輸入數量高於原始數量！");
+						 			}
+						 			else{
+						 				alert_msg(ret.msg);
+						 			}
+					 			}					            
+					 		},
+					 		error: function (xhr, ajaxOptions, thrownError) {
+			                	// console.log('ajax error');
+			                 //     console.log(thrownError);
+			                 }
+			             });
+					 }
+				});
+
+				//出貨、換盆後動作----------------------------------------------------------
+
 				$('#datetimepicker1').datetimepicker({
 		        	minView: 2,
 		            language:  'zh-TW',
@@ -1881,6 +2023,74 @@ if(!empty($op)) {
 			</div>
 		</div>
 		<!--出貨----------------------------------------------------------->
+
+		<!--汰除----------------------------------------------------------->
+		<div id="eli-modal1" class="modal upd-modal1" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<form autocomplete="off" method="post" action="./" id="eli_form1" class="form-horizontal" role="form" data-toggle="validator">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+							<h4 class="modal-title">汰除</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<input type="hidden" name="op" value="upd1">
+									<input type="hidden" name="onadd_sn">
+									<input type="hidden" name="onadd_newpot_sn">
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品號<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_no" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">品名<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_part_name" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">剩餘數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity" placeholder="" required minlength="1" maxlength="32" readonly="readonly">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div> 
+									<div class="form-group">
+										<label for="addModalInput1" class="col-sm-2 control-label">汰除數量<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="addModalInput1" name="onadd_quantity_del" placeholder="" required minlength="1" maxlength="32">
+											<div class="help-block with-errors"></div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">汰除原因<font color="red">*</font></label>
+										<div class="col-sm-10">
+											<select class="form-control" name="onelda_reason">
+												<option value="4">其他</option>
+												<option value="3">黑頭</option>
+												<option value="2">褐斑</option>
+												<option selected="selected" value="1">軟腐</option>
+											</select>
+										</div>
+									</div>        								
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary keep" data-dismiss="modal">保留</button>
+							<button type="submit" class="btn btn-danger">汰除</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--汰除----------------------------------------------------------->
 
 		<!--苗種履歷----------------------------------------------------------->
 		<div id="history_modal" class="modal upd-modal2" tabindex="-1" role="dialog">

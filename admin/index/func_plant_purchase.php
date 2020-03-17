@@ -389,6 +389,21 @@ function getSettingBySn($onchba_size,$onchba_tsize) {
 	return $ret_data;
 }
 
+function getScheduleData() {
+	$ret_data = array();
+	$conn = getDB();
+	$sql="SELECT * FROM `onliine_add_data` WHERE onadd_status >= 0 AND onadd_schedule = 1";
+	$qresult = $conn->query($sql);
+	if ($qresult->num_rows > 0) {
+		while ($row = $qresult->fetch_assoc()) {
+			$ret_data[] = $row;
+		}
+		$qresult->free();
+	}
+	$conn->close();
+	return $ret_data;
+}
+
 function getWorkListByMonth() {
 	$ret_data = array();
 	$conn = getDB();
@@ -408,31 +423,34 @@ function getWorkListByMonth() {
         	$row['c_y'] = $c_y;
         	$row['o_m'] = $o_m;
         	$row['c_m'] = $c_m;
+        	$row['isSell'] = $row['onadd_growing'];
         	$row['onadd_growing'] = $mapping[$row['onadd_growing']];
         	$row['onadd_sellsize'] = $GLOBALS['size'][$row['onadd_sellsize']];
         	$days=strtotime(date('today'))-strtotime($test);
+
         	if($days > 0 && $days < 604800){// 0:尚未達標 1:即將到達預估出貨日期(成熟期前7天開始提醒)  2:已超過可出貨日期
         		$row['practicesell_status'] = 1;
         	}
-        	else if($days < 0){
+        	else if($days < 86400){
         		$row['practicesell_status'] = 2;
         	}
         	else{
         		$row['practicesell_status'] = 0;
         	}
+
         	if($o_y <= $c_y && !empty($row['onchba_cycle'])){
         		if($o_y == $c_y && $o_m <= $c_m){
         			$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);
         			$row['expected_date'] = $test;
-        			$row['onadd_planting_date_unix'] = strtotime('now');
-        			$row['expected_date_unix'] = strtotime($test);
+        			$row['onadd_planting_date_unix'] = strtotime(date( "Y-m-d", strtotime("now")));
+        			$row['expected_date_unix'] = strtotime(date( "Y-m-d", strtotime($test)));
         			$ret_data[] = $row;
         		}
         		else if($o_y < $c_y){
         			$row['onadd_planting_date'] = date("Y/m/d",$row['onadd_planting_date']);
         			$row['expected_date'] = $test;
-        			$row['onadd_planting_date_unix'] = strtotime('now');
-        			$row['expected_date_unix'] = strtotime($test);
+        			$row['onadd_planting_date_unix'] = strtotime(date( "Y-m-d", strtotime("now")));
+        			$row['expected_date_unix'] = strtotime(date( "Y-m-d", strtotime($test)));
         			$ret_data[] = $row;
         		}        		
         	}
@@ -442,6 +460,7 @@ function getWorkListByMonth() {
 		$qresult->free();
 	}
 	$conn->close();
+	$ret_data[] = getScheduleData();
 	return $ret_data;
 }
 

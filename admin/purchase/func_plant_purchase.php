@@ -343,6 +343,7 @@ function getUserBySn($onadd_sn) {
 		if ($row = $qresult->fetch_assoc()) {
 			$ret_data = $row;
 			$ret_data['onadd_planting_date'] = date('Y-m-d',$ret_data['onadd_planting_date']);
+			$ret_data['onadd_planting_date_unix'] = $row['onadd_planting_date'];
 		}
 		$qresult->free();
 	}
