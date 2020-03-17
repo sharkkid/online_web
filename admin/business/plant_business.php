@@ -565,13 +565,13 @@ if(!empty($op)) {
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>	 -->
-									<div class="form-group">
+									<!-- <div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">數量<font color="red">*</font></label>
 										<div class="col-sm-10">
 											<input type="text" class="form-control" id="addModalInput1" name="oncoda_num" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
-									</div>	
+									</div>	 -->
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">成本金額<font color="red">*</font></label>
 										<div class="col-sm-10">
@@ -736,7 +736,6 @@ if(!empty($op)) {
 										<tr style="font-size: 1.3em">	
 											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">項目</th>
 											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">成本金額</th>
-											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">數量</th>
 											<th style="text-align: center;color:#52565e; border-bottom:1px #b0b0b0 solid;">操作</th>
 										</tr>
 									<?php 
@@ -746,7 +745,6 @@ if(!empty($op)) {
 											<tr style="font-size: 1.1em;">
 												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo $value2['oncoda_name']; ?></td>
 												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo number_format($value2['oncoda_cost'],1)." NT"; ?></td>
-												<td  style="text-align: center;color:#52565e; vertical-align: middle;border-right:0.1rem #BEBEBE dashed;text-align: center;"><?php echo number_format($value2['oncoda_num'],0); ?></td>
 												<td  style="text-align: center;color:#52565e; vertical-align: middle;text-align: center;">
 													<button type="button" class="btn btn-primary btn-xs upd_detail" data-oncoda_sn="<?php echo $value2['oncoda_sn'];?>" data-oncost_sn="<?php echo $value['oncost_sn'];?>" style="background-color:#A46B62;border:#A46B62">修改</button>
 													<button type="button" class="btn btn-danger btn-xs del" data-oncoda_sn="<?php echo $value2['oncoda_sn'];?>" data-oncost_sn="<?php echo $value['oncost_sn'];?>" style="background-color:#E94653;">刪除</button>

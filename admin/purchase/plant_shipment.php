@@ -80,6 +80,7 @@ if(!empty($op)) {
 	$pg_pages = $pg_rows == 0 ? 0 : ( (int)(($pg_total + ($pg_rows - 1)) /$pg_rows) );
 
 	$user_list = getUser($search_where, $pg_offset, $pg_rows);
+	
 	// printr($user_list);
 	// exit;
 	$User_forExcel = getUser_forExcel($search_where);
@@ -99,6 +100,8 @@ if(!empty($op)) {
         $add_date = date('Y/m/d H:i:s');
         $sheetname = 'data';
         $sheet = $originalexcel->getSheetByName($sheetname);
+        $sheet->freezePane('A3');
+        $sheet->setTitle("出貨報表_".date("Y-m-d"));
     // 塞值
         $n = 3;
         for($i=0;$i<count($User_forExcel);$i++){
@@ -110,11 +113,11 @@ if(!empty($op)) {
             $sheet->setCellValue('F'.($n+$i), $User_forExcel[$i]['onshda_quantity']);//出貨數量
             $sheet->setCellValue('G'.($n+$i), $User_forExcel[$i]['onshda_price']);//出貨單價
             $sheet->setCellValue('H'.($n+$i), $User_forExcel[$i]['onshda_price']*$User_forExcel[$i]['onshda_quantity']);//總收入
-            $sheet->setCellValue('I'.($n+$i), $User_forExcel[$i]['oncoda_cost']+($User_forExcel[$i]['onadd_cost_month']*$User_forExcel[$i]['date_month']));//總成本
-            $sheet->setCellValue('J'.($n+$i), $User_forExcel[$i]['onshda_price']*$User_forExcel[$i]['onshda_quantity']-($User_forExcel[$i]['oncoda_cost']+($User_forExcel[$i]['onadd_cost_month']*$User_forExcel[$i]['date_month'])));//毛利
+            $sheet->setCellValue('I'.($n+$i), $User_forExcel[$i]['oncoda_cost']*$User_forExcel[$i]['onshda_quantity']+$User_forExcel[$i]['onadd_cost_month']*$User_forExcel[$i]['date_month']);//總成本
+            $sheet->setCellValue('J'.($n+$i), $User_forExcel[$i]['onshda_price']*$User_forExcel[$i]['onshda_quantity']-($User_forExcel[$i]['oncoda_cost']*$User_forExcel[$i]['onshda_quantity']+($User_forExcel[$i]['onadd_cost_month']*$User_forExcel[$i]['date_month'])));//毛利
             $sheet->setCellValue('K'.($n+$i), $User_forExcel[$i]['onshda_client']);//客戶
         }
-        // printr($User_forExcel);
+  //       printr($User_forExcel);
 		// exit;
 
     // 產生檔案
