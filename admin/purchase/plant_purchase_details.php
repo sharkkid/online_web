@@ -526,6 +526,14 @@ if(!empty($op)) {
 	  	$('#onproduct_sn').val(onproduct_sn);
 	}
 	</script>
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+	<script>
+		$(function(){
+			$('.masonry').masonry({
+				itemSelector: '.item'
+			})
+		});
+	</script>
 	<style type="text/css">	
 		@media screen and (max-width: 375px){
 			#img_print{
@@ -718,96 +726,92 @@ if(!empty($op)) {
         						// }
         					-->
 
-        				</div>
-        			</div>
-        		</div>
-        		<div class="" ass="am-cf am-g">
-        			<ul class="am-avg-sm-2 my-shop-product-list">
-        				<?php
-        				$produce_image = '';
-        				$image_btn_name = '';
-        				for($i = 0;$i < count($AllProductData);$i++){        					
-        					if(!empty($AllProductData[$i]['onproduct_pic_url'])){
-        						$produce_image = $AllProductData[$i]['onproduct_pic_url'];
-        						$image_btn_name = '更新照片';
-        					}else{
-        						$produce_image = './images/nopic.png';
-        						$image_btn_name = '上傳照片';
-        					}
-        					$product_size_n = getSizeQtyBySn($AllProductData[$i]['onproduct_part_no'],$AllProductData[$i]['onproduct_part_name']);
-        					// printr($product_size_n);
-        					// exit();
-        					echo '<li>
-		        					<div class="am-panel am-panel-default col-sm-12" id="img_div">
-		        						<div class="am-panel-bd"">';
-		        						if($permmsion == 0 || strpos($permmsion_option, "4") !== false){
-		        							echo '<button style="float:left clear:both;" class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button><hr>';
-		        						}
-		        							echo '
-		        							<div class="col-sm-6" id="imgbox" style="">
-		        								<img style="clear:both;" id="img_print" class="am-img-responsive thumbnail " src="'.$produce_image.'">
-		        							</div>
-		        							<div class="col-sm-6" id="img_data" style="text-align: center;">
-			        							<span style="font-size:1.5em;">
-				        							<a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del='.date('Y').'&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'">'.$AllProductData[$i]['onproduct_part_name'].
-				        							'</a>
-			        							</span>
-			        							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
-		        							';
-		        							// printr($product_size_n);
-		        								for($n=0;$n<6;$n++){
-		        									if($product_size_n[$n]['onadd_growing'] != null){
-		        										echo '<span style="font-size:1em;text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_cur_size']].'寸：'.$product_size_n[$n]['sum'].' 株';
-		        									}	        									
-		        								}
-		        								if($AllProductData[$i]['onproduct_color'] != '')
-		        									echo '<span style="font-size:1em;text-align: center; display:block;">花色：'.$AllProductData[$i]['onproduct_color'].'</span>';
-		        								else
-		        									echo '<span style="font-size:1em;text-align: center; display:block;">花色：尚未填寫</span>';
-		        								if($AllProductData[$i]['onproduct_size'] != '')
-		        									echo '<span style="font-size:1em;text-align: center; display:block;">花徑：'.$AllProductData[$i]['onproduct_size'];
-		        								else
-		        									echo '<span style="font-size:1em;text-align: center; display:block;">花徑：尚未填寫';
-		        								if($AllProductData[$i]['onproduct_height'] != '')
-		        									echo '<span style="font-size:1em;text-align: center; display:block;">高度：'.$AllProductData[$i]['onproduct_height'].'</span>';
-		        								else
-		        									echo '<span style="font-size:1em;text-align: center; display:block;">高度：尚未填寫</span>';		     
-		        			echo			' </div>      						
-		        						</div>
-		        					</div>
-		        				</li>';
-        				}
-        				?>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid " ass="am-cf am-g">
+			<div class="row masonry">
+			<?php
+			$produce_image = '';
+			$image_btn_name = '';
+			for($i = 0;$i < count($AllProductData);$i++){        					
+				if(!empty($AllProductData[$i]['onproduct_pic_url'])){
+					$produce_image = $AllProductData[$i]['onproduct_pic_url'];
+					$image_btn_name = '更新照片';
+				}else{
+					$produce_image = './images/nopic.png';
+					$image_btn_name = '上傳照片';
+				}
+				$product_size_n = getSizeQtyBySn($AllProductData[$i]['onproduct_part_no'],$AllProductData[$i]['onproduct_part_name']);
+				// printr($product_size_n);
+				// exit();
+				echo '
+					<div class="am-panel am-panel-default col-sm-6 item" id="img_div" style="width:49%;margin:0.5rem;">
+						<div class="am-panel-bd"">';
+						if($permmsion == 0 || strpos($permmsion_option, "4") !== false){
+							echo '<button style="float:left clear:both;" class="btn btn-info" onclick="upd_btn_click('.$AllProductData[$i]['onproduct_sn'].')">'.$image_btn_name.'</button><hr>';
+						}
+							echo '
+							<div class="col-sm-6" id="imgbox" style="">
+								<img style="clear:both;" id="img_print" class="am-img-responsive thumbnail " src="'.$produce_image.'">
+							</div>
+							<div class="col-sm-6" id="img_data" style="text-align: center;">
+    							<span style="font-size:1.5em;">
+        							<a href="details_table.php?onadd_part_no='.$AllProductData[$i]['onproduct_part_no'].'&onadd_growing='.$AllProductData[$i]['onproduct_growing'].'&onadd_quantity_del='.date('Y').'&onadd_part_name='.$AllProductData[$i]['onproduct_part_name'].'">'.$AllProductData[$i]['onproduct_part_name'].
+        							'</a>
+    							</span>
+    							<h4 style="text-align: center; display:block;">'.$AllProductData[$i]['onproduct_part_no'].'</h4>
+							';
+							// printr($product_size_n);
+								for($n=0;$n<6;$n++){
+									if($product_size_n[$n]['onadd_growing'] != null){
+										echo '<span style="font-size:1em;text-align: center; display:block;">'.$permissions_mapping[$product_size_n[$n]['onadd_cur_size']].'寸：'.$product_size_n[$n]['sum'].' 株';
+									}	        									
+								}
+								if($AllProductData[$i]['onproduct_color'] != '')
+									echo '<span style="font-size:1em;text-align: center; display:block;">花色：'.$AllProductData[$i]['onproduct_color'].'</span>';
+								else
+									echo '<span style="font-size:1em;text-align: center; display:block;">花色：尚未填寫</span>';
+								if($AllProductData[$i]['onproduct_size'] != '')
+									echo '<span style="font-size:1em;text-align: center; display:block;">花徑：'.$AllProductData[$i]['onproduct_size'];
+								else
+									echo '<span style="font-size:1em;text-align: center; display:block;">花徑：尚未填寫';
+								if($AllProductData[$i]['onproduct_height'] != '')
+									echo '<span style="font-size:1em;text-align: center; display:block;">高度：'.$AllProductData[$i]['onproduct_height'].'</span>';
+								else
+									echo '<span style="font-size:1em;text-align: center; display:block;">高度：尚未填寫</span>';		     
+						echo' </div>      						
+						</div>
+					</div>';
+				}
+		?>
+		</div></div>
+		<?php include('./../htmlModule/page.php');?>
+		<!--Start footer-->
+		<footer class="footer">
+			<span>Copyright &copy; 2019. Online Plant</span>
+		</footer>
+		<!--end footer-->
 
-        			</ul>
+	</section>
+	<!--end main content-->
 
-        		</div>
-				<?php include('./../htmlModule/page.php');?>
-        		<!--Start footer-->
-        		<footer class="footer">
-        			<span>Copyright &copy; 2019. Online Plant</span>
-        		</footer>
-        		<!--end footer-->
-
-        	</section>
-        	<!--end main content-->
-
-        	<!--Common plugins-->
-	        <script src="./../../js1/jquery.slimscroll.min.js"></script>
-	        <script src="./../../js1/jquery.nanoscroller.min.js"></script>
-	        <script src="./../../js1/metismenu.min.js"></script>
-	        <script src="./../../js1/float-custom.js"></script>
-	        <!--page script-->
-	        <script src="./../../js1/d3.min.js"></script>
-	        <script src="./../../js1/c3.min.js"></script>
-	        <!-- iCheck for radio and checkboxes -->
-	        <script src="./../../js1/icheck.min.js"></script>
-	        <!-- Datatables-->
-	        <script src="./../../js1/jquery.datatables.min.js"></script>
-	        <script src="./../../js1/datatables.responsive.min.js"></script>
-	        <script src="./../../js1/jquery.toast.min.js"></script>
-	        <script src="./../../js1/dashboard-alpha.js"></script>
-	        <script src="./../../lib/dom-to-image.js"></script>
-	        <script src="./../../lib/FileSaver.js"></script>
-        </body>
+	<!--Common plugins-->
+    <script src="./../../js1/jquery.slimscroll.min.js"></script>
+    <script src="./../../js1/jquery.nanoscroller.min.js"></script>
+    <script src="./../../js1/metismenu.min.js"></script>
+    <script src="./../../js1/float-custom.js"></script>
+    <!--page script-->
+    <script src="./../../js1/d3.min.js"></script>
+    <script src="./../../js1/c3.min.js"></script>
+    <!-- iCheck for radio and checkboxes -->
+    <script src="./../../js1/icheck.min.js"></script>
+    <!-- Datatables-->
+    <script src="./../../js1/jquery.datatables.min.js"></script>
+    <script src="./../../js1/datatables.responsive.min.js"></script>
+    <script src="./../../js1/jquery.toast.min.js"></script>
+    <script src="./../../js1/dashboard-alpha.js"></script>
+    <script src="./../../lib/dom-to-image.js"></script>
+    <script src="./../../lib/FileSaver.js"></script>
+</body>
 </html>?>
