@@ -444,6 +444,7 @@ function getSettingBySn($onchba_size,$onchba_tsize) {
 	$ret_data = array();
 	$conn = getDB();
 	$sql="select * from online_change_basin where onchba_size like '{$onchba_size}' and onchba_tsize like '{$onchba_tsize}'";
+	// echo "sql=".$sql."<br>";
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
 		if ($row = $qresult->fetch_assoc()) {
@@ -882,7 +883,7 @@ function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
 	if ($qresult->num_rows > 0) {
 		while($row = $qresult->fetch_assoc()) {			
 			$onchba_cycle = getSettingBySn($DEVICE_SYSTEM[$row['onadd_cur_size']],$DEVICE_SYSTEM[$row['onadd_growing']])['onchba_cycle'];
-			// echo "Q="$onchba_cycle."</br>";
+			// printr($row);
         	if($row['onadd_plant_st']==2){
         		$onchba_cycle=1;
         		$test = date("Y/m/d", strtotime("+$onchba_cycle days", $row['onadd_planting_date']));
@@ -910,40 +911,40 @@ function getExpectedShipByMonth($year,$onadd_part_no,$onadd_growing) {
 		$n = 0;
 		switch ($ret_data[$i]['month']) {
 			case '01':
-				$expected_number[$ret_data[$i]['onadd_growing']]['1'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['1'] += $ret_data[$i]['count'];
 				break;
 			case '02':
-				$expected_number[$ret_data[$i]['onadd_growing']]['2'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['2'] += $ret_data[$i]['count'];
 				break;
 			case '03':
-				$expected_number[$ret_data[$i]['onadd_growing']]['3'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['3'] += $ret_data[$i]['count'];
 				break;
 			case '04':
-				$expected_number[$ret_data[$i]['onadd_growing']]['4'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['4'] += $ret_data[$i]['count'];
 				break;
 			case '05':
-				$expected_number[$ret_data[$i]['onadd_growing']]['5'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['5'] += $ret_data[$i]['count'];
 				break;
 			case '06':
-				$expected_number[$ret_data[$i]['onadd_growing']]['6'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['6'] += $ret_data[$i]['count'];
 				break;
 			case '07':
-				$expected_number[$ret_data[$i]['onadd_growing']]['7'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['7'] += $ret_data[$i]['count'];
 				break;
 			case '08':
-				$expected_number[$ret_data[$i]['onadd_growing']]['8'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['8'] += $ret_data[$i]['count'];
 				break;
 			case '09':
-				$expected_number[$ret_data[$i]['onadd_growing']]['9'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['9'] += $ret_data[$i]['count'];
 				break;
 			case '10':
-				$expected_number[$ret_data[$i]['onadd_growing']]['10'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['10'] += $ret_data[$i]['count'];
 				break;
 			case '11':
-				$expected_number[$ret_data[$i]['onadd_growing']]['11'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['11'] += $ret_data[$i]['count'];
 				break;
 			case '12':
-				$expected_number[$ret_data[$i]['onadd_growing']]['12'] += $ret_data[$i]['count'];
+				$expected_number[$ret_data[$i]['onadd_sellsize']]['12'] += $ret_data[$i]['count'];
 				break;
 		}
 	}

@@ -195,49 +195,48 @@ $op=GetParam('op');
 				        var data = ret.data;							
 						var main_content = document.getElementById("main_content");
 						var event = "";
-						console.log(data);
-						for (var i = 0; i < data.length; i++) {
-							if(i == (data.length-1)){
-								var dy_modal = document.createElement("div");
-								dy_modal.setAttribute('class', 'modal fade');
-								dy_modal.setAttribute('id', 'myModal'+i);
-								dy_modal.setAttribute('role', 'dialog');
-								dy_modal.innerHTML = "<div class='modal-dialog modal-'><div class='modal-content'><div class='modal-body'><div class=\"panel panel-info\"><div class=\"panel-heading\"><h4 class=\"modal-title\">提醒事項</h4></div><div class=\"panel-body\" style=\"font-size: 1.4rem\"><label>您有 "+data[i].length+" 項本周待辦事項尚未處理，請點擊以下連結前往處理。</label><br><label></label><a href=\"<?php echo WT_SERVER.'/admin/schedule/plant_re_schedule.php'?>\">點我連結至本周待辦事項！</a><br><br><br><br><br></div></div></div><div class='modal-footer'><button type='button' class='btn btn-default' data-dismiss=\"modal\" id=\"btn_modal\">確認</button></div></div></div>";		
-								main_content.appendChild(dy_modal);	
-								$('#myModal'+i).modal('show');
-							}else{
-								var dy_modal = document.createElement("div");
-								dy_modal.setAttribute('class', 'modal fade');
-								dy_modal.setAttribute('id', 'myModal'+i);
-								dy_modal.setAttribute('role', 'dialog');
-								if(data[i]['onadd_planting_date_unix'] >= data[i]['expected_date_unix']){
-									if(data[i]['isSell'] == 9){
-										expected_title = "預計出貨日：";
-										event = "已經超過出貨日期";
-									}
-									else{
-										expected_title = "預計成長日：";
-										event = "已經超過換盆日期";
-									}
-								  	
+						if(data[data.length-1].length > 0){
+							var dy_modal = document.createElement("div");
+							dy_modal.setAttribute('class', 'modal fade');
+							dy_modal.setAttribute('id', 'myModal'+i);
+							dy_modal.setAttribute('role', 'dialog');
+							dy_modal.innerHTML = "<div class='modal-dialog modal-'><div class='modal-content'><div class='modal-body'><div class=\"panel panel-info\"><div class=\"panel-heading\"><h4 class=\"modal-title\">提醒事項</h4></div><div class=\"panel-body\" style=\"font-size: 1.4rem\"><label>您有 "+data[data.length-1].length+" 項本周待辦事項尚未處理，請點擊以下連結前往處理。</label><br><label></label><a href=\"<?php echo WT_SERVER.'/admin/schedule/plant_re_schedule.php'?>\">點我連結至本周待辦事項！</a><br><br><br><br><br></div></div></div><div class='modal-footer'><button type='button' class='btn btn-default' data-dismiss=\"modal\" id=\"btn_modal\">確認</button></div></div></div>";		
+							main_content.appendChild(dy_modal);	
+							$('#myModal'+i).modal('show');
+						}
+
+						for (var i = 0; i < data.length-1; i++) {
+							var dy_modal = document.createElement("div");
+							dy_modal.setAttribute('class', 'modal fade');
+							dy_modal.setAttribute('id', 'myModal'+i);
+							dy_modal.setAttribute('role', 'dialog');
+							if(data[i]['onadd_planting_date_unix'] >= data[i]['expected_date_unix']){
+								if(data[i]['isSell'] == 9){
+									expected_title = "預計出貨日：";
+									event = "已經超過出貨日期";
 								}
 								else{
-									if(data[i]['isSell'] == 9){
-										expected_title = "預計出貨日：";
-										event = "即將到達出貨日期";
-									}
-									else{
-										expected_title = "預計成長日：";
-										event = "即將到達換盆日期";
-									}
+									expected_title = "預計成長日：";
+									event = "已經超過換盆日期";
 								}
+							  	
+							}
+							else{
+								if(data[i]['isSell'] == 9){
+									expected_title = "預計出貨日：";
+									event = "即將到達出貨日期";
+								}
+								else{
+									expected_title = "預計成長日：";
+									event = "即將到達換盆日期";
+								}
+							}
 
-								if(data[i]['onadd_quantity'] > 0){
-									dy_modal.innerHTML = "<div class='modal-dialog modal-'><div class='modal-content'><div class='modal-body'><div class=\"panel panel-info\"><div class=\"panel-heading\"><h4 class=\"modal-title\">提醒事項</h4></div><div class=\"panel-body\" style=\"font-size: 1.4rem\"><label>品號："+data[i]['onadd_part_no']+"</label></br><label>品名："+data[i]['onadd_part_name']+"</label></br><label>下種日："+data[i]['onadd_planting_date']+"</label></br><label>"+expected_title+data[i]['expected_date']+"</br><label>數量："+data[i]['onadd_quantity']+"</label></br><label>提醒事項："+event+"</label></div></div></div><div class='modal-footer'><button type='button' class='btn btn-default' data-dismiss=\"modal\" id=\"btn_modal\">確認</button></div></div></div>";		
-									main_content.appendChild(dy_modal);	
-									$('#myModal'+i).modal('show');
-								}
-							}														
+							if(data[i]['onadd_quantity'] > 0){
+								dy_modal.innerHTML = "<div class='modal-dialog modal-'><div class='modal-content'><div class='modal-body'><div class=\"panel panel-info\"><div class=\"panel-heading\"><h4 class=\"modal-title\">提醒事項</h4></div><div class=\"panel-body\" style=\"font-size: 1.4rem\"><label>品號："+data[i]['onadd_part_no']+"</label></br><label>品名："+data[i]['onadd_part_name']+"</label></br><label>下種日："+data[i]['onadd_planting_date']+"</label></br><label>"+expected_title+data[i]['expected_date']+"</br><label>數量："+data[i]['onadd_quantity']+"</label></br><label>提醒事項："+event+"</label></div></div></div><div class='modal-footer'><button type='button' class='btn btn-default' data-dismiss=\"modal\" id=\"btn_modal\">確認</button></div></div></div>";		
+								main_content.appendChild(dy_modal);	
+								$('#myModal'+i).modal('show');
+							}																					
 						}
 					}
 				},

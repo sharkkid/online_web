@@ -1,7 +1,8 @@
 <?php
 $get_text = $_GET['text'];
 $access_token = array();
-$access_token[]="lPuzbsvo2oZo28hVuBHtA2ZXAkqP9XyKAmT0aRo1YoQ";
+// $access_token[]="lPuzbsvo2oZo28hVuBHtA2ZXAkqP9XyKAmT0aRo1YoQ";
+$access_token[]="ihxw66gKunhjooYXGjj0AjD8RKZ0r2trdoQG6MMQCCT";
 $message=$get_text."\n現在時刻: ".date('Y-m-d H:i:s');
 $TargetCount = count($access_token);
    $Push_Content['message'] = $message;
