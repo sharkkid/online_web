@@ -256,7 +256,7 @@ if(!empty($op)) {
 		$IsUploadImg=IsNewProduct($onadd_part_no,$onadd_part_name);//產品是否已存在
 		if(!empty($onproduct_pic_url))
 			$onproduct_pic_url = ".".$onproduct_pic_url;
-		$jsuser_sn = GetParam('supplier');//編輯人員
+		// $jsuser_sn = GetParam('supplier');//編輯人員
 		$IsSetCycle=getTargetSize($DEVICE_SYSTEM[$onadd_cur_size],$DEVICE_SYSTEM[$onadd_growing]);//是否有此種植週期
 
 		if(empty($onadd_part_no)||empty($onadd_part_name)||empty($onadd_planting_date)||empty($onadd_quantity)||empty($onadd_growing)||empty($IsSetCycle)){
@@ -270,7 +270,7 @@ if(!empty($op)) {
 			$now = time();
 			$conn = getDB();
 			if($IsUploadImg == "0"){
-				$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}', onadd_buy_price='{$onadd_buy_price}' WHERE onadd_sn='{$onadd_sn}';";
+				$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}', onadd_buy_price='{$onadd_buy_price}',onadd_sellsize = '{$onadd_sellsize}' WHERE onadd_sn='{$onadd_sn}';";
 			
 				if($conn->query($sql)) {
 					$ret_msg = "修改成功！";
@@ -279,9 +279,9 @@ if(!empty($op)) {
 				}
 			}
 			else{
-				$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}',jsuser_sn='{$supplier}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}', onadd_buy_price='{$onadd_buy_price}' WHERE onadd_sn='{$onadd_sn}';";
+				$sql = "UPDATE onliine_add_data	SET onadd_part_no ='{$onadd_part_no}',onadd_part_name='{$onadd_part_name}',onadd_color='{$onadd_color}'	,onadd_size='{$onadd_size}',onadd_height='{$onadd_height}',onadd_pot_size='{$onadd_pot_size}',onadd_supplier='{$onadd_supplier}',onadd_planting_date='{$onadd_planting_date}',onadd_quantity='{$onadd_quantity}',onadd_growing='{$onadd_growing}', onadd_location='{$onadd_location}', onadd_cur_size='{$onadd_cur_size}', onadd_buy_price='{$onadd_buy_price}',onadd_sellsize = '{$onadd_sellsize}' WHERE onadd_sn='{$onadd_sn}';";
 
-				$sql2 = "UPDATE onliine_product_data	SET onproduct_pic_url = '{$onproduct_pic_url}' WHERE onproduct_part_no='{$onadd_part_no}' AND onproduct_part_name = '{$onadd_part_name}';";
+				$sql2 = "UPDATE onliine_product_data SET onproduct_pic_url = '{$onproduct_pic_url}' WHERE onproduct_part_no='{$onadd_part_no}' AND onproduct_part_name = '{$onadd_part_name}';";
 			
 				if($conn->query($sql)) {
 					$ret_msg = "修改成功！";
@@ -292,6 +292,7 @@ if(!empty($op)) {
 					$ret_msg = "修改失敗！";
 				}
 			}
+			// $ret_msg .= ",IsUploadImg=".$IsUploadImg.",onproduct_pic_url=".$onproduct_pic_url;
 			$conn->close();
 		}
 		break;
@@ -911,7 +912,7 @@ if(!empty($op)) {
 			        complete: function(json){
 			        	// $('#img_newName').html(json.responseText);   
 			        	$('#img_newName').html(json.responseText);   
-			        	console.log(json.responseText);
+			        	// console.log($('#img_newName').html());
 			        }   
 			    });  
 		    });
@@ -938,7 +939,7 @@ if(!empty($op)) {
 			        complete: function(json){
 			        	// $('#adjust_form input[name=onadd_quantity]').val(d.onadd_quantity);
 			        	$('#img_newName').html(json.responseText);   
-			        	console.log(json.responseText);
+			        	// console.log($('#img_newName').html());
 			        }   
 			    });  
 		    });
@@ -1172,6 +1173,9 @@ if(!empty($op)) {
 				$('#adjust_form img[id=preview]').attr("src","");
 				$('#adjust_form div[id=preview_size]').html("");
 			});
+			$('#btn_add').on('click',function(){
+				$('#img_newName').html("");
+			});
 
 			//汰除-----------------------------------------------------------
 			$('button.upd1').on('click', function(){
@@ -1276,13 +1280,14 @@ if(!empty($op)) {
 			                	$('#adjust_form input[name=onadd_part_no]').val(d.onadd_part_no);
 			                	$('#adjust_form input[name=onadd_part_name]').val(d.onadd_part_name);
 			                	$('#adjust_form input[name=onadd_color]').val(d.onadd_color);
-			                	$('#adjust_form input[name=onadd_size]').val(d.onadd_size);
+			                	$('#adjust_form [name=onadd_cur_size] option[value='+d.onadd_cur_size+']').prop('selected','selected');
 			                	$('#adjust_form input[name=onadd_height]').val(d.onadd_height);
 			                	$('#adjust_form input[name=onadd_pot_size]').val(d.onadd_pot_size);
 			                	$('#adjust_form [name=onadd_location] option[value='+d.onadd_location+']').prop('selected','selected');
 			                	$('#adjust_form input[name=onadd_supplier]').val(d.onadd_supplier);
 			                	$('#adjust_form input[name=onadd_buy_price]').val(d.onadd_buy_price);
-			                	$('#dropdown_onadd_cur_size').val(d.onadd_cur_size);
+			                	$('#img_newName').html(d.img_url);
+			                	// $('#dropdown_onadd_cur_size').val(d.onadd_cur_size);
 			                	$('#adjust_form input[name=onadd_planting_date]').val(d.onadd_planting_date);
 			                	$('#adjust_form input[name=onadd_quantity]').val(d.onadd_quantity);
 
@@ -1454,7 +1459,7 @@ if(!empty($op)) {
 					var param = $(this).serializeArray();
 					var onproduct_pic_url = {name:"onproduct_pic_url",value:$('#img_newName').html().substring(1,$('#img_newName').html().length)};
 					param.push(onproduct_pic_url);
-					// console.log(param);
+					console.log(param);
 					$(this).parents('.modal').modal('hide');
 					$(this)[0].reset();
 					 	$.ajax({
@@ -2829,7 +2834,7 @@ if(!empty($op)) {
 				<div class="navbar-collapse collapse pull-right" style="margin-bottom: 10px;">
 					<ul class="nav nav-pills pull-right toolbar">
 						<?php if($permmsion == 0 || strpos($permmsion_option, '1') !== false){ ?>
-							<li><button data-parent="#toolbar" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li>
+							<li><button data-parent="#toolbar" id="btn_add" data-toggle="modal" data-target=".add-modal" class="accordion-toggle btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li>
 						<?php } ?>
 						<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-primary" onclick="javascript:location.href='./plant_purchase_add.php'"><i class="glyphicon glyphicon-plus"></i> 新品項建立</button></li> -->
 						<!-- <li><button data-parent="#toolbar" class="accordion-toggle btn btn-warning" onclick="javascript:location.href='./plant_purchase_add.php'"></i> 返回苗種資料建立</button></li> -->
