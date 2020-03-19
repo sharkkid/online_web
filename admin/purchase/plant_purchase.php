@@ -1,5 +1,7 @@
 <?php
 include_once("./func_plant_purchase.php");
+// printr(getProductByPartNo("123213123"));
+// exit;
 $qr_sn = "";
 $status_mapping = array(0=>'<font color="red">關閉</font>', 1=>'<font color="blue">啟用</font>');
 $DEVICE_SYSTEM = array(
@@ -1007,6 +1009,7 @@ if(!empty($op)) {
 							        	document.getElementById('dropdown_onadd_pot_size').value = (data.onproduct_pot_size != "") ? data.onproduct_pot_size : "";
 							        	document.getElementById('dropdown_onadd_supplier').value = (data.onproduct_supplier != "") ? data.onproduct_supplier : "";
 							        	document.getElementById('dropdown_onadd_growing').value = data.onproduct_growing;
+							        	$('#add_form input[name=onadd_buy_price]').val(data.onadd_buy_price);
 							        }
 							    },
 							    error: function (xhr, ajaxOptions, thrownError) {
@@ -2789,7 +2792,7 @@ if(!empty($op)) {
 									<div class="form-group">
 										<label for="addModalInput1" class="col-sm-2 control-label">採購單價<font color="red">*</font></label>
 										<div class="col-sm-10">
-											<input type="text" class="form-control" id="addModalInput1" name="onadd_buy_price" placeholder="" required minlength="1" maxlength="32">
+											<input type="text" class="form-control" id="onadd_buy_price" name="onadd_buy_price" placeholder="" required minlength="1" maxlength="32">
 											<div class="help-block with-errors"></div>
 										</div>
 									</div>

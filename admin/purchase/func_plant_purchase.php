@@ -415,7 +415,10 @@ function getProductBySn($onproduct_sn) {
 function getProductByPartNo($onproduct_part_no) {
 	$ret_data = array();
 	$conn = getDB();
-	$sql="select * from onliine_product_data where onproduct_part_no='{$onproduct_part_no}'";
+	$sql="select a.*,b.* from onliine_product_data as a
+	left join onliine_add_data as b on a.onproduct_part_no =b.onadd_part_no
+	WHERE onproduct_part_no='{$onproduct_part_no}'
+	order by b.onadd_sn desc LIMIT 0,1";
 
 	$qresult = $conn->query($sql);
 	if ($qresult->num_rows > 0) {
