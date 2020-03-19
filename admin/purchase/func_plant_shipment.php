@@ -39,13 +39,13 @@ function getUser_forExcel($where='') {
 	$ret_data = array();
 	$conn = getDB();
 	if(empty($where))
-		$sql="SELECT a.onadd_sn,a.onadd_data_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost)+b.onadd_buy_price as oncoda_cost,floor((a.onshda_add_date-b.onadd_planting_date)/60/60/24/30)+1 as date_month 
+		$sql="SELECT a.onadd_sn,a.onadd_data_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost)+b.onadd_buy_price as oncoda_cost,b.onadd_planting_date
 			FROM `online_shipment_data` a 
 			left join `onliine_add_data` b on a.onadd_data_sn = b.onadd_sn
 			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
 			where c.oncoda_cost_status = 0 and a.onshda_status = 1 GROUP by a.onshda_sn order by a.onshda_add_date desc";
 	else
-		$sql="SELECT a.onadd_sn,a.onadd_data_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost)+b.onadd_buy_price as oncoda_cost,floor((a.onshda_add_date-b.onadd_planting_date)/60/60/24/30)+1 as date_month 
+		$sql="SELECT a.onadd_sn,a.onadd_data_sn,a.onadd_part_no,a.onadd_part_name,a.onshda_add_date,a.onshda_quantity,a.onshda_price,a.onshda_client,b.onadd_cur_size,b.onadd_cost_month,SUM(c.oncoda_cost)+b.onadd_buy_price as oncoda_cost,b.onadd_planting_date
 			FROM `online_shipment_data` a 
 			left join `onliine_add_data` b on a.onadd_data_sn = b.onadd_sn
 			left join `online_cost_data` c on b.onadd_cur_size = c.oncoda_cost_size 
@@ -60,6 +60,7 @@ function getUser_forExcel($where='') {
 			$row['onadd_plant_st'] = $qresult2->fetch_assoc()['onproduct_isbought'];			
 			$qresult3 = $conn->query($sql_onadd_cost_month);	
 			$row['onadd_cost_month'] = $qresult3->fetch_assoc()['onadd_cost_month'];
+			$row['date_month'] = ($row['a.onshda_add_date'] - $row['a.onadd_planting_date'])/60/60/24/30+1;
 			$ret_data[] = $row;
 		}
 	}
