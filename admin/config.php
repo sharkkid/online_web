@@ -5,7 +5,7 @@ require_once dirname(__FILE__) . './../_setting.php';
 if (!isset($_SESSION['user']) || $_SESSION['key'] != md5($_SESSION['user']['jsuser_account'] . get_ip() . 'online_web')){
 	if (!preg_match("/sys_login.php/", $_SERVER['SCRIPT_NAME'])) {
 		$_SESSION['LOGIN_REDIRECT'] = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-		header("Location: http://{$_SERVER['HTTP_HOST']}/online_web/admin/sys/sys_login.php");
+		header("Location: http://{$_SERVER['HTTP_HOST']}/online_plant_web/admin/sys/sys_login.php");
 		exit;
 	}
 }
